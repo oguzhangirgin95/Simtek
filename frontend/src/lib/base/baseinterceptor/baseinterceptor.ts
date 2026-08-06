@@ -14,7 +14,8 @@ export const BaseInterceptor: HttpInterceptorFn = (request, next) => {
 
   headers['Accept-Language'] = flowService.get<string>('language') ?? 'tr';
 
-  const token = flowService.get<string>('token');
+  const token = flowService.token();
+  
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }

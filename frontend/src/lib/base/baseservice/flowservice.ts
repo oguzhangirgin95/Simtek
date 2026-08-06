@@ -88,6 +88,11 @@ export class FlowService extends BaseService {
   /** son servis hatasi */
   public readonly serviceError = this.select<string>('serviceError');
 
+  /** oturum bilgisi; transaction state'inden bagimsizdir, clear() silmez */
+  public readonly token = signal<string | undefined>(undefined);
+
+  public readonly isLoggedIn = computed<boolean>(() => !!this.token());
+
   public async next(): Promise<void> {
     const step = this.currentStepConfig();
     if (!step) {

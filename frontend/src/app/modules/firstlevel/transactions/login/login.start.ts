@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
+import { LoginControllerService } from '../../../../../lib/services/api/loginController.service';
+import { LoginResponse } from '../../../../../lib/services/model/loginResponse';
 
 @Component({
   selector: 'app-login-start',
@@ -8,6 +11,9 @@ import { BaseComponent } from '../../../../../lib/base/basecomponent/basecompone
   styleUrl: './login.scss',
 })
 export class LoginStart extends BaseComponent implements OnInit {
+  private readonly loginService = inject(LoginControllerService);
+  private readonly router = inject(Router);
+
   constructor() {
     super();
   }
@@ -19,9 +25,22 @@ export class LoginStart extends BaseComponent implements OnInit {
     };
   }
 
-  /** input degisince state'i gunceller (yeni nesne veriyoruz ki signal tetiklensin) */
   setField(key: string, event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.State.Request = { ...this.State.Request, [key]: value };
   }
+
+  login() {
+    this.loginService.login(this.State.Request).toPromise().then((response: LoginResponse | undefined) => {
+        if (response?.token) {
+          this.flowService.token.set(response.token);
+          this.router.navigateByUrl('/monitoring/dashboard');
+        } else {
+          this.State.loginError = 'Kullanıcı adı veya şifre hatalı.';
+        }
+    }).catch(error => {
+      console.error('Login error:', error);
+    });
+  }
+
 }

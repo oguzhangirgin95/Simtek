@@ -11,6 +11,7 @@ public class LoginBusiness {
         if(loginRequest != null && loginRequest.username != null && loginRequest.password != null) {
 
             loginResponse.success = true;
+            loginResponse.token = "TOKEN-" + loginRequest.username.toUpperCase();
         }
 
         return loginResponse;
