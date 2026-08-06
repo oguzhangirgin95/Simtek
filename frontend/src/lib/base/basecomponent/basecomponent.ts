@@ -36,6 +36,10 @@ export abstract class BaseComponent {
 
   public readonly serviceError = this.flowService.serviceError;
 
+  public getResource(key: string, value: string): string {
+    return this.flowService.getResource(key, value);
+  }
+
   public next(): Promise<void> {
     return this.flowService.next();
   }

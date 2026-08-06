@@ -1,7 +1,7 @@
 <main class="app-body">
   <!-- interceptor'dan gelen ortak durum -->
   @if (loading()) {
-    <p class="loading">Yükleniyor...</p>
+    <p class="loading">{{ loadingText() }}</p>
   }
   @if (serviceError()) {
     <p class="error">{{ serviceError() }}</p>
@@ -12,10 +12,10 @@
   @if (!disableLayout()) {
     <div class="buttons">
       @if (showBackButton()) {
-        <button type="button" (click)="back()">Geri</button>
+        <button type="button" (click)="back()">{{ backText() }}</button>
       }
       @if (showContinueButton()) {
-        <button type="button" (click)="next()">Devam</button>
+        <button type="button" (click)="next()">{{ continueText() }}</button>
       }
 
       @for (button of buttons(); track $index) {

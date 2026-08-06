@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 import { LoginControllerService } from '../../../../../lib/services/api/loginController.service';
@@ -13,6 +13,14 @@ import { LoginResponse } from '../../../../../lib/services/model/loginResponse';
 export class LoginStart extends BaseComponent implements OnInit {
   private readonly loginService = inject(LoginControllerService);
   private readonly router = inject(Router);
+
+  readonly title = computed(() => this.getResource('LOGIN_TITLE', 'Giriş'));
+
+  readonly usernameLabel = computed(() => this.getResource('LOGIN_USERNAME', 'Kullanıcı adı'));
+
+  readonly passwordLabel = computed(() => this.getResource('LOGIN_PASSWORD', 'Şifre'));
+
+  readonly loginButton = computed(() => this.getResource('LOGIN_BUTTON', 'Giriş yap'));
 
   constructor() {
     super();

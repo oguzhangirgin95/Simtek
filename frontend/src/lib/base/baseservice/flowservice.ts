@@ -1,6 +1,7 @@
 import { Injectable, Injector, Signal, computed, inject, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationStart, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
+import { ResourceControllerService } from '../../services/api/resourceController.service';
 import { FlowButton, FlowConfig, FlowStep, ServiceConfig, ValidationError } from '../baseconfig/config';
 import { BaseService } from './baseservice';
 import { Validationservice } from './validationservice';
@@ -12,6 +13,7 @@ export class FlowService extends BaseService {
   private readonly router = inject(Router);
   private readonly validationService = inject(Validationservice);
   private readonly injector = inject(Injector);
+  private readonly resourceControllerService = inject(ResourceControllerService);
 
   constructor() {
     super();
@@ -92,6 +94,33 @@ export class FlowService extends BaseService {
   public readonly token = signal<string | undefined>(undefined);
 
   public readonly isLoggedIn = computed<boolean>(() => !!this.token());
+
+  private readonly resources = signal<Record<string, string>>({});
+
+  private readonly loadedResources = new Set<string>();
+
+  public getResource(key: string, value: string): string {
+    return this.resources()[key] ?? value;
+  }
+
+  public loadResources(group: string): void {
+    if (!group || this.loadedResources.has(group)) {
+      return;
+    }
+    this.loadedResources.add(group);
+
+    this.resourceControllerService
+      .get({ transactionName: group })
+      .toPromise()
+      .then((response) => {
+        const resource: Record<string, string> = {};
+        response?.resources?.forEach((item) => (resource[item.key ?? ''] = item.value ?? ''));
+        this.resources.update((current) => ({ ...current, ...resource }));
+      })
+      .catch((error) => {
+        console.error(`Resource yuklenemedi: ${group}`, error);
+      });
+  }
 
   public async next(): Promise<void> {
     const step = this.currentStepConfig();
@@ -178,6 +207,10 @@ export class FlowService extends BaseService {
     this.config.set(config);
     this.transaction.set(snapshot.parent?.url.map((segment) => segment.path).join('/') ?? '');
     this.currentStep.set(step);
+
+    this.loadResources('general');
+
+    this.loadResources(this.transaction());
 
     if (stepConfig?.service) {
       this.callService(step, stepConfig.service).catch((error) => console.error(error));

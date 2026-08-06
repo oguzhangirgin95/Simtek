@@ -1,12 +1,12 @@
-<h2>Giriş</h2>
+<h2>{{ title() }}</h2>
 
 <div class="field">
-  <label for="username">Kullanıcı adı</label>
+  <label for="username">{{ usernameLabel() }}</label>
   <input id="username" type="text" [value]="State.Request?.username ?? ''" (input)="setField('username', $event)" />
 </div>
 
 <div class="field">
-  <label for="password">Şifre</label>
+  <label for="password">{{ passwordLabel() }}</label>
   <input id="password" type="password" [value]="State.Request?.password ?? ''" (input)="setField('password', $event)" />
 </div>
 
@@ -23,5 +23,5 @@
 }
 
 <div class="buttons">
-  <button type="button" (click)="login()">Giriş yap</button>
+  <button type="button" (click)="login()">{{ loginButton() }}</button>
 </div>

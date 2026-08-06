@@ -5,6 +5,7 @@ api.module.ts
 api/api.ts
 api/loginController.service.ts
 api/reportEntryController.service.ts
+api/resourceController.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -15,6 +16,9 @@ model/models.ts
 model/reportEntryConfirmResponse.ts
 model/reportEntryExecuteResponse.ts
 model/reportEntryRequest.ts
+model/resource.ts
+model/resourceRequest.ts
+model/resourceResponse.ts
 param.ts
 provide-api.ts
 query.params.ts
