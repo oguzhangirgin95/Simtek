@@ -7,6 +7,8 @@ export const LoginConfig: FlowConfig = {
         step: 'start',
         showContinueButton: true,
         showBackButton: true,
+        showHeader: false,
+        showFooter: false,
          validation: [
           {
             id: 'username',

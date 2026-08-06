@@ -3,19 +3,3 @@
 @if (response()) {
   <p>İşlem tamamlandı.</p>
 }
-
-<div class="buttons">
-  @if (showBackButton()) {
-    <button type="button" (click)="back()">Geri</button>
-  }
-  @if (showContinueButton()) {
-    <button type="button" (click)="next()">Devam</button>
-  }
-
-  <!-- config'teki ek butonlar -->
-  @for (button of buttons(); track $index) {
-    @if (isButtonVisible(button)) {
-      <button type="button" (click)="clickButton(button)">{{ button.label }}</button>
-    }
-  }
-</div>

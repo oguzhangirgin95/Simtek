@@ -43,6 +43,8 @@ export interface FlowStep {
   validation: ValidationRuleConfig[];
   showContinueButton?: boolean;
   showBackButton?: boolean;
+  showHeader?: boolean;
+  showFooter?: boolean;
   service?: ServiceConfig;
   disableLayout?: boolean;
   keepState?: boolean;

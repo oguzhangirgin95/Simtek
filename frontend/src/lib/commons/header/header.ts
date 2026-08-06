@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BaseComponent } from '../../base/basecomponent/basecomponent';
 
 @Component({
   selector: 'app-header',
@@ -6,4 +7,4 @@ import { Component } from '@angular/core';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header {}
+export class Header extends BaseComponent {}

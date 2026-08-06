@@ -24,6 +24,12 @@ export abstract class BaseComponent {
 
   public readonly buttons = this.flowService.buttons;
 
+  public readonly disableLayout = this.flowService.disableLayout;
+
+  public readonly showHeader = this.flowService.showHeader;
+  
+  public readonly showFooter = this.flowService.showFooter;
+
   public readonly errors = this.flowService.errors;
 
   public next(): Promise<void> {

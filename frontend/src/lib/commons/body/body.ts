@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BaseComponent } from '../../base/basecomponent/basecomponent';
 
 @Component({
   selector: 'app-body',
@@ -6,4 +7,4 @@ import { Component } from '@angular/core';
   templateUrl: './body.html',
   styleUrl: './body.scss',
 })
-export class Body {}
+export class Body extends BaseComponent {}

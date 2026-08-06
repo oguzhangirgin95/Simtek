@@ -12,6 +12,15 @@ export class FlowService extends BaseService {
   private readonly router = inject(Router);
   private readonly validationService = inject(Validationservice);
 
+  constructor() {
+    super();
+    this.router.events.subscribe((event) => {
+      if (event instanceof ActivationStart) {
+        this.readRoute(event.snapshot);
+      }
+    });
+  }
+
   private readonly services = new Map<string, any>();
 
   private readonly state = new Map<string, any>();
@@ -58,19 +67,18 @@ export class FlowService extends BaseService {
   public readonly stepIndex = computed<number>(() => this.steps().findIndex((step) => step.step === this.currentStep()));
 
   public readonly showContinueButton = computed<boolean>(() => this.currentStepConfig()?.showContinueButton === true);
+  
   public readonly showBackButton = computed<boolean>(() => this.currentStepConfig()?.showBackButton === true);
+  
   public readonly buttons = computed<FlowButton[]>(() => this.currentStepConfig()?.buttons ?? []);
 
-  public readonly errors = this.select<ValidationError[]>('validationErrors');
+  public readonly disableLayout = computed<boolean>(() => this.currentStepConfig()?.disableLayout === true);
 
-  constructor() {
-    super();
-    this.router.events.subscribe((event) => {
-      if (event instanceof ActivationStart) {
-        this.readRoute(event.snapshot);
-      }
-    });
-  }
+  public readonly showHeader = computed<boolean>(() => this.currentStepConfig()?.showHeader !== false);
+  
+  public readonly showFooter = computed<boolean>(() => this.currentStepConfig()?.showFooter !== false);
+
+  public readonly errors = this.select<ValidationError[]>('validationErrors');
 
   public async next(): Promise<void> {
     const step = this.currentStepConfig();

@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { BaseComponent } from '../lib/base/basecomponent/basecomponent';
 import { CommonsModule } from '../lib/commons/commons-module';
 
 @Component({
@@ -8,6 +9,4 @@ import { CommonsModule } from '../lib/commons/commons-module';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
-  protected readonly title = signal('frontend');
-}
+export class App extends BaseComponent {}
