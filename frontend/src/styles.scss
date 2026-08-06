@@ -1,1 +1,107 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --renk-ana: #1f2937;
+  --renk-vurgu: #2563eb;
+  --renk-yazi: #111827;
+  --renk-soluk: #6b7280;
+  --renk-cizgi: #d1d5db;
+  --renk-zemin: #f9fafb;
+  --renk-hata: #dc2626;
+
+  --bosluk: 12px;
+  --kose: 6px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: var(--renk-yazi);
+  background: var(--renk-zemin);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--bosluk);
+  font-weight: 600;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: var(--bosluk);
+  max-width: 320px;
+
+  label {
+    color: var(--renk-soluk);
+    font-size: 13px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 8px 10px;
+    border: 1px solid var(--renk-cizgi);
+    border-radius: var(--kose);
+    font: inherit;
+    background: #ffffff;
+
+    &:focus {
+      outline: none;
+      border-color: var(--renk-vurgu);
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  gap: var(--bosluk);
+  margin-top: calc(var(--bosluk) * 1.5);
+}
+
+button {
+  padding: 8px 18px;
+  border: 1px solid var(--renk-ana);
+  border-radius: var(--kose);
+  background: var(--renk-ana);
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.errors {
+  margin: var(--bosluk) 0;
+  padding-left: 18px;
+  color: var(--renk-hata);
+}
+
+.error {
+  margin: var(--bosluk) 0;
+  color: var(--renk-hata);
+}
+
+.loading {
+  margin: var(--bosluk) 0;
+  color: var(--renk-soluk);
+}
