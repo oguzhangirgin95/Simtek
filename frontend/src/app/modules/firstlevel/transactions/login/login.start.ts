@@ -5,6 +5,17 @@ import { BaseComponent } from '../../../../../lib/base/basecomponent/base-compon
   selector: 'app-login-start',
   imports: [],
   templateUrl: './login.start.html',
-  styleUrl: './login.start.scss',
+  styleUrl: './login.scss',
 })
-export class LoginStart extends BaseComponent {}
+export class LoginStart extends BaseComponent {
+  constructor() {
+    super();
+  }
+
+  OnInit() { 
+     this.State.Request = {
+      username: '',
+      password: '',
+    };
+  }
+}
