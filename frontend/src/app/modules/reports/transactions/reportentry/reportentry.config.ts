@@ -1,4 +1,4 @@
-import { FlowConfig } from "../../../../../lib/base/baseconfig/config";
+import { FlowConfig, ValidatorEnum } from "../../../../../lib/base/baseconfig/config";
 import { ReportEntryControllerService } from "../../../../../lib/services/api/reportEntryController.service";
 
 export const ReportEntryConfig: FlowConfig = {
@@ -7,18 +7,29 @@ export const ReportEntryConfig: FlowConfig = {
       {
         step: 'start',
         showContinueButton: true,
-        showBackButton: true,
-        validation: [],
+        showBackButton: false,
+        validation: [
+          {
+            id: 'reportName',
+            validatorType: ValidatorEnum.Required,
+            validationMessage: 'VALIDATION_REQUIRED | Rapor adı girilmeli'
+          },
+          {
+            id: 'reportType',
+            validatorType: ValidatorEnum.Required,
+            validationMessage: 'VALIDATION_REQUIRED | Rapor tipi seçilmeli'
+          },
+        ],
       },
       {
         step: 'confirm',
         showContinueButton: true,
         showBackButton: true,
         validation: [],
-        service:{
+        service: {
           serviceName: ReportEntryControllerService,
-          methodName: "confirm",
-          params:["confirmRequest"]
+          methodName: 'confirm',
+          params: ['Request']
         }
       },
       {
@@ -26,21 +37,12 @@ export const ReportEntryConfig: FlowConfig = {
         showContinueButton: false,
         showBackButton: false,
         validation: [],
-        service:{
-          serviceName: ReportEntryControllerService,
-          methodName: "execute",
-          params:["executeRequest"]
-        },
         keepState: true,
-        buttons: [
-          {
-            id:"",
-            label: '',
-            navigate: '',
-            color: 'primary',
-            isVisible: "state.executeRequest.isVisible",
-          },
-        ],
+        service: {
+          serviceName: ReportEntryControllerService,
+          methodName: 'execute',
+          params: ['Request']
+        }
       },
     ],
   }

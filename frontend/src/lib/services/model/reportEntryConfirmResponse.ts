@@ -10,8 +10,14 @@
 
 
 export interface ReportEntryConfirmResponse { 
+    valid?: boolean;
     reportName?: string;
+    reportTypeName?: string;
+    cityName?: string;
+    unitName?: string;
     period?: string;
+    policeCount?: number;
+    taskCount?: number;
     message?: string;
 }
 

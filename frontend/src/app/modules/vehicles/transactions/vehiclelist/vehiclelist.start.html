@@ -1,0 +1,72 @@
+<h2>{{ labels().title }}</h2>
+
+<div class="filters">
+  <app-select
+    name="cityId"
+    [label]="labels().city"
+    [placeholder]="labels().all"
+    [value]="State.Request?.cityId"
+    [options]="State.CityList ?? []"
+    (valueChange)="setFilter('cityId', $event)"
+  />
+  <app-select
+    name="unitId"
+    [label]="labels().unit"
+    [placeholder]="labels().all"
+    [value]="State.Request?.unitId"
+    [options]="State.UnitList ?? []"
+    (valueChange)="setFilter('unitId', $event)"
+  />
+  <app-select
+    name="type"
+    [label]="labels().type"
+    [placeholder]="labels().all"
+    [value]="State.Request?.type"
+    [options]="State.TypeList ?? []"
+    (valueChange)="setFilter('type', $event)"
+  />
+  <app-input
+    name="searchText"
+    [label]="labels().search"
+    [value]="State.Request?.searchText"
+    (valueChange)="setFilter('searchText', $event)"
+  />
+  <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
+</div>
+
+<div class="stats">
+  <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
+  @for (type of State.TypeCounts ?? []; track type.key) {
+    <app-statcard [label]="type.name" [value]="type.count" />
+  }
+</div>
+
+<div class="content">
+  <app-card [title]="labels().listTitle" [subtitle]="labels().listHint">
+    <app-grid
+      [columns]="columns()"
+      [rows]="State.VehicleList ?? []"
+      [emptyText]="labels().empty"
+      (rowClicked)="selectVehicle($event)"
+    />
+  </app-card>
+
+  <div>
+    <app-card [title]="labels().detailTitle">
+      @if (State.VehicleDetail?.found) {
+        <app-detailcard
+          [title]="State.VehicleDetail?.plate"
+          [subtitle]="State.VehicleDetail?.brand + ' ' + State.VehicleDetail?.model"
+          [imageUrl]="State.VehicleDetail?.photoUrl"
+          [items]="State.VehicleItems ?? []"
+        />
+      } @else {
+        <app-info [message]="labels().selectFirst" />
+      }
+    </app-card>
+
+    <app-card [title]="labels().typeChartTitle">
+      <app-donutchart [items]="State.TypeChart ?? []" />
+    </app-card>
+  </div>
+</div>

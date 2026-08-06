@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.operations.entity.Task;
+import models.operations.request.TaskAssignRequest;
 import models.operations.request.TaskListRequest;
 import models.operations.request.TaskTypeListRequest;
+import models.operations.response.TaskAssignConfirmResponse;
+import models.operations.response.TaskAssignExecuteResponse;
 import models.operations.response.TaskListItem;
 import models.operations.response.TaskListResponse;
 import models.operations.response.TaskTypeItem;
@@ -162,6 +165,97 @@ public class TaskBusiness {
         taskListResponse.pageSize = pageSize;
 
         return taskListResponse;
+    }
+
+    /** Gorev atama - onay adimi: atama yapilmadan once ozet ve limit uyarisi doner */
+    public TaskAssignConfirmResponse TaskAssignConfirm(TaskAssignRequest taskAssignRequest) {
+
+        TaskAssignConfirmResponse response = new TaskAssignConfirmResponse();
+
+        if (taskAssignRequest == null || taskAssignRequest.policeId == null) {
+            response.message = "Personel secilmedi.";
+            return response;
+        }
+
+        Police police = PoliceBusiness.GetPolice(taskAssignRequest.policeId);
+        if (police == null) {
+            response.message = "Personel bulunamadi.";
+            return response;
+        }
+
+        if (taskAssignRequest.type == null || taskAssignRequest.type.isEmpty()) {
+            response.message = "Gorev tipi secilmedi.";
+            return response;
+        }
+
+        response.valid = true;
+        response.policeId = police.id;
+        response.policeName = police.fullName;
+        response.badgeNumber = police.badgeNumber;
+        response.unitName = police.unitName;
+        response.cityName = police.cityName;
+        response.typeName = PoliceBusiness.GetTaskTypeName(taskAssignRequest.type);
+        response.location = taskAssignRequest.location;
+        response.timeRange = taskAssignRequest.startTime + " - " + taskAssignRequest.endTime;
+        response.currentTaskCount = CountTasks(police.id);
+        response.dailyTaskLimit = police.dailyTaskLimit;
+        response.willExceedLimit = response.currentTaskCount + 1 > police.dailyTaskLimit;
+        response.message = response.willExceedLimit
+                ? "Bu atama ile personel gunluk gorev limitini asacak."
+                : "Atama yapilabilir.";
+
+        return response;
+    }
+
+    /** Gorev atama - gerceklestirme adimi: gorev listeye eklenir */
+    public TaskAssignExecuteResponse TaskAssignExecute(TaskAssignRequest taskAssignRequest) {
+
+        TaskAssignExecuteResponse response = new TaskAssignExecuteResponse();
+
+        if (taskAssignRequest == null || taskAssignRequest.policeId == null) {
+            response.message = "Personel secilmedi.";
+            return response;
+        }
+
+        Police police = PoliceBusiness.GetPolice(taskAssignRequest.policeId);
+        if (police == null) {
+            response.message = "Personel bulunamadi.";
+            return response;
+        }
+
+        Task task = new Task();
+        task.id = police.id + "-G" + (CountTasks(police.id) + 1);
+        task.policeId = police.id;
+        task.cityId = police.cityId;
+        task.unitId = police.unitId;
+        task.type = taskAssignRequest.type;
+        task.location = taskAssignRequest.location;
+        task.startTime = taskAssignRequest.startTime;
+        task.endTime = taskAssignRequest.endTime;
+        task.status = "PLANLANDI";
+
+        TASKS.add(task);
+        police.dailyTaskCount = CountTasks(police.id);
+
+        response.success = true;
+        response.taskId = task.id;
+        response.policeName = police.fullName;
+        response.typeName = PoliceBusiness.GetTaskTypeName(task.type);
+        response.timeRange = task.startTime + " - " + task.endTime;
+        response.newTaskCount = police.dailyTaskCount;
+        response.message = "Gorev atandi.";
+
+        return response;
+    }
+
+    private Integer CountTasks(String policeId) {
+        int count = 0;
+        for (Task task : TASKS) {
+            if (task.policeId.equals(policeId)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /** Gorev tipi filtresinin secenekleri ve adetleri (grafik icin de kullanilabilir) */

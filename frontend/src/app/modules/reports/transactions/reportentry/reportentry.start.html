@@ -1,31 +1,61 @@
-<h2>Rapor Girişi</h2>
+<h2>{{ labels().title }}</h2>
 
-<div class="field">
-  <label for="reportName">Rapor adı</label>
-  <input
-    id="reportName"
-    type="text"
-    [value]="State.confirmRequest?.reportName ?? ''"
-    (input)="setField('reportName', $event)"
-  />
-</div>
+<app-card [title]="labels().formTitle" [subtitle]="labels().hint">
+  <div class="filters">
+    <app-input
+      name="reportName"
+      [label]="labels().name"
+      [value]="State.Request?.reportName"
+      (valueChange)="setField('reportName', $event)"
+    />
+    <app-select
+      name="reportType"
+      [label]="labels().type"
+      [placeholder]="labels().all"
+      [value]="State.Request?.reportType"
+      [options]="State.TypeList ?? []"
+      (valueChange)="setField('reportType', $event)"
+    />
+  </div>
 
-<div class="field">
-  <label for="startDate">Başlangıç tarihi</label>
-  <input
-    id="startDate"
-    type="date"
-    [value]="State.confirmRequest?.startDate ?? ''"
-    (input)="setField('startDate', $event)"
-  />
-</div>
+  <div class="filters">
+    <app-select
+      name="cityId"
+      [label]="labels().city"
+      [placeholder]="labels().all"
+      [value]="State.Request?.cityId"
+      [options]="State.CityList ?? []"
+      (valueChange)="setField('cityId', $event)"
+    />
+    <app-select
+      name="unitId"
+      [label]="labels().unit"
+      [placeholder]="labels().all"
+      [value]="State.Request?.unitId"
+      [options]="State.UnitList ?? []"
+      (valueChange)="setField('unitId', $event)"
+    />
+    <app-input
+      name="startDate"
+      type="date"
+      [label]="labels().startDate"
+      [value]="State.Request?.startDate"
+      (valueChange)="setField('startDate', $event)"
+    />
+    <app-input
+      name="endDate"
+      type="date"
+      [label]="labels().endDate"
+      [value]="State.Request?.endDate"
+      (valueChange)="setField('endDate', $event)"
+    />
+  </div>
 
-<div class="field">
-  <label for="endDate">Bitiş tarihi</label>
-  <input
-    id="endDate"
-    type="date"
-    [value]="State.confirmRequest?.endDate ?? ''"
-    (input)="setField('endDate', $event)"
-  />
-</div>
+  @if (errors()?.length) {
+    <ul class="errors">
+      @for (error of errors(); track $index) {
+        <li>{{ error.message }}</li>
+      }
+    </ul>
+  }
+</app-card>

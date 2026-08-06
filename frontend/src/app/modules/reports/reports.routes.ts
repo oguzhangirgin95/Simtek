@@ -4,7 +4,11 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'reportentry',
+        redirectTo: 'reportlist',
+    },
+    {
+        path: 'reportlist',
+        loadChildren: () => import('./transactions/reportlist/reportlist.routes').then((m) => m.routes),
     },
     {
         path: 'reportentry',

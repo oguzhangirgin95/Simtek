@@ -12,6 +12,13 @@
 export interface ReportEntryExecuteResponse { 
     success?: boolean;
     reportNo?: string;
+    reportName?: string;
+    reportTypeName?: string;
+    cityName?: string;
+    period?: string;
+    policeCount?: number;
+    taskCount?: number;
+    createdDate?: string;
     message?: string;
 }
 

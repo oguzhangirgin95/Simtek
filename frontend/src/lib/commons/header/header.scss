@@ -3,11 +3,23 @@
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  background: #1f2937;
+  background: var(--renk-ana);
   color: #ffffff;
 
   &__title {
     font-size: 18px;
     font-weight: 600;
+  }
+
+  &__user {
+    margin-left: auto;
+    color: #d1d5db;
+    font-size: 13px;
+  }
+
+  app-button button {
+    background: transparent;
+    border-color: #ffffff;
+    color: #ffffff;
   }
 }

@@ -1,0 +1,29 @@
+.filters {
+  display: flex;
+  gap: var(--bosluk);
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  .field {
+    margin-bottom: 0;
+    min-width: 170px;
+  }
+}
+
+.stats {
+  display: flex;
+  gap: var(--bosluk);
+  flex-wrap: wrap;
+  margin: var(--bosluk) 0;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--bosluk);
+}
+
+app-card {
+  display: block;
+  margin-bottom: var(--bosluk);
+}

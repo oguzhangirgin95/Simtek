@@ -1,0 +1,25 @@
+<h2>{{ labels().title }}</h2>
+
+<div class="filters">
+  <app-select
+    name="cityId"
+    [label]="labels().city"
+    [placeholder]="labels().all"
+    [value]="State.Request?.cityId"
+    [options]="State.CityList ?? []"
+    (valueChange)="setFilter('cityId', $event)"
+  />
+</div>
+
+<div class="stats">
+  <app-statcard [label]="labels().unitCount" [value]="State.UnitWorkload?.units?.length ?? 0" />
+  <app-statcard [label]="labels().totalTask" [value]="State.UnitWorkload?.totalTaskLoad ?? 0" />
+</div>
+
+<app-card [title]="(State.UnitWorkload?.cityName ?? '') + ' ' + labels().chartTitle">
+  <app-barchart [items]="State.UnitChart ?? []" />
+</app-card>
+
+<app-card [title]="labels().listTitle">
+  <app-grid [columns]="columns()" [rows]="State.UnitWorkload?.units ?? []" [emptyText]="labels().empty" />
+</app-card>

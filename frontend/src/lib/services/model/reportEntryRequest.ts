@@ -11,6 +11,9 @@
 
 export interface ReportEntryRequest { 
     reportName?: string;
+    reportType?: string;
+    cityId?: string;
+    unitId?: string;
     startDate?: string;
     endDate?: string;
 }

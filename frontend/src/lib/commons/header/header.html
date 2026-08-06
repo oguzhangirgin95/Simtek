@@ -1,3 +1,8 @@
 <header class="app-header">
-  <span class="app-header__title">Simtek</span>
+  <span class="app-header__title">{{ labels().title }}</span>
+
+  @if (isLoggedIn()) {
+    <span class="app-header__user">{{ username() }}</span>
+    <app-button [label]="labels().logout" variant="outline" (clicked)="logout()" />
+  }
 </header>

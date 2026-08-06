@@ -1,0 +1,59 @@
+<h2>{{ labels().title }}</h2>
+
+<div class="filters">
+  <app-select
+    name="cityId"
+    [label]="labels().city"
+    [placeholder]="labels().all"
+    [value]="State.Request?.cityId"
+    [options]="State.CityList ?? []"
+    (valueChange)="setFilter('cityId', $event)"
+  />
+  <app-select
+    name="unitId"
+    [label]="labels().unit"
+    [placeholder]="labels().all"
+    [value]="State.Request?.unitId"
+    [options]="State.UnitList ?? []"
+    (valueChange)="setFilter('unitId', $event)"
+  />
+  <app-select
+    name="type"
+    [label]="labels().type"
+    [placeholder]="labels().all"
+    [value]="State.Request?.type"
+    [options]="State.TypeList ?? []"
+    (valueChange)="setFilter('type', $event)"
+  />
+  <app-select
+    name="status"
+    [label]="labels().status"
+    [placeholder]="labels().all"
+    [value]="State.Request?.status"
+    [options]="statusList()"
+    (valueChange)="setFilter('status', $event)"
+  />
+  <app-select
+    name="onlyOverLimit"
+    [label]="labels().limit"
+    [placeholder]="labels().all"
+    [value]="State.Request?.onlyOverLimit ? '1' : ''"
+    [options]="limitList()"
+    (valueChange)="setOverLimit($event)"
+  />
+  <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
+</div>
+
+<div class="stats">
+  <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
+</div>
+
+<div class="content">
+  <app-card [title]="labels().listTitle">
+    <app-grid [columns]="columns()" [rows]="State.TaskList ?? []" [emptyText]="labels().empty" />
+  </app-card>
+
+  <app-card [title]="labels().typeChartTitle">
+    <app-donutchart [items]="State.TypeChart ?? []" />
+  </app-card>
+</div>

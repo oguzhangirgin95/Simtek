@@ -1,0 +1,21 @@
+<h2>{{ labels().title }}</h2>
+
+<div class="filters">
+  <app-select
+    name="reportType"
+    [label]="labels().type"
+    [placeholder]="labels().all"
+    [value]="State.Request?.reportType"
+    [options]="State.TypeList ?? []"
+    (valueChange)="setFilter('reportType', $event)"
+  />
+  <app-button [label]="labels().newReport" (clicked)="newReport()" />
+</div>
+
+<div class="stats">
+  <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
+</div>
+
+<app-card [title]="labels().listTitle">
+  <app-grid [columns]="columns()" [rows]="State.ReportList ?? []" [emptyText]="labels().empty" />
+</app-card>

@@ -1,0 +1,43 @@
+<h2>{{ labels().title }}</h2>
+
+<app-card [title]="labels().formTitle">
+  <div class="filters">
+    <app-select
+      name="language"
+      [label]="labels().language"
+      [value]="State.Request?.language"
+      [options]="languageList()"
+      (valueChange)="setField('language', $event)"
+    />
+    <app-select
+      name="pageSize"
+      [label]="labels().pageSize"
+      [value]="State.Request?.pageSize"
+      [options]="pageSizeList"
+      (valueChange)="setField('pageSize', $event)"
+    />
+    <app-select
+      name="defaultCityId"
+      [label]="labels().defaultCity"
+      [placeholder]="labels().all"
+      [value]="State.Request?.defaultCityId"
+      [options]="State.CityList ?? []"
+      (valueChange)="setField('defaultCityId', $event)"
+    />
+    <app-input
+      name="refreshSeconds"
+      type="number"
+      [label]="labels().refresh"
+      [value]="State.Request?.refreshSeconds"
+      (valueChange)="setField('refreshSeconds', $event)"
+    />
+  </div>
+
+  <div class="buttons">
+    <app-button [label]="labels().save" (clicked)="saveSetting()" />
+  </div>
+
+  @if (State.Message) {
+    <app-info [message]="State.Message" variant="success" />
+  }
+</app-card>

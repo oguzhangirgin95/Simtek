@@ -36,6 +36,8 @@ export abstract class BaseComponent {
 
   public readonly serviceError = this.flowService.serviceError;
 
+  public readonly isLoggedIn = this.flowService.isLoggedIn;
+
   public getResource(key: string, value: string): string {
     return this.flowService.getResource(key, value);
   }
