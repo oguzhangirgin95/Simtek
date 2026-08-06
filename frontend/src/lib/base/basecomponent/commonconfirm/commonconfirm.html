@@ -1,1 +1,22 @@
-<p>commonconfirm works!</p>
+<h2>Onay</h2>
+
+@for (item of items(); track item.key) {
+  <p><b>{{ item.key }}:</b> {{ item.value }}</p>
+}
+
+@if (errors()?.length) {
+  <ul class="errors">
+    @for (error of errors(); track $index) {
+      <li>{{ error.message }}</li>
+    }
+  </ul>
+}
+
+<div class="buttons">
+  @if (showBackButton()) {
+    <button type="button" (click)="back()">Geri</button>
+  }
+  @if (showContinueButton()) {
+    <button type="button" (click)="next()">Devam</button>
+  }
+</div>

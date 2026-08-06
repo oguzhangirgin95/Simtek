@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { BaseComponent } from '../base-component';
+import { BaseComponent } from '../basecomponent';
 
 @Component({
   imports: [],
   templateUrl: './commonexecute.html',
   styleUrl: './commonexecute.scss',
 })
-export class Commonexecute extends BaseComponent {}
+export class Commonexecute extends BaseComponent {
+  readonly response = this.flowService.select<any>('executeResponse');
+}

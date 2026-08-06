@@ -13,11 +13,29 @@ export interface ValidationConfig {
   [key: string]: ValidationRule;
 }
 
+export enum ValidatorEnum {
+  Required = 'required',
+  Regex = 'regex',
+  MinLength = 'minLength',
+  MaxLength = 'maxLength',
+  Email = 'email',
+  Number = 'number',
+  Custom = 'custom',
+}
+
 export interface ValidationRuleConfig {
   id: string;
-  validatorType: string;
+  validatorType?: ValidatorEnum;
   customValidation?: (value: unknown, element?: HTMLInputElement) => boolean;
   validationMessage: string;
+  regex?: string;
+  minLength?: number;
+  maxLength?: number;
+}
+
+export interface ValidationError {
+  id: string;
+  message: string;
 }
 
 export interface FlowStep {

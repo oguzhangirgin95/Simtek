@@ -1,17 +1,17 @@
-import { Component } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/base-component';
+import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 
 @Component({
   imports: [],
   templateUrl: './reportentry.start.html',
-  styleUrl: './reportentry.scss',
+  styleUrl: './reportentry.start.scss',
 })
-export class ReportentryStart extends BaseComponent {
+export class ReportentryStart extends BaseComponent implements OnInit {
   constructor() {
     super();
   }
 
-  OnInit() { 
+  ngOnInit() {
      this.State.confirmRequest = {
       username: '',
       password: '',

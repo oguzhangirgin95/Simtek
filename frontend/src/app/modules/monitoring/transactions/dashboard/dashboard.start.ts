@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/base-component';
+import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 
 @Component({
   imports: [],
@@ -12,6 +12,6 @@ export class DashboardStart extends BaseComponent {
   }
 
   OnInit() { 
-    
+
   }
 }

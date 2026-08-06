@@ -1,4 +1,4 @@
-import { FlowConfig } from "../../../../../lib/base/baseconfig/config";
+import { FlowConfig, ValidatorEnum } from "../../../../../lib/base/baseconfig/config";
 
 export const LoginConfig: FlowConfig = {
   config: {
@@ -10,24 +10,24 @@ export const LoginConfig: FlowConfig = {
          validation: [
           {
             id: 'username',
-            validatorType: 'ValidatorEnum.Required',
+            validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Username is required'
           },
           {
             id: 'username',
-            validatorType: '',
+            validatorType: ValidatorEnum.Custom,
             customValidation: Validation,
             validationMessage: 'VALIDATION_CUSTOM | Username cannot be "admin"'
           },
           {
             id: 'username',
-            validatorType: '',
+            validatorType: ValidatorEnum.Custom,
             customValidation: ValidationLength,
             validationMessage: 'VALIDATION_LENGTH_CUSTOM | Username cannot be higher than 6 characters'
           },
           {
             id: 'password',
-            validatorType: 'ValidatorEnum.Required',
+            validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Password is required'
           }
         ],

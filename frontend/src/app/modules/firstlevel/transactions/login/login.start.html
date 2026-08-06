@@ -1,1 +1,28 @@
-<p>login.start works!</p>
+<h2>Giriş</h2>
+
+<div class="field">
+  <label for="username">Kullanıcı adı</label>
+  <input id="username" type="text" [value]="State.Request?.username ?? ''" (input)="setField('username', $event)" />
+</div>
+
+<div class="field">
+  <label for="password">Şifre</label>
+  <input id="password" type="password" [value]="State.Request?.password ?? ''" (input)="setField('password', $event)" />
+</div>
+
+@if (errors()?.length) {
+  <ul class="errors">
+    @for (error of errors(); track $index) {
+      <li>{{ error.message }}</li>
+    }
+  </ul>
+}
+
+<div class="buttons">
+  @if (showBackButton()) {
+    <button type="button" (click)="back()">Geri</button>
+  }
+  @if (showContinueButton()) {
+    <button type="button" (click)="next()">Devam</button>
+  }
+</div>

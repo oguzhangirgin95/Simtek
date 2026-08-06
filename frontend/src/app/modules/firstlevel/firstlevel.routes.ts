@@ -3,6 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
     {
         path: '',
-        loadComponent: () => import('./transactions/login/login.start').then((m) => m.LoginStart),
+        pathMatch: 'full',
+        redirectTo: 'login',
+    },
+    {
+        path: 'login',
+        loadChildren: () => import('./transactions/login/login.routes').then((m) => m.routes),
     },
 ];
