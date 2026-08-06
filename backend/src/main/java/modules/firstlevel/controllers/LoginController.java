@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import models.extended.firstlevel.request.LoginExtendedRequest;
-import modules.firstlevel.business.TokenBusiness;
+import models.firstlevel.request.LoginRequest;
+import modules.firstlevel.business.LoginBusiness;
 
 
 @RestController
-@RequestMapping("/token")
-public class TokenController {
+@RequestMapping("/login")
+public class LoginController {
 
-    @PostMapping("/login")
-    public Boolean Login(LoginExtendedRequest loginRequest) {
-        TokenBusiness tokenBusiness = new TokenBusiness();
+    @PostMapping("/eligable")
+    public Boolean Login(LoginRequest loginRequest) {
+        LoginBusiness tokenBusiness = new LoginBusiness();
         return tokenBusiness.Login(loginRequest);
     }
 }
