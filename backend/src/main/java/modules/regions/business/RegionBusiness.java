@@ -1,66 +1,127 @@
 package modules.regions.business;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import models.regions.entity.City;
+import models.regions.request.RegionDeleteRequest;
 import models.regions.request.RegionListRequest;
+import models.regions.request.RegionSaveRequest;
+import models.regions.response.RegionDeleteResponse;
 import models.regions.response.RegionListItem;
 import models.regions.response.RegionListResponse;
+import models.regions.response.RegionSaveResponse;
+import modules.personnel.repositories.PoliceRepository;
+import modules.regions.repositories.CityRepository;
+import modules.units.repositories.UnitRepository;
 
+@Service
 public class RegionBusiness {
 
-    /** Sehirler ve harita uzerindeki konumlari. x/y, gercek koordinatlardan 0-100 / 0-60 araligina tasinmistir. */
-    private static final List<City> CITIES = new ArrayList<>();
+    private final CityRepository cityRepository;
+    private final UnitRepository unitRepository;
+    private final PoliceRepository policeRepository;
 
-    static {
-        CITIES.add(new City("34", "Istanbul", "34", 15.7, 9.9));
-        CITIES.add(new City("06", "Ankara", "06", 36.1, 20.7));
-        CITIES.add(new City("35", "Izmir", "35", 6.0, 35.8));
-        CITIES.add(new City("16", "Bursa", "16", 16.1, 18.1));
-        CITIES.add(new City("07", "Antalya", "07", 24.8, 51.0));
-        CITIES.add(new City("01", "Adana", "01", 49.1, 50.0));
-        CITIES.add(new City("42", "Konya", "42", 34.1, 41.3));
-        CITIES.add(new City("27", "Gaziantep", "27", 59.9, 49.3));
-        CITIES.add(new City("38", "Kayseri", "38", 49.9, 32.7));
-        CITIES.add(new City("55", "Samsun", "55", 54.4, 7.1));
-        CITIES.add(new City("61", "Trabzon", "61", 72.2, 10.0));
-        CITIES.add(new City("21", "Diyarbakir", "21", 74.9, 40.9));
-        CITIES.add(new City("25", "Erzurum", "25", 80.4, 21.0));
-        CITIES.add(new City("65", "Van", "65", 91.5, 35.1));
+    public RegionBusiness(CityRepository cityRepository, UnitRepository unitRepository,
+            PoliceRepository policeRepository) {
+        this.cityRepository = cityRepository;
+        this.unitRepository = unitRepository;
+        this.policeRepository = policeRepository;
     }
 
-    /** diger moduller sehir listesine buradan ulasir */
-    public static List<City> GetCities() {
-        return CITIES;
-    }
-
-    public static City GetCity(String cityId) {
-        for (City city : CITIES) {
-            if (city.id.equals(cityId)) {
-                return city;
-            }
-        }
-        return null;
-    }
-
+    /** Sehir filtresi ve harita icin sehir listesi */
+    @Transactional(readOnly = true)
     public RegionListResponse RegionList(RegionListRequest regionListRequest) {
 
         String searchText = regionListRequest == null || regionListRequest.searchText == null
                 ? ""
-                : regionListRequest.searchText.trim().toLowerCase();
+                : regionListRequest.searchText.trim();
+
+        List<City> cities = searchText.isEmpty()
+                ? cityRepository.findAllByOrderBySortOrderAsc()
+                : cityRepository.findByNameContainingIgnoreCaseOrderBySortOrderAsc(searchText);
 
         RegionListResponse regionListResponse = new RegionListResponse();
 
-        for (City city : CITIES) {
-            if (!searchText.isEmpty() && !city.name.toLowerCase().contains(searchText)) {
-                continue;
-            }
+        for (City city : cities) {
             regionListResponse.regions.add(new RegionListItem(city.id, city.name, city.plateCode, city.x, city.y));
         }
 
         regionListResponse.totalCount = regionListResponse.regions.size();
 
         return regionListResponse;
+    }
+
+    /** Sehir ekleme / guncelleme */
+    @Transactional
+    public RegionSaveResponse RegionSave(RegionSaveRequest regionSaveRequest) {
+
+        RegionSaveResponse response = new RegionSaveResponse();
+
+        if (regionSaveRequest == null || regionSaveRequest.name == null || regionSaveRequest.name.trim().isEmpty()) {
+            response.message = "Sehir adi girilmeli.";
+            return response;
+        }
+        if (regionSaveRequest.plateCode == null || regionSaveRequest.plateCode.trim().isEmpty()) {
+            response.message = "Plaka kodu girilmeli.";
+            return response;
+        }
+
+        String id = regionSaveRequest.id == null || regionSaveRequest.id.trim().isEmpty()
+                ? regionSaveRequest.plateCode.trim()
+                : regionSaveRequest.id.trim();
+
+        City city = cityRepository.findById(id).orElseGet(City::new);
+        city.id = id;
+        city.name = regionSaveRequest.name.trim();
+        city.plateCode = regionSaveRequest.plateCode.trim();
+        city.x = regionSaveRequest.x == null ? 0.0 : regionSaveRequest.x;
+        city.y = regionSaveRequest.y == null ? 0.0 : regionSaveRequest.y;
+        city.sortOrder = regionSaveRequest.sortOrder == null ? 99 : regionSaveRequest.sortOrder;
+
+        cityRepository.save(city);
+
+        response.success = true;
+        response.id = city.id;
+        response.message = "Sehir kaydedildi.";
+
+        return response;
+    }
+
+    /** Sehir silme; bagli birim veya personel varsa silinmez */
+    @Transactional
+    public RegionDeleteResponse RegionDelete(RegionDeleteRequest regionDeleteRequest) {
+
+        RegionDeleteResponse response = new RegionDeleteResponse();
+
+        if (regionDeleteRequest == null || regionDeleteRequest.id == null) {
+            response.message = "Sehir secilmedi.";
+            return response;
+        }
+
+        Optional<City> city = cityRepository.findById(regionDeleteRequest.id);
+        if (city.isEmpty()) {
+            response.message = "Sehir bulunamadi.";
+            return response;
+        }
+
+        if (policeRepository.countByCityId(regionDeleteRequest.id) > 0) {
+            response.message = "Sehre bagli personel oldugu icin silinemez.";
+            return response;
+        }
+        if (unitRepository.countByCityId(regionDeleteRequest.id) > 0) {
+            response.message = "Sehre bagli birim oldugu icin silinemez.";
+            return response;
+        }
+
+        cityRepository.delete(city.get());
+
+        response.success = true;
+        response.message = "Sehir silindi.";
+
+        return response;
     }
 }

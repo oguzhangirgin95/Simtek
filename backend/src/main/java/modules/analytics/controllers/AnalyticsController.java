@@ -15,10 +15,15 @@ import modules.analytics.business.AnalyticsBusiness;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
-    /** Gunluk gorev trendi, dashboard grafigi icin */
+    private final AnalyticsBusiness analyticsBusiness;
+
+    public AnalyticsController(AnalyticsBusiness analyticsBusiness) {
+        this.analyticsBusiness = analyticsBusiness;
+    }
+
+    /** Gunluk gorev trendi */
     @PostMapping(path = "/tasktrend", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskTrendResponse TaskTrend(@RequestBody TaskTrendRequest taskTrendRequest) {
-        AnalyticsBusiness analyticsBusiness = new AnalyticsBusiness();
         return analyticsBusiness.TaskTrend(taskTrendRequest);
     }
 }

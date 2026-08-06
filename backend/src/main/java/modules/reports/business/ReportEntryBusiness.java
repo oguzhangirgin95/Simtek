@@ -1,11 +1,18 @@
 package modules.reports.business;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.criteria.Predicate;
 import models.operations.entity.Task;
 import models.personnel.entity.Police;
 import models.regions.entity.City;
+import models.reports.entity.Report;
 import models.reports.request.ReportEntryRequest;
 import models.reports.request.ReportListRequest;
 import models.reports.request.ReportTypeListRequest;
@@ -16,15 +23,14 @@ import models.reports.response.ReportListResponse;
 import models.reports.response.ReportTypeItem;
 import models.reports.response.ReportTypeListResponse;
 import models.units.entity.Unit;
-import modules.operations.business.TaskBusiness;
-import modules.personnel.business.PoliceBusiness;
-import modules.regions.business.RegionBusiness;
-import modules.units.business.UnitBusiness;
+import modules.operations.repositories.TaskRepository;
+import modules.personnel.repositories.PoliceRepository;
+import modules.regions.repositories.CityRepository;
+import modules.reports.repositories.ReportRepository;
+import modules.units.repositories.UnitRepository;
 
+@Service
 public class ReportEntryBusiness {
-
-    /** olusturulan raporlar */
-    private static final List<ReportListItem> REPORTS = new ArrayList<>();
 
     private static final String[][] REPORT_TYPES = {
             { "DEVRIYE", "Devriye Raporu" },
@@ -32,6 +38,21 @@ public class ReportEntryBusiness {
             { "KAZA", "Kaza Inceleme Raporu" },
             { "PERSONEL", "Personel Raporu" }
     };
+
+    private final ReportRepository reportRepository;
+    private final PoliceRepository policeRepository;
+    private final TaskRepository taskRepository;
+    private final CityRepository cityRepository;
+    private final UnitRepository unitRepository;
+
+    public ReportEntryBusiness(ReportRepository reportRepository, PoliceRepository policeRepository,
+            TaskRepository taskRepository, CityRepository cityRepository, UnitRepository unitRepository) {
+        this.reportRepository = reportRepository;
+        this.policeRepository = policeRepository;
+        this.taskRepository = taskRepository;
+        this.cityRepository = cityRepository;
+        this.unitRepository = unitRepository;
+    }
 
     public static String GetReportTypeName(String reportType) {
         if (reportType == null) {
@@ -48,157 +69,163 @@ public class ReportEntryBusiness {
     /** Rapor tipi secenekleri */
     public ReportTypeListResponse ReportTypeList(ReportTypeListRequest reportTypeListRequest) {
 
-        ReportTypeListResponse reportTypeListResponse = new ReportTypeListResponse();
+        ReportTypeListResponse response = new ReportTypeListResponse();
 
         for (String[] type : REPORT_TYPES) {
-            reportTypeListResponse.types.add(new ReportTypeItem(type[0], type[1]));
+            response.types.add(new ReportTypeItem(type[0], type[1]));
         }
 
-        return reportTypeListResponse;
+        return response;
     }
 
     /** Onay adimi: rapor olusturulmadan once kapsam ozeti doner */
-    public ReportEntryConfirmResponse Confirm(ReportEntryRequest reportEntryRequest) {
+    @Transactional(readOnly = true)
+    public ReportEntryConfirmResponse Confirm(ReportEntryRequest request) {
 
         ReportEntryConfirmResponse response = new ReportEntryConfirmResponse();
 
-        if (reportEntryRequest == null || reportEntryRequest.reportName == null
-                || reportEntryRequest.reportName.trim().isEmpty()) {
+        if (request == null || !HasText(request.reportName)) {
             response.message = "Rapor adi girilmedi.";
             return response;
         }
-
-        if (reportEntryRequest.reportType == null || reportEntryRequest.reportType.isEmpty()) {
+        if (!HasText(request.reportType)) {
             response.message = "Rapor tipi secilmedi.";
             return response;
         }
 
         response.valid = true;
-        response.reportName = reportEntryRequest.reportName;
-        response.reportTypeName = GetReportTypeName(reportEntryRequest.reportType);
-        response.cityName = GetCityName(reportEntryRequest.cityId);
-        response.unitName = GetUnitName(reportEntryRequest.unitId);
-        response.period = reportEntryRequest.startDate + " - " + reportEntryRequest.endDate;
-        response.policeCount = CountPolice(reportEntryRequest);
-        response.taskCount = CountTasks(reportEntryRequest);
+        response.reportName = request.reportName;
+        response.reportTypeName = GetReportTypeName(request.reportType);
+        response.cityName = GetCityName(request.cityId);
+        response.unitName = GetUnitName(request.unitId);
+        response.period = request.startDate + " - " + request.endDate;
+        response.policeCount = CountPolice(request);
+        response.taskCount = CountTasks(request);
         response.message = "Rapor olusturulmaya hazir.";
 
         return response;
     }
 
-    /** Gerceklestirme adimi: rapor olusturulur ve listeye eklenir */
-    public ReportEntryExecuteResponse Execute(ReportEntryRequest reportEntryRequest) {
+    /** Gerceklestirme adimi: rapor veritabanina yazilir */
+    @Transactional
+    public ReportEntryExecuteResponse Execute(ReportEntryRequest request) {
 
         ReportEntryExecuteResponse response = new ReportEntryExecuteResponse();
 
-        if (reportEntryRequest == null || reportEntryRequest.reportName == null
-                || reportEntryRequest.reportName.trim().isEmpty()) {
+        if (request == null || !HasText(request.reportName)) {
             response.message = "Rapor olusturulamadi.";
             return response;
         }
 
-        ReportListItem report = new ReportListItem();
-        report.reportNo = "RPR-" + (REPORTS.size() + 1001);
-        report.reportName = reportEntryRequest.reportName;
-        report.reportType = reportEntryRequest.reportType;
-        report.reportTypeName = GetReportTypeName(reportEntryRequest.reportType);
-        report.cityName = GetCityName(reportEntryRequest.cityId);
-        report.unitName = GetUnitName(reportEntryRequest.unitId);
-        report.period = reportEntryRequest.startDate + " - " + reportEntryRequest.endDate;
-        report.policeCount = CountPolice(reportEntryRequest);
-        report.taskCount = CountTasks(reportEntryRequest);
-        report.createdDate = reportEntryRequest.endDate;
+        Report report = new Report();
+        report.reportNo = "RPR-" + (reportRepository.count() + 1001);
+        report.reportName = request.reportName.trim();
+        report.reportType = request.reportType;
+        report.cityId = request.cityId;
+        report.unitId = request.unitId;
+        report.cityName = GetCityName(request.cityId);
+        report.unitName = GetUnitName(request.unitId);
+        report.period = request.startDate + " - " + request.endDate;
+        report.policeCount = CountPolice(request);
+        report.taskCount = CountTasks(request);
+        report.createdDate = HasText(request.endDate) ? LocalDate.parse(request.endDate) : LocalDate.now();
 
-        REPORTS.add(report);
+        reportRepository.save(report);
 
         response.success = true;
         response.reportNo = report.reportNo;
         response.reportName = report.reportName;
-        response.reportTypeName = report.reportTypeName;
+        response.reportTypeName = GetReportTypeName(report.reportType);
         response.cityName = report.cityName;
         response.period = report.period;
         response.policeCount = report.policeCount;
         response.taskCount = report.taskCount;
-        response.createdDate = report.createdDate;
+        response.createdDate = report.createdDate.toString();
         response.message = "Rapor olusturuldu.";
 
         return response;
     }
 
     /** Olusturulmus raporlar */
+    @Transactional(readOnly = true)
     public ReportListResponse ReportList(ReportListRequest reportListRequest) {
 
-        String reportType = reportListRequest == null || reportListRequest.reportType == null
-                ? ""
-                : reportListRequest.reportType;
+        String reportType = reportListRequest == null ? null : reportListRequest.reportType;
 
-        ReportListResponse reportListResponse = new ReportListResponse();
+        List<Report> reports = HasText(reportType)
+                ? reportRepository.findByReportTypeOrderByReportNoAsc(reportType)
+                : reportRepository.findAllByOrderByReportNoAsc();
 
-        for (ReportListItem report : REPORTS) {
-            if (!reportType.isEmpty() && !reportType.equals(report.reportType)) {
-                continue;
-            }
-            reportListResponse.reports.add(report);
+        ReportListResponse response = new ReportListResponse();
+
+        for (Report report : reports) {
+            ReportListItem item = new ReportListItem();
+            item.reportNo = report.reportNo;
+            item.reportName = report.reportName;
+            item.reportType = report.reportType;
+            item.reportTypeName = GetReportTypeName(report.reportType);
+            item.cityName = report.cityName;
+            item.unitName = report.unitName;
+            item.period = report.period;
+            item.policeCount = report.policeCount;
+            item.taskCount = report.taskCount;
+            item.createdDate = report.createdDate == null ? null : report.createdDate.toString();
+
+            response.reports.add(item);
         }
 
-        reportListResponse.totalCount = reportListResponse.reports.size();
+        response.totalCount = response.reports.size();
 
-        return reportListResponse;
+        return response;
     }
 
     /* ---------------- yardimcilar ---------------- */
 
     private String GetCityName(String cityId) {
-        if (cityId == null || cityId.isEmpty()) {
+        if (!HasText(cityId)) {
             return "Ulke geneli";
         }
-        City city = RegionBusiness.GetCity(cityId);
+        City city = cityRepository.findById(cityId).orElse(null);
         return city == null ? "" : city.name;
     }
 
     private String GetUnitName(String unitId) {
-        if (unitId == null || unitId.isEmpty()) {
+        if (!HasText(unitId)) {
             return "Tum birimler";
         }
-        for (Unit unit : UnitBusiness.GetUnits()) {
-            if (unit.id.equals(unitId)) {
-                return unit.name;
-            }
-        }
-        return "";
+        Unit unit = unitRepository.findById(unitId).orElse(null);
+        return unit == null ? "" : unit.name;
     }
 
     private Integer CountPolice(ReportEntryRequest request) {
-        String cityId = request.cityId == null ? "" : request.cityId;
-        String unitId = request.unitId == null ? "" : request.unitId;
-
-        int count = 0;
-        for (Police police : PoliceBusiness.GetPoliceList()) {
-            if (!cityId.isEmpty() && !police.cityId.equals(cityId)) {
-                continue;
+        Specification<Police> specification = (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (HasText(request.cityId)) {
+                predicates.add(builder.equal(root.get("cityId"), request.cityId));
             }
-            if (!unitId.isEmpty() && !police.unitId.equals(unitId)) {
-                continue;
+            if (HasText(request.unitId)) {
+                predicates.add(builder.equal(root.get("unitId"), request.unitId));
             }
-            count++;
-        }
-        return count;
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
+        return (int) policeRepository.count(specification);
     }
 
     private Integer CountTasks(ReportEntryRequest request) {
-        String cityId = request.cityId == null ? "" : request.cityId;
-        String unitId = request.unitId == null ? "" : request.unitId;
+        Specification<Task> specification = (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (HasText(request.cityId)) {
+                predicates.add(builder.equal(root.get("cityId"), request.cityId));
+            }
+            if (HasText(request.unitId)) {
+                predicates.add(builder.equal(root.get("unitId"), request.unitId));
+            }
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
+        return (int) taskRepository.count(specification);
+    }
 
-        int count = 0;
-        for (Task task : TaskBusiness.GetTasks()) {
-            if (!cityId.isEmpty() && !task.cityId.equals(cityId)) {
-                continue;
-            }
-            if (!unitId.isEmpty() && !task.unitId.equals(unitId)) {
-                continue;
-            }
-            count++;
-        }
-        return count;
+    private static boolean HasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }

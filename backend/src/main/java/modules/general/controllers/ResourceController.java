@@ -15,9 +15,14 @@ import modules.general.business.ResourceBusiness;
 @RequestMapping("/resource")
 public class ResourceController {
 
+    private final ResourceBusiness resourceBusiness;
+
+    public ResourceController(ResourceBusiness resourceBusiness) {
+        this.resourceBusiness = resourceBusiness;
+    }
+
     @PostMapping(path = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResourceResponse Get(@RequestBody ResourceRequest resourceRequest) {
-        ResourceBusiness resourceBusiness = new ResourceBusiness();
         return resourceBusiness.Get(resourceRequest);
     }
 }

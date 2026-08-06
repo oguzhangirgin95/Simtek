@@ -16,17 +16,21 @@ import modules.settings.business.SettingBusiness;
 @RequestMapping("/setting")
 public class SettingController {
 
+    private final SettingBusiness settingBusiness;
+
+    public SettingController(SettingBusiness settingBusiness) {
+        this.settingBusiness = settingBusiness;
+    }
+
     /** Kullanicinin ayarlari */
     @PostMapping(path = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public SettingResponse SettingGet(@RequestBody SettingGetRequest settingGetRequest) {
-        SettingBusiness settingBusiness = new SettingBusiness();
         return settingBusiness.SettingGet(settingGetRequest);
     }
 
     /** Ayarlari kaydeder */
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public SettingResponse SettingSave(@RequestBody SettingSaveRequest settingSaveRequest) {
-        SettingBusiness settingBusiness = new SettingBusiness();
         return settingBusiness.SettingSave(settingSaveRequest);
     }
 }

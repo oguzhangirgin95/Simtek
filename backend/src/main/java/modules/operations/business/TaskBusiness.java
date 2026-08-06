@@ -1,73 +1,56 @@
 package modules.operations.business;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.criteria.Predicate;
 import models.operations.entity.Task;
 import models.operations.request.TaskAssignRequest;
+import models.operations.request.TaskDeleteRequest;
 import models.operations.request.TaskListRequest;
 import models.operations.request.TaskTypeListRequest;
 import models.operations.response.TaskAssignConfirmResponse;
 import models.operations.response.TaskAssignExecuteResponse;
+import models.operations.response.TaskDeleteResponse;
 import models.operations.response.TaskListItem;
 import models.operations.response.TaskListResponse;
 import models.operations.response.TaskTypeItem;
 import models.operations.response.TaskTypeListResponse;
 import models.personnel.entity.Police;
+import models.regions.entity.City;
+import models.units.entity.Unit;
+import modules.operations.repositories.TaskRepository;
+import modules.operations.repositories.TaskTypeCountProjection;
 import modules.personnel.business.PoliceBusiness;
+import modules.personnel.repositories.PoliceRepository;
+import modules.regions.repositories.CityRepository;
+import modules.units.repositories.UnitRepository;
 
+@Service
 public class TaskBusiness {
 
-    /** Her polisin gunluk gorevleri; polisin dailyTaskCount degeri kadar kayit uretilir. */
-    private static final List<Task> TASKS = new ArrayList<>();
+    private final TaskRepository taskRepository;
+    private final PoliceRepository policeRepository;
+    private final CityRepository cityRepository;
+    private final UnitRepository unitRepository;
 
-    private static final String[] LOCATIONS = {
-            "D-100 Karayolu", "Cevre Yolu 12. km", "Merkez Kavsagi", "Istasyon Caddesi",
-            "Universite Kavsagi", "Sanayi Bulvari", "Sahil Yolu", "Otogar Cikisi"
-    };
-
-    private static final String[] TASK_TYPES = {
-            "DEVRIYE", "RADAR", "MOTOSIKLET", "OKUL_GECIDI", "KAZA_INCELEME"
-    };
-
-    static {
-        int index = 0;
-
-        for (Police police : PoliceBusiness.GetPoliceList()) {
-
-            int taskCount = police.dailyTaskCount == null ? 0 : police.dailyTaskCount;
-
-            for (int i = 0; i < taskCount; i++) {
-
-                Task task = new Task();
-                task.id = police.id + "-G" + (i + 1);
-                task.policeId = police.id;
-                task.cityId = police.cityId;
-                task.unitId = police.unitId;
-
-                // ilk gorev polisin ana gorev tipi, digerleri sirayla dagitilir
-                task.type = i == 0 ? police.taskType : TASK_TYPES[(index + i) % TASK_TYPES.length];
-                task.location = LOCATIONS[(index + i) % LOCATIONS.length];
-                task.startTime = String.format("%02d:00", 8 + i);
-                task.endTime = String.format("%02d:00", 9 + i);
-
-                if (i < taskCount - 2) {
-                    task.status = "TAMAMLANDI";
-                } else if (i == taskCount - 2) {
-                    task.status = "DEVAM";
-                } else {
-                    task.status = "PLANLANDI";
-                }
-
-                TASKS.add(task);
-            }
-
-            index++;
-        }
-    }
-
-    public static List<Task> GetTasks() {
-        return TASKS;
+    public TaskBusiness(TaskRepository taskRepository, PoliceRepository policeRepository,
+            CityRepository cityRepository, UnitRepository unitRepository) {
+        this.taskRepository = taskRepository;
+        this.policeRepository = policeRepository;
+        this.cityRepository = cityRepository;
+        this.unitRepository = unitRepository;
     }
 
     public static String GetStatusName(String status) {
@@ -86,51 +69,60 @@ public class TaskBusiness {
         }
     }
 
-    /** Gorev listesi: sehir / birim / polis / tip / durum filtreleriyle */
+    /* ---------------- liste ---------------- */
+
+    @Transactional(readOnly = true)
     public TaskListResponse TaskList(TaskListRequest taskListRequest) {
 
-        String cityId = taskListRequest == null || taskListRequest.cityId == null ? "" : taskListRequest.cityId;
-        String unitId = taskListRequest == null || taskListRequest.unitId == null ? "" : taskListRequest.unitId;
-        String policeId = taskListRequest == null || taskListRequest.policeId == null ? "" : taskListRequest.policeId;
-        String type = taskListRequest == null || taskListRequest.type == null ? "" : taskListRequest.type;
-        String status = taskListRequest == null || taskListRequest.status == null ? "" : taskListRequest.status;
-        boolean onlyOverLimit = taskListRequest != null && Boolean.TRUE.equals(taskListRequest.onlyOverLimit);
+        TaskListRequest request = taskListRequest == null ? new TaskListRequest() : taskListRequest;
 
-        TaskListResponse taskListResponse = new TaskListResponse();
-        List<TaskListItem> filtered = new ArrayList<>();
+        // limit asanlar filtresi personel uzerinden geldigi icin once o personeller bulunur
+        List<String> overLimitPoliceIds = null;
+        if (Boolean.TRUE.equals(request.onlyOverLimit)) {
+            overLimitPoliceIds = new ArrayList<>();
+            Specification<Police> overLimit = (root, query, builder) -> builder
+                    .greaterThan(root.get("dailyTaskCount"), root.get("dailyTaskLimit"));
+            for (Police police : policeRepository.findAll(overLimit)) {
+                overLimitPoliceIds.add(police.id);
+            }
+        }
 
-        for (Task task : TASKS) {
+        Specification<Task> specification = BuildSpecification(request, overLimitPoliceIds);
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
 
-            Police police = PoliceBusiness.GetPolice(task.policeId);
-            if (police == null) {
-                continue;
-            }
-            if (!cityId.isEmpty() && !task.cityId.equals(cityId)) {
-                continue;
-            }
-            if (!unitId.isEmpty() && !task.unitId.equals(unitId)) {
-                continue;
-            }
-            if (!policeId.isEmpty() && !task.policeId.equals(policeId)) {
-                continue;
-            }
-            if (!type.isEmpty() && !task.type.equals(type)) {
-                continue;
-            }
-            if (!status.isEmpty() && !task.status.equals(status)) {
-                continue;
-            }
-            if (onlyOverLimit && !PoliceBusiness.IsOverDailyLimit(police)) {
-                continue;
-            }
+        TaskListResponse response = new TaskListResponse();
+        List<Task> tasks;
+
+        int pageNumber = request.pageNumber == null ? 0 : request.pageNumber;
+        int pageSize = request.pageSize == null ? 0 : request.pageSize;
+
+        if (pageNumber > 0 && pageSize > 0) {
+            Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+            Page<Task> page = taskRepository.findAll(specification, pageable);
+
+            tasks = page.getContent();
+            response.totalCount = (int) page.getTotalElements();
+            response.pageNumber = pageNumber;
+            response.pageSize = pageSize;
+        } else {
+            tasks = taskRepository.findAll(specification, sort);
+            response.totalCount = tasks.size();
+        }
+
+        Map<String, Police> policeMap = GetPoliceMap();
+        Map<String, String> cityNames = GetCityNames();
+        Map<String, String> unitNames = GetUnitNames();
+
+        for (Task task : tasks) {
+            Police police = policeMap.get(task.policeId);
 
             TaskListItem item = new TaskListItem();
             item.id = task.id;
             item.policeId = task.policeId;
-            item.policeName = police.fullName;
-            item.badgeNumber = police.badgeNumber;
-            item.cityName = police.cityName;
-            item.unitName = police.unitName;
+            item.policeName = police == null ? "" : police.fullName;
+            item.badgeNumber = police == null ? "" : police.badgeNumber;
+            item.cityName = cityNames.getOrDefault(task.cityId, "");
+            item.unitName = unitNames.getOrDefault(task.unitId, "");
             item.type = task.type;
             item.typeName = PoliceBusiness.GetTaskTypeName(task.type);
             item.location = task.location;
@@ -139,65 +131,96 @@ public class TaskBusiness {
             item.status = task.status;
             item.statusName = GetStatusName(task.status);
 
-            filtered.add(item);
+            response.tasks.add(item);
         }
 
-        taskListResponse.totalCount = filtered.size();
-
-        int pageNumber = taskListRequest == null || taskListRequest.pageNumber == null
-                ? 0
-                : taskListRequest.pageNumber;
-        int pageSize = taskListRequest == null || taskListRequest.pageSize == null ? 0 : taskListRequest.pageSize;
-
-        if (pageNumber < 1 || pageSize < 1) {
-            taskListResponse.tasks = filtered;
-            return taskListResponse;
-        }
-
-        int fromIndex = (pageNumber - 1) * pageSize;
-        int toIndex = Math.min(fromIndex + pageSize, filtered.size());
-
-        if (fromIndex < filtered.size()) {
-            taskListResponse.tasks = new ArrayList<>(filtered.subList(fromIndex, toIndex));
-        }
-
-        taskListResponse.pageNumber = pageNumber;
-        taskListResponse.pageSize = pageSize;
-
-        return taskListResponse;
+        return response;
     }
 
-    /** Gorev atama - onay adimi: atama yapilmadan once ozet ve limit uyarisi doner */
+    private Specification<Task> BuildSpecification(TaskListRequest request, List<String> overLimitPoliceIds) {
+        return (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (overLimitPoliceIds != null) {
+                if (overLimitPoliceIds.isEmpty()) {
+                    return builder.disjunction();
+                }
+                predicates.add(root.get("policeId").in(overLimitPoliceIds));
+            }
+            if (HasText(request.cityId)) {
+                predicates.add(builder.equal(root.get("cityId"), request.cityId));
+            }
+            if (HasText(request.unitId)) {
+                predicates.add(builder.equal(root.get("unitId"), request.unitId));
+            }
+            if (HasText(request.policeId)) {
+                predicates.add(builder.equal(root.get("policeId"), request.policeId));
+            }
+            if (HasText(request.type)) {
+                predicates.add(builder.equal(root.get("type"), request.type));
+            }
+            if (HasText(request.status)) {
+                predicates.add(builder.equal(root.get("status"), request.status));
+            }
+
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    /** Gorev tipi filtresinin secenekleri ve adetleri */
+    @Transactional(readOnly = true)
+    public TaskTypeListResponse TaskTypeList(TaskTypeListRequest taskTypeListRequest) {
+
+        String cityId = taskTypeListRequest == null || !HasText(taskTypeListRequest.cityId)
+                ? null
+                : taskTypeListRequest.cityId;
+
+        TaskTypeListResponse response = new TaskTypeListResponse();
+
+        for (TaskTypeCountProjection projection : taskRepository.typeCounts(cityId)) {
+            int count = projection.getTypeCount().intValue();
+            response.types.add(new TaskTypeItem(projection.getTaskType(),
+                    PoliceBusiness.GetTaskTypeName(projection.getTaskType()), count));
+            response.totalTaskCount += count;
+        }
+
+        return response;
+    }
+
+    /* ---------------- gorev atama ---------------- */
+
+    @Transactional(readOnly = true)
     public TaskAssignConfirmResponse TaskAssignConfirm(TaskAssignRequest taskAssignRequest) {
 
         TaskAssignConfirmResponse response = new TaskAssignConfirmResponse();
 
-        if (taskAssignRequest == null || taskAssignRequest.policeId == null) {
+        if (taskAssignRequest == null || !HasText(taskAssignRequest.policeId)) {
             response.message = "Personel secilmedi.";
             return response;
         }
 
-        Police police = PoliceBusiness.GetPolice(taskAssignRequest.policeId);
-        if (police == null) {
+        Optional<Police> found = policeRepository.findById(taskAssignRequest.policeId);
+        if (found.isEmpty()) {
             response.message = "Personel bulunamadi.";
             return response;
         }
-
-        if (taskAssignRequest.type == null || taskAssignRequest.type.isEmpty()) {
+        if (!HasText(taskAssignRequest.type)) {
             response.message = "Gorev tipi secilmedi.";
             return response;
         }
+
+        Police police = found.get();
 
         response.valid = true;
         response.policeId = police.id;
         response.policeName = police.fullName;
         response.badgeNumber = police.badgeNumber;
-        response.unitName = police.unitName;
-        response.cityName = police.cityName;
+        response.unitName = GetUnitNames().getOrDefault(police.unitId, "");
+        response.cityName = GetCityNames().getOrDefault(police.cityId, "");
         response.typeName = PoliceBusiness.GetTaskTypeName(taskAssignRequest.type);
         response.location = taskAssignRequest.location;
         response.timeRange = taskAssignRequest.startTime + " - " + taskAssignRequest.endTime;
-        response.currentTaskCount = CountTasks(police.id);
+        response.currentTaskCount = (int) taskRepository.countByPoliceId(police.id);
         response.dailyTaskLimit = police.dailyTaskLimit;
         response.willExceedLimit = response.currentTaskCount + 1 > police.dailyTaskLimit;
         response.message = response.willExceedLimit
@@ -207,24 +230,27 @@ public class TaskBusiness {
         return response;
     }
 
-    /** Gorev atama - gerceklestirme adimi: gorev listeye eklenir */
+    @Transactional
     public TaskAssignExecuteResponse TaskAssignExecute(TaskAssignRequest taskAssignRequest) {
 
         TaskAssignExecuteResponse response = new TaskAssignExecuteResponse();
 
-        if (taskAssignRequest == null || taskAssignRequest.policeId == null) {
+        if (taskAssignRequest == null || !HasText(taskAssignRequest.policeId)) {
             response.message = "Personel secilmedi.";
             return response;
         }
 
-        Police police = PoliceBusiness.GetPolice(taskAssignRequest.policeId);
-        if (police == null) {
+        Optional<Police> found = policeRepository.findById(taskAssignRequest.policeId);
+        if (found.isEmpty()) {
             response.message = "Personel bulunamadi.";
             return response;
         }
 
+        Police police = found.get();
+        int taskCount = (int) taskRepository.countByPoliceId(police.id);
+
         Task task = new Task();
-        task.id = police.id + "-G" + (CountTasks(police.id) + 1);
+        task.id = police.id + "-G" + (taskCount + 1);
         task.policeId = police.id;
         task.cityId = police.cityId;
         task.unitId = police.unitId;
@@ -234,8 +260,10 @@ public class TaskBusiness {
         task.endTime = taskAssignRequest.endTime;
         task.status = "PLANLANDI";
 
-        TASKS.add(task);
-        police.dailyTaskCount = CountTasks(police.id);
+        taskRepository.save(task);
+
+        police.dailyTaskCount = taskCount + 1;
+        policeRepository.save(police);
 
         response.success = true;
         response.taskId = task.id;
@@ -248,41 +276,66 @@ public class TaskBusiness {
         return response;
     }
 
-    private Integer CountTasks(String policeId) {
-        int count = 0;
-        for (Task task : TASKS) {
-            if (task.policeId.equals(policeId)) {
-                count++;
-            }
+    /** Gorev silme; personelin gunluk sayaci guncellenir */
+    @Transactional
+    public TaskDeleteResponse TaskDelete(TaskDeleteRequest request) {
+
+        TaskDeleteResponse response = new TaskDeleteResponse();
+
+        if (request == null || !HasText(request.taskId)) {
+            response.message = "Gorev secilmedi.";
+            return response;
         }
-        return count;
+
+        Optional<Task> found = taskRepository.findById(request.taskId);
+        if (found.isEmpty()) {
+            response.message = "Gorev bulunamadi.";
+            return response;
+        }
+
+        Task task = found.get();
+        taskRepository.delete(task);
+
+        Police police = policeRepository.findById(task.policeId).orElse(null);
+        if (police != null) {
+            police.dailyTaskCount = (int) taskRepository.countByPoliceId(police.id);
+            policeRepository.save(police);
+            response.newTaskCount = police.dailyTaskCount;
+        }
+
+        response.success = true;
+        response.message = "Gorev silindi.";
+
+        return response;
     }
 
-    /** Gorev tipi filtresinin secenekleri ve adetleri (grafik icin de kullanilabilir) */
-    public TaskTypeListResponse TaskTypeList(TaskTypeListRequest taskTypeListRequest) {
+    /* ---------------- yardimcilar ---------------- */
 
-        String cityId = taskTypeListRequest == null || taskTypeListRequest.cityId == null
-                ? ""
-                : taskTypeListRequest.cityId;
-
-        TaskTypeListResponse taskTypeListResponse = new TaskTypeListResponse();
-
-        for (String type : TASK_TYPES) {
-
-            int count = 0;
-            for (Task task : TASKS) {
-                if (!cityId.isEmpty() && !task.cityId.equals(cityId)) {
-                    continue;
-                }
-                if (task.type.equals(type)) {
-                    count++;
-                }
-            }
-
-            taskTypeListResponse.types.add(new TaskTypeItem(type, PoliceBusiness.GetTaskTypeName(type), count));
-            taskTypeListResponse.totalTaskCount += count;
+    private Map<String, Police> GetPoliceMap() {
+        Map<String, Police> map = new HashMap<>();
+        for (Police police : policeRepository.findAll()) {
+            map.put(police.id, police);
         }
+        return map;
+    }
 
-        return taskTypeListResponse;
+    private Map<String, String> GetCityNames() {
+        Map<String, String> names = new HashMap<>();
+        for (City city : cityRepository.findAll()) {
+            names.put(city.id, city.name);
+        }
+        return names;
+    }
+
+    private Map<String, String> GetUnitNames() {
+        Map<String, String> names = new HashMap<>();
+        for (Unit unit : unitRepository.findAll()) {
+            names.put(unit.id, unit.name);
+        }
+        return names;
+    }
+
+    private static boolean HasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }

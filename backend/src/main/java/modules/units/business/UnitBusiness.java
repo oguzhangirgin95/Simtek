@@ -1,77 +1,147 @@
 package modules.units.business;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import models.regions.entity.City;
 import models.units.entity.Unit;
+import models.units.request.UnitDeleteRequest;
 import models.units.request.UnitListRequest;
+import models.units.request.UnitSaveRequest;
+import models.units.response.UnitDeleteResponse;
 import models.units.response.UnitListItem;
 import models.units.response.UnitListResponse;
-import modules.regions.business.RegionBusiness;
+import models.units.response.UnitSaveResponse;
+import modules.personnel.repositories.PoliceRepository;
+import modules.regions.repositories.CityRepository;
+import modules.units.repositories.UnitRepository;
 
+@Service
 public class UnitBusiness {
 
-    private static final List<Unit> UNITS = new ArrayList<>();
+    private final UnitRepository unitRepository;
+    private final CityRepository cityRepository;
+    private final PoliceRepository policeRepository;
 
-    /** Ankara'nin birimleri isim isim tanimli, diger sehirler standart birimlerle acilir */
-    private static final String[] ANKARA_UNITS = {
-            "Cankaya Trafik Denetleme",
-            "Kecioren Trafik Denetleme",
-            "Yenimahalle Trafik Denetleme",
-            "Etimesgut Trafik Denetleme",
-            "Mamak Trafik Denetleme",
-            "Bolge Trafik Denetleme"
-    };
-
-    private static final String[] STANDART_UNITS = {
-            "Merkez Trafik Denetleme",
-            "Bolge Trafik Denetleme",
-            "Otoyol Denetleme"
-    };
-
-    static {
-        for (City city : RegionBusiness.GetCities()) {
-
-            String[] unitNames = city.id.equals("06") ? ANKARA_UNITS : STANDART_UNITS;
-
-            for (int i = 0; i < unitNames.length; i++) {
-                String unitId = city.id + "-B" + (i + 1);
-                UNITS.add(new Unit(unitId, unitNames[i], city.id, city.name));
-            }
-        }
+    public UnitBusiness(UnitRepository unitRepository, CityRepository cityRepository,
+            PoliceRepository policeRepository) {
+        this.unitRepository = unitRepository;
+        this.cityRepository = cityRepository;
+        this.policeRepository = policeRepository;
     }
 
-    /** diger moduller birim listesine buradan ulasir */
-    public static List<Unit> GetUnits() {
-        return UNITS;
-    }
-
-    public static List<Unit> GetUnitsByCity(String cityId) {
-        List<Unit> cityUnits = new ArrayList<>();
-        for (Unit unit : UNITS) {
-            if (unit.cityId.equals(cityId)) {
-                cityUnits.add(unit);
-            }
-        }
-        return cityUnits;
-    }
-
+    /** Birim filtresi icin birim listesi, cityId verilirse o sehrin birimleri */
+    @Transactional(readOnly = true)
     public UnitListResponse UnitList(UnitListRequest unitListRequest) {
 
         String cityId = unitListRequest == null || unitListRequest.cityId == null ? "" : unitListRequest.cityId;
 
+        List<Unit> units = cityId.isEmpty()
+                ? unitRepository.findAllByOrderByCityIdAscSeqAsc()
+                : unitRepository.findByCityIdOrderBySeqAsc(cityId);
+
+        Map<String, String> cityNames = GetCityNames();
+
         UnitListResponse unitListResponse = new UnitListResponse();
 
-        for (Unit unit : UNITS) {
-            if (!cityId.isEmpty() && !unit.cityId.equals(cityId)) {
-                continue;
-            }
-            unitListResponse.units.add(new UnitListItem(unit.id, unit.name, unit.cityId, unit.cityName));
+        for (Unit unit : units) {
+            unitListResponse.units.add(
+                    new UnitListItem(unit.id, unit.name, unit.cityId, cityNames.getOrDefault(unit.cityId, "")));
         }
 
         unitListResponse.totalCount = unitListResponse.units.size();
 
         return unitListResponse;
+    }
+
+    /** Birim ekleme / guncelleme */
+    @Transactional
+    public UnitSaveResponse UnitSave(UnitSaveRequest unitSaveRequest) {
+
+        UnitSaveResponse response = new UnitSaveResponse();
+
+        if (unitSaveRequest == null || unitSaveRequest.name == null || unitSaveRequest.name.trim().isEmpty()) {
+            response.message = "Birim adi girilmeli.";
+            return response;
+        }
+        if (unitSaveRequest.cityId == null || unitSaveRequest.cityId.trim().isEmpty()) {
+            response.message = "Sehir secilmeli.";
+            return response;
+        }
+        if (cityRepository.findById(unitSaveRequest.cityId).isEmpty()) {
+            response.message = "Sehir bulunamadi.";
+            return response;
+        }
+
+        Unit unit;
+
+        if (unitSaveRequest.id == null || unitSaveRequest.id.trim().isEmpty()) {
+            // yeni birim: sehirdeki son siranin bir fazlasi
+            int nextSeq = (int) unitRepository.countByCityId(unitSaveRequest.cityId) + 1;
+            unit = new Unit();
+            unit.id = unitSaveRequest.cityId + "-B" + nextSeq;
+            unit.seq = unitSaveRequest.seq == null ? nextSeq : unitSaveRequest.seq;
+        } else {
+            unit = unitRepository.findById(unitSaveRequest.id).orElse(null);
+            if (unit == null) {
+                response.message = "Birim bulunamadi.";
+                return response;
+            }
+            unit.seq = unitSaveRequest.seq == null ? unit.seq : unitSaveRequest.seq;
+        }
+
+        unit.name = unitSaveRequest.name.trim();
+        unit.cityId = unitSaveRequest.cityId;
+
+        unitRepository.save(unit);
+
+        response.success = true;
+        response.id = unit.id;
+        response.message = "Birim kaydedildi.";
+
+        return response;
+    }
+
+    /** Birim silme; bagli personel varsa silinmez */
+    @Transactional
+    public UnitDeleteResponse UnitDelete(UnitDeleteRequest unitDeleteRequest) {
+
+        UnitDeleteResponse response = new UnitDeleteResponse();
+
+        if (unitDeleteRequest == null || unitDeleteRequest.id == null) {
+            response.message = "Birim secilmedi.";
+            return response;
+        }
+
+        Optional<Unit> unit = unitRepository.findById(unitDeleteRequest.id);
+        if (unit.isEmpty()) {
+            response.message = "Birim bulunamadi.";
+            return response;
+        }
+
+        if (policeRepository.countByUnitId(unitDeleteRequest.id) > 0) {
+            response.message = "Birime bagli personel oldugu icin silinemez.";
+            return response;
+        }
+
+        unitRepository.delete(unit.get());
+
+        response.success = true;
+        response.message = "Birim silindi.";
+
+        return response;
+    }
+
+    private Map<String, String> GetCityNames() {
+        Map<String, String> cityNames = new HashMap<>();
+        for (City city : cityRepository.findAll()) {
+            cityNames.put(city.id, city.name);
+        }
+        return cityNames;
     }
 }

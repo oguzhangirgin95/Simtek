@@ -1,15 +1,23 @@
 package modules.analytics.business;
 
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+
 import models.analytics.request.TaskTrendRequest;
 import models.analytics.response.TaskTrendResponse;
 import models.analytics.response.TrendPoint;
-import models.operations.entity.Task;
 import models.personnel.entity.Police;
 import models.regions.entity.City;
-import modules.operations.business.TaskBusiness;
-import modules.personnel.business.PoliceBusiness;
-import modules.regions.business.RegionBusiness;
+import modules.operations.repositories.TaskRepository;
+import modules.personnel.repositories.PoliceRepository;
+import modules.regions.repositories.CityRepository;
 
+@Service
 public class AnalyticsBusiness {
 
     private static final String[] DAY_LABELS = { "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz" };
@@ -17,47 +25,38 @@ public class AnalyticsBusiness {
     /** gunlere gore dalgalanma orani (%), bugun son gun kabul edilir */
     private static final int[] DAY_FACTORS = { 92, 96, 100, 98, 104, 78, 70 };
 
+    private final TaskRepository taskRepository;
+    private final PoliceRepository policeRepository;
+    private final CityRepository cityRepository;
+
+    public AnalyticsBusiness(TaskRepository taskRepository, PoliceRepository policeRepository,
+            CityRepository cityRepository) {
+        this.taskRepository = taskRepository;
+        this.policeRepository = policeRepository;
+        this.cityRepository = cityRepository;
+    }
+
     /**
-     * Gunluk gorev trendi. Sistemde tarihli gorev kaydi tutulmadigi icin
+     * Gunluk gorev trendi. Veritabaninda tarihli gorev kaydi tutulmadigi icin
      * bugunun gorev sayisi gun katsayilariyla gecmise dogru olceklenir.
      */
+    @Transactional(readOnly = true)
     public TaskTrendResponse TaskTrend(TaskTrendRequest taskTrendRequest) {
 
-        String cityId = taskTrendRequest == null || taskTrendRequest.cityId == null ? "" : taskTrendRequest.cityId;
-        String unitId = taskTrendRequest == null || taskTrendRequest.unitId == null ? "" : taskTrendRequest.unitId;
+        String cityId = Filter(taskTrendRequest == null ? null : taskTrendRequest.cityId);
+        String unitId = Filter(taskTrendRequest == null ? null : taskTrendRequest.unitId);
 
         int dayCount = taskTrendRequest == null || taskTrendRequest.dayCount == null || taskTrendRequest.dayCount < 1
-                ? 7
+                ? DAY_LABELS.length
                 : Math.min(taskTrendRequest.dayCount, DAY_LABELS.length);
 
-        TaskTrendResponse taskTrendResponse = new TaskTrendResponse();
+        TaskTrendResponse response = new TaskTrendResponse();
 
-        City city = cityId.isEmpty() ? null : RegionBusiness.GetCity(cityId);
-        taskTrendResponse.cityName = city == null ? "Ulke geneli" : city.name;
+        City city = cityId == null ? null : cityRepository.findById(cityId).orElse(null);
+        response.cityName = city == null ? "Ulke geneli" : city.name;
 
-        int todayTaskCount = 0;
-        for (Task task : TaskBusiness.GetTasks()) {
-            if (!cityId.isEmpty() && !task.cityId.equals(cityId)) {
-                continue;
-            }
-            if (!unitId.isEmpty() && !task.unitId.equals(unitId)) {
-                continue;
-            }
-            todayTaskCount++;
-        }
-
-        int activePolice = 0;
-        for (Police police : PoliceBusiness.GetPoliceList()) {
-            if (!cityId.isEmpty() && !police.cityId.equals(cityId)) {
-                continue;
-            }
-            if (!unitId.isEmpty() && !police.unitId.equals(unitId)) {
-                continue;
-            }
-            if ("SAHADA".equals(police.status)) {
-                activePolice++;
-            }
-        }
+        int todayTaskCount = (int) taskRepository.countByFilter(cityId, unitId);
+        int activePolice = (int) policeRepository.count(BuildActiveSpecification(cityId, unitId));
 
         for (int i = dayCount - 1; i >= 0; i--) {
 
@@ -69,14 +68,32 @@ public class AnalyticsBusiness {
                     (todayTaskCount * factor) / 100,
                     (activePolice * factor) / 100);
 
-            taskTrendResponse.points.add(point);
-            taskTrendResponse.totalTaskCount += point.taskCount;
+            response.points.add(point);
+            response.totalTaskCount += point.taskCount;
         }
 
-        taskTrendResponse.averageTaskCount = taskTrendResponse.points.isEmpty()
+        response.averageTaskCount = response.points.isEmpty()
                 ? 0
-                : taskTrendResponse.totalTaskCount / taskTrendResponse.points.size();
+                : response.totalTaskCount / response.points.size();
 
-        return taskTrendResponse;
+        return response;
+    }
+
+    private Specification<Police> BuildActiveSpecification(String cityId, String unitId) {
+        return (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("status"), "SAHADA"));
+            if (cityId != null) {
+                predicates.add(builder.equal(root.get("cityId"), cityId));
+            }
+            if (unitId != null) {
+                predicates.add(builder.equal(root.get("unitId"), unitId));
+            }
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private static String Filter(String value) {
+        return value == null || value.trim().isEmpty() ? null : value;
     }
 }

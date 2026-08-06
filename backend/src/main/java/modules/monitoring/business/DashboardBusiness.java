@@ -1,7 +1,9 @@
 package modules.monitoring.business;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import models.monitoring.request.DashboardRequest;
 import models.monitoring.response.CityStatistic;
@@ -10,210 +12,143 @@ import models.monitoring.response.StatusCount;
 import models.monitoring.response.SummaryResponse;
 import models.monitoring.response.UnitWorkloadItem;
 import models.monitoring.response.UnitWorkloadResponse;
-import models.personnel.entity.Police;
 import models.regions.entity.City;
-import models.units.entity.Unit;
-import modules.personnel.business.PoliceBusiness;
-import modules.regions.business.RegionBusiness;
-import modules.units.business.UnitBusiness;
+import modules.personnel.repositories.CityStatisticProjection;
+import modules.personnel.repositories.PoliceRepository;
+import modules.personnel.repositories.SummaryProjection;
+import modules.personnel.repositories.UnitWorkloadProjection;
+import modules.regions.repositories.CityRepository;
+import modules.units.repositories.UnitRepository;
 
+@Service
 public class DashboardBusiness {
 
-    /** Harita icin sehir bazli polis / aktif memur istatistikleri */
+    private static final String DEFAULT_CITY_ID = "06";
+
+    private final PoliceRepository policeRepository;
+    private final CityRepository cityRepository;
+    private final UnitRepository unitRepository;
+
+    public DashboardBusiness(PoliceRepository policeRepository, CityRepository cityRepository,
+            UnitRepository unitRepository) {
+        this.policeRepository = policeRepository;
+        this.cityRepository = cityRepository;
+        this.unitRepository = unitRepository;
+    }
+
+    /** Harita: sehir bazli toplam ve aktif memur, tek sorguda gruplanir */
+    @Transactional(readOnly = true)
     public MapStatisticsResponse MapStatistics(DashboardRequest dashboardRequest) {
 
-        String unitId = dashboardRequest == null || dashboardRequest.unitId == null ? "" : dashboardRequest.unitId;
-        String status = dashboardRequest == null || dashboardRequest.status == null ? "" : dashboardRequest.status;
+        String unitId = Filter(dashboardRequest == null ? null : dashboardRequest.unitId);
+        String status = Filter(dashboardRequest == null ? null : dashboardRequest.status);
 
-        MapStatisticsResponse mapStatisticsResponse = new MapStatisticsResponse();
+        MapStatisticsResponse response = new MapStatisticsResponse();
 
-        for (City city : RegionBusiness.GetCities()) {
+        for (CityStatisticProjection projection : policeRepository.cityStatistics(unitId, status)) {
 
             CityStatistic cityStatistic = new CityStatistic();
-            cityStatistic.cityId = city.id;
-            cityStatistic.cityName = city.name;
-            cityStatistic.plateCode = city.plateCode;
-            cityStatistic.x = city.x;
-            cityStatistic.y = city.y;
-            cityStatistic.totalPolice = 0;
-            cityStatistic.activePolice = 0;
-            cityStatistic.unitCount = UnitBusiness.GetUnitsByCity(city.id).size();
-
-            for (Police police : PoliceBusiness.GetPoliceList()) {
-
-                if (!police.cityId.equals(city.id)) {
-                    continue;
-                }
-                if (!unitId.isEmpty() && !police.unitId.equals(unitId)) {
-                    continue;
-                }
-                if (!status.isEmpty() && !police.status.equals(status)) {
-                    continue;
-                }
-
-                cityStatistic.totalPolice++;
-                if ("SAHADA".equals(police.status)) {
-                    cityStatistic.activePolice++;
-                }
-            }
-
+            cityStatistic.cityId = projection.getCityId();
+            cityStatistic.cityName = projection.getCityName();
+            cityStatistic.plateCode = projection.getPlateCode();
+            cityStatistic.x = projection.getX();
+            cityStatistic.y = projection.getY();
+            cityStatistic.totalPolice = projection.getTotalPolice().intValue();
+            cityStatistic.activePolice = projection.getActivePolice().intValue();
+            cityStatistic.unitCount = projection.getUnitCount().intValue();
             cityStatistic.activePercent = cityStatistic.totalPolice == 0
                     ? 0
                     : (cityStatistic.activePolice * 100) / cityStatistic.totalPolice;
 
-            mapStatisticsResponse.cities.add(cityStatistic);
-            mapStatisticsResponse.totalPolice += cityStatistic.totalPolice;
-            mapStatisticsResponse.activePolice += cityStatistic.activePolice;
+            response.cities.add(cityStatistic);
+            response.totalPolice += cityStatistic.totalPolice;
+            response.activePolice += cityStatistic.activePolice;
 
-            if (cityStatistic.activePolice > mapStatisticsResponse.busiestCityActivePolice) {
-                mapStatisticsResponse.busiestCityActivePolice = cityStatistic.activePolice;
-                mapStatisticsResponse.busiestCityName = cityStatistic.cityName;
+            if (cityStatistic.activePolice > response.busiestCityActivePolice) {
+                response.busiestCityActivePolice = cityStatistic.activePolice;
+                response.busiestCityName = cityStatistic.cityName;
             }
         }
 
-        return mapStatisticsResponse;
+        return response;
     }
 
-    /** First-sight bilgiler: sahada, merkezde, izinde, raporlu, limit asan */
+    /** First-sight bilgiler: tek sorguda hesaplanir */
+    @Transactional(readOnly = true)
     public SummaryResponse Summary(DashboardRequest dashboardRequest) {
 
-        String cityId = dashboardRequest == null || dashboardRequest.cityId == null ? "" : dashboardRequest.cityId;
-        String unitId = dashboardRequest == null || dashboardRequest.unitId == null ? "" : dashboardRequest.unitId;
-        String status = dashboardRequest == null || dashboardRequest.status == null ? "" : dashboardRequest.status;
+        String cityId = Filter(dashboardRequest == null ? null : dashboardRequest.cityId);
+        String unitId = Filter(dashboardRequest == null ? null : dashboardRequest.unitId);
+        String status = Filter(dashboardRequest == null ? null : dashboardRequest.status);
 
-        SummaryResponse summaryResponse = new SummaryResponse();
+        SummaryProjection projection = policeRepository.summary(cityId, unitId, status);
 
-        for (Police police : PoliceBusiness.GetPoliceList()) {
+        SummaryResponse response = new SummaryResponse();
+        response.totalPolice = projection.getTotalPolice().intValue();
+        response.onDuty = projection.getOnDuty().intValue();
+        response.atStation = projection.getAtStation().intValue();
+        response.onLeave = projection.getOnLeave().intValue();
+        response.onReport = projection.getOnReport().intValue();
+        response.overDailyLimit = projection.getOverDailyLimit().intValue();
+        response.unitCount = cityId == null
+                ? (int) unitRepository.count()
+                : (int) unitRepository.countByCityId(cityId);
 
-            if (!cityId.isEmpty() && !police.cityId.equals(cityId)) {
-                continue;
-            }
-            if (!unitId.isEmpty() && !police.unitId.equals(unitId)) {
-                continue;
-            }
-            if (!status.isEmpty() && !police.status.equals(status)) {
-                continue;
-            }
+        response.statusDistribution.add(new StatusCount("SAHADA", "Sahada", response.onDuty));
+        response.statusDistribution.add(new StatusCount("MERKEZDE", "Merkezde", response.atStation));
+        response.statusDistribution.add(new StatusCount("IZINDE", "Izinde", response.onLeave));
+        response.statusDistribution.add(new StatusCount("RAPORLU", "Raporlu", response.onReport));
 
-            summaryResponse.totalPolice++;
-
-            switch (police.status) {
-                case "SAHADA":
-                    summaryResponse.onDuty++;
-                    break;
-                case "MERKEZDE":
-                    summaryResponse.atStation++;
-                    break;
-                case "IZINDE":
-                    summaryResponse.onLeave++;
-                    break;
-                case "RAPORLU":
-                    summaryResponse.onReport++;
-                    break;
-                default:
-                    break;
-            }
-
-            if (PoliceBusiness.IsOverDailyLimit(police)) {
-                summaryResponse.overDailyLimit++;
-            }
-        }
-
-        summaryResponse.unitCount = cityId.isEmpty()
-                ? UnitBusiness.GetUnits().size()
-                : UnitBusiness.GetUnitsByCity(cityId).size();
-
-        summaryResponse.statusDistribution.add(new StatusCount("SAHADA", "Sahada", summaryResponse.onDuty));
-        summaryResponse.statusDistribution.add(new StatusCount("MERKEZDE", "Merkezde", summaryResponse.atStation));
-        summaryResponse.statusDistribution.add(new StatusCount("IZINDE", "Izinde", summaryResponse.onLeave));
-        summaryResponse.statusDistribution.add(new StatusCount("RAPORLU", "Raporlu", summaryResponse.onReport));
-
-        return summaryResponse;
+        return response;
     }
 
-    /** Grafik icin birim bazli gorev yogunlugu, cityId verilmezse Ankara doner */
+    /** Birim bazli gorev yogunlugu; cityId verilmezse Ankara doner */
+    @Transactional(readOnly = true)
     public UnitWorkloadResponse UnitWorkload(DashboardRequest dashboardRequest) {
 
-        String cityId = dashboardRequest == null || dashboardRequest.cityId == null || dashboardRequest.cityId.isEmpty()
-                ? "06"
-                : dashboardRequest.cityId;
+        String cityId = Filter(dashboardRequest == null ? null : dashboardRequest.cityId);
+        if (cityId == null) {
+            cityId = DEFAULT_CITY_ID;
+        }
+        String status = Filter(dashboardRequest == null ? null : dashboardRequest.status);
 
-        String status = dashboardRequest == null || dashboardRequest.status == null ? "" : dashboardRequest.status;
+        UnitWorkloadResponse response = new UnitWorkloadResponse();
+        response.cityId = cityId;
 
-        UnitWorkloadResponse unitWorkloadResponse = new UnitWorkloadResponse();
-        unitWorkloadResponse.cityId = cityId;
+        City city = cityRepository.findById(cityId).orElse(null);
+        response.cityName = city == null ? "" : city.name;
 
-        City city = RegionBusiness.GetCity(cityId);
-        unitWorkloadResponse.cityName = city == null ? "" : city.name;
+        List<UnitWorkloadProjection> projections = policeRepository.unitWorkload(cityId, status);
 
-        List<UnitWorkloadItem> items = new ArrayList<>();
-        int enYuksekYogunluk = 0;
+        int highestLoad = 0;
+        for (UnitWorkloadProjection projection : projections) {
+            highestLoad = Math.max(highestLoad, projection.getTaskLoad().intValue());
+        }
 
-        for (Unit unit : UnitBusiness.GetUnitsByCity(cityId)) {
+        for (UnitWorkloadProjection projection : projections) {
 
             UnitWorkloadItem item = new UnitWorkloadItem();
-            item.unitId = unit.id;
-            item.unitName = unit.name;
-            item.totalPolice = 0;
-            item.activePolice = 0;
-            item.taskLoad = 0;
-            item.patrol = 0;
-            item.radar = 0;
-            item.motorcycle = 0;
-            item.schoolCrossing = 0;
-            item.accidentInvestigation = 0;
+            item.unitId = projection.getUnitId();
+            item.unitName = projection.getUnitName();
+            item.totalPolice = projection.getTotalPolice().intValue();
+            item.activePolice = projection.getActivePolice().intValue();
+            item.taskLoad = projection.getTaskLoad().intValue();
+            item.patrol = projection.getPatrol().intValue();
+            item.radar = projection.getRadar().intValue();
+            item.motorcycle = projection.getMotorcycle().intValue();
+            item.schoolCrossing = projection.getSchoolCrossing().intValue();
+            item.accidentInvestigation = projection.getAccidentInvestigation().intValue();
+            item.loadPercent = highestLoad == 0 ? 0 : (item.taskLoad * 100) / highestLoad;
 
-            for (Police police : PoliceBusiness.GetPoliceList()) {
-
-                if (!police.unitId.equals(unit.id)) {
-                    continue;
-                }
-                if (!status.isEmpty() && !police.status.equals(status)) {
-                    continue;
-                }
-
-                item.totalPolice++;
-                item.taskLoad += police.dailyTaskCount;
-
-                if ("SAHADA".equals(police.status)) {
-                    item.activePolice++;
-                }
-
-                switch (police.taskType) {
-                    case "DEVRIYE":
-                        item.patrol++;
-                        break;
-                    case "RADAR":
-                        item.radar++;
-                        break;
-                    case "MOTOSIKLET":
-                        item.motorcycle++;
-                        break;
-                    case "OKUL_GECIDI":
-                        item.schoolCrossing++;
-                        break;
-                    case "KAZA_INCELEME":
-                        item.accidentInvestigation++;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            if (item.taskLoad > enYuksekYogunluk) {
-                enYuksekYogunluk = item.taskLoad;
-            }
-
-            unitWorkloadResponse.totalTaskLoad += item.taskLoad;
-            items.add(item);
+            response.units.add(item);
+            response.totalTaskLoad += item.taskLoad;
         }
 
-        for (UnitWorkloadItem item : items) {
-            item.loadPercent = enYuksekYogunluk == 0 ? 0 : (item.taskLoad * 100) / enYuksekYogunluk;
-        }
+        return response;
+    }
 
-        unitWorkloadResponse.units = items;
-
-        return unitWorkloadResponse;
+    /** Bos filtreler sorguda devre disi kalsin diye null'a cevrilir */
+    private static String Filter(String value) {
+        return value == null || value.trim().isEmpty() ? null : value;
     }
 }

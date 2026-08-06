@@ -1,16 +1,16 @@
 package modules.settings.business;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import models.settings.entity.AppSetting;
 import models.settings.request.SettingGetRequest;
 import models.settings.request.SettingSaveRequest;
 import models.settings.response.SettingResponse;
+import modules.settings.repositories.AppSettingRepository;
 
+@Service
 public class SettingBusiness {
-
-    /** token -> kullanicinin ayarlari */
-    private static final Map<String, SettingResponse> SETTINGS = new ConcurrentHashMap<>();
 
     private static final String DEFAULT_LANGUAGE = "tr";
 
@@ -18,54 +18,75 @@ public class SettingBusiness {
 
     private static final Integer DEFAULT_REFRESH_SECONDS = 0;
 
+    private final AppSettingRepository appSettingRepository;
+
+    public SettingBusiness(AppSettingRepository appSettingRepository) {
+        this.appSettingRepository = appSettingRepository;
+    }
+
     /** Kullanicinin ayarlari; kayit yoksa varsayilanlar doner */
+    @Transactional(readOnly = true)
     public SettingResponse SettingGet(SettingGetRequest settingGetRequest) {
 
-        String token = settingGetRequest == null || settingGetRequest.token == null ? "" : settingGetRequest.token;
+        SettingResponse response = new SettingResponse();
+        response.success = true;
+        response.language = DEFAULT_LANGUAGE;
+        response.pageSize = DEFAULT_PAGE_SIZE;
+        response.defaultCityId = "";
+        response.refreshSeconds = DEFAULT_REFRESH_SECONDS;
+        response.message = "Varsayilan ayarlar.";
 
-        SettingResponse saved = SETTINGS.get(token);
-        if (saved != null) {
-            return saved;
+        if (settingGetRequest == null || settingGetRequest.token == null) {
+            return response;
         }
 
-        SettingResponse settingResponse = new SettingResponse();
-        settingResponse.success = true;
-        settingResponse.language = DEFAULT_LANGUAGE;
-        settingResponse.pageSize = DEFAULT_PAGE_SIZE;
-        settingResponse.defaultCityId = "";
-        settingResponse.refreshSeconds = DEFAULT_REFRESH_SECONDS;
-        settingResponse.message = "Varsayilan ayarlar.";
+        AppSetting setting = appSettingRepository.findById(settingGetRequest.token).orElse(null);
+        if (setting == null) {
+            return response;
+        }
 
-        return settingResponse;
+        response.language = setting.language;
+        response.pageSize = setting.pageSize;
+        response.defaultCityId = setting.defaultCityId;
+        response.refreshSeconds = setting.refreshSeconds;
+        response.message = "Ayarlar yuklendi.";
+
+        return response;
     }
 
     /** Ayarlari kaydeder */
+    @Transactional
     public SettingResponse SettingSave(SettingSaveRequest settingSaveRequest) {
 
-        SettingResponse settingResponse = new SettingResponse();
+        SettingResponse response = new SettingResponse();
 
         if (settingSaveRequest == null || settingSaveRequest.token == null || settingSaveRequest.token.isEmpty()) {
-            settingResponse.message = "Oturum bulunamadi.";
-            return settingResponse;
+            response.message = "Oturum bulunamadi.";
+            return response;
         }
 
-        settingResponse.success = true;
-        settingResponse.language = settingSaveRequest.language == null || settingSaveRequest.language.isEmpty()
+        AppSetting setting = appSettingRepository.findById(settingSaveRequest.token).orElseGet(AppSetting::new);
+        setting.token = settingSaveRequest.token;
+        setting.language = settingSaveRequest.language == null || settingSaveRequest.language.isEmpty()
                 ? DEFAULT_LANGUAGE
                 : settingSaveRequest.language;
-        settingResponse.pageSize = settingSaveRequest.pageSize == null || settingSaveRequest.pageSize < 1
+        setting.pageSize = settingSaveRequest.pageSize == null || settingSaveRequest.pageSize < 1
                 ? DEFAULT_PAGE_SIZE
                 : settingSaveRequest.pageSize;
-        settingResponse.defaultCityId = settingSaveRequest.defaultCityId == null
-                ? ""
-                : settingSaveRequest.defaultCityId;
-        settingResponse.refreshSeconds = settingSaveRequest.refreshSeconds == null || settingSaveRequest.refreshSeconds < 0
+        setting.defaultCityId = settingSaveRequest.defaultCityId == null ? "" : settingSaveRequest.defaultCityId;
+        setting.refreshSeconds = settingSaveRequest.refreshSeconds == null || settingSaveRequest.refreshSeconds < 0
                 ? DEFAULT_REFRESH_SECONDS
                 : settingSaveRequest.refreshSeconds;
-        settingResponse.message = "Ayarlar kaydedildi.";
 
-        SETTINGS.put(settingSaveRequest.token, settingResponse);
+        appSettingRepository.save(setting);
 
-        return settingResponse;
+        response.success = true;
+        response.language = setting.language;
+        response.pageSize = setting.pageSize;
+        response.defaultCityId = setting.defaultCityId;
+        response.refreshSeconds = setting.refreshSeconds;
+        response.message = "Ayarlar kaydedildi.";
+
+        return response;
     }
 }

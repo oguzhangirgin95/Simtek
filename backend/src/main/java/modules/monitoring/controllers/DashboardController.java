@@ -17,24 +17,27 @@ import modules.monitoring.business.DashboardBusiness;
 @RequestMapping("/dashboard")
 public class DashboardController {
 
-    /** Harita: sehir bazli toplam ve aktif memur sayilari, en yogun sehir */
+    private final DashboardBusiness dashboardBusiness;
+
+    public DashboardController(DashboardBusiness dashboardBusiness) {
+        this.dashboardBusiness = dashboardBusiness;
+    }
+
+    /** Harita: sehir bazli toplam ve aktif memur sayilari */
     @PostMapping(path = "/mapstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     public MapStatisticsResponse MapStatistics(@RequestBody DashboardRequest dashboardRequest) {
-        DashboardBusiness dashboardBusiness = new DashboardBusiness();
         return dashboardBusiness.MapStatistics(dashboardRequest);
     }
 
-    /** First-sight bilgiler: sahada, merkezde, izinde, raporlu, limit asan */
+    /** First-sight bilgiler */
     @PostMapping(path = "/summary", produces = MediaType.APPLICATION_JSON_VALUE)
     public SummaryResponse DashboardSummary(@RequestBody DashboardRequest dashboardRequest) {
-        DashboardBusiness dashboardBusiness = new DashboardBusiness();
         return dashboardBusiness.Summary(dashboardRequest);
     }
 
-    /** Grafik: birim bazli gorev yogunlugu (varsayilan Ankara) */
+    /** Grafik: birim bazli gorev yogunlugu */
     @PostMapping(path = "/unitworkload", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitWorkloadResponse UnitWorkload(@RequestBody DashboardRequest dashboardRequest) {
-        DashboardBusiness dashboardBusiness = new DashboardBusiness();
         return dashboardBusiness.UnitWorkload(dashboardRequest);
     }
 }

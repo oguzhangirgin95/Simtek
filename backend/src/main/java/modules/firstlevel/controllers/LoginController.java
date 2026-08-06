@@ -19,23 +19,26 @@ import modules.firstlevel.business.LoginBusiness;
 @RequestMapping("/login")
 public class LoginController {
 
+    private final LoginBusiness loginBusiness;
+
+    public LoginController(LoginBusiness loginBusiness) {
+        this.loginBusiness = loginBusiness;
+    }
+
     @PostMapping(path = "/eligable", produces = MediaType.APPLICATION_JSON_VALUE)
     public LoginResponse Login(@RequestBody LoginRequest loginRequest) {
-        LoginBusiness tokenBusiness = new LoginBusiness();
-        return tokenBusiness.Login(loginRequest);
+        return loginBusiness.Login(loginRequest);
     }
 
     /** Cikis */
     @PostMapping(path = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public LogoutResponse Logout(@RequestBody LogoutRequest logoutRequest) {
-        LoginBusiness loginBusiness = new LoginBusiness();
         return loginBusiness.Logout(logoutRequest);
     }
 
     /** Token gecerli mi */
     @PostMapping(path = "/currentuser", produces = MediaType.APPLICATION_JSON_VALUE)
     public CurrentUserResponse CurrentUser(@RequestBody CurrentUserRequest currentUserRequest) {
-        LoginBusiness loginBusiness = new LoginBusiness();
         return loginBusiness.CurrentUser(currentUserRequest);
     }
 }
