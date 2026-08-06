@@ -1,0 +1,38 @@
+.app-progress {
+  margin-bottom: var(--bosluk);
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  &__value {
+    color: var(--renk-soluk);
+  }
+
+  &__track {
+    height: 8px;
+    background: var(--renk-cizgi);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    background: var(--renk-vurgu);
+
+    &--success {
+      background: #16a34a;
+    }
+
+    &--warning {
+      background: #d97706;
+    }
+
+    &--error {
+      background: var(--renk-hata);
+    }
+  }
+}

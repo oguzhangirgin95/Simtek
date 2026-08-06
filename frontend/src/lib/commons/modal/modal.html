@@ -1,0 +1,14 @@
+@if (open()) {
+  <div class="app-modal">
+    <div class="app-modal__panel">
+      <header class="app-modal__header">
+        <h3>{{ title() }}</h3>
+        <button type="button" class="app-modal__close" (click)="closed.emit()">×</button>
+      </header>
+
+      <div class="app-modal__body">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+}

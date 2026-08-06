@@ -1,0 +1,14 @@
+<div class="app-list">
+  @if (title()) {
+    <h3>{{ title() }}</h3>
+  }
+
+  @for (item of items(); track $index) {
+    <div class="app-list__row">
+      <span class="app-list__key">{{ item.key }}</span>
+      <span class="app-list__value">{{ item.value }}</span>
+    </div>
+  } @empty {
+    <p class="app-list__empty">{{ emptyText() }}</p>
+  }
+</div>

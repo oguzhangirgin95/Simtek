@@ -1,0 +1,21 @@
+.app-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--renk-cizgi);
+  margin-bottom: var(--bosluk);
+
+  &__tab {
+    padding: 8px 14px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: var(--renk-soluk);
+
+    &--active {
+      color: var(--renk-yazi);
+      border-bottom-color: var(--renk-vurgu);
+      font-weight: 600;
+    }
+  }
+}

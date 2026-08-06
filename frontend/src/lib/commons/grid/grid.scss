@@ -1,0 +1,23 @@
+.app-grid {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--renk-cizgi);
+  }
+
+  th {
+    color: var(--renk-soluk);
+    font-weight: 600;
+  }
+
+  tbody tr:hover {
+    background: var(--renk-zemin);
+  }
+}

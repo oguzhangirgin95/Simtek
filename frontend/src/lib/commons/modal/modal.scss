@@ -1,0 +1,38 @@
+.app-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 39, 0.45);
+  z-index: 100;
+
+  &__panel {
+    width: min(560px, 92vw);
+    max-height: 86vh;
+    overflow: auto;
+    background: #ffffff;
+    border-radius: var(--kose);
+    padding: var(--bosluk);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--bosluk);
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &__close {
+    padding: 0 8px;
+    border: none;
+    background: transparent;
+    color: var(--renk-soluk);
+    font-size: 20px;
+    line-height: 1;
+  }
+}

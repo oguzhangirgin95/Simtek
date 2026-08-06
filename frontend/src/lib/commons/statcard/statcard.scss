@@ -1,0 +1,38 @@
+.app-statcard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+  padding: var(--bosluk);
+  background: #ffffff;
+  border: 1px solid var(--renk-cizgi);
+  border-left: 4px solid var(--renk-vurgu);
+  border-radius: var(--kose);
+  cursor: default;
+
+  &__value {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  &__label {
+    color: var(--renk-soluk);
+  }
+
+  &__hint {
+    color: var(--renk-soluk);
+    font-size: 12px;
+  }
+
+  &--success {
+    border-left-color: #16a34a;
+  }
+
+  &--warning {
+    border-left-color: #d97706;
+  }
+
+  &--error {
+    border-left-color: var(--renk-hata);
+  }
+}

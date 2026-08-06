@@ -1,0 +1,10 @@
+.app-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--renk-cizgi);
+  color: var(--renk-ana);
+  font-weight: 600;
+}

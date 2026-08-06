@@ -1,0 +1,29 @@
+<div class="app-grid">
+  @if (title()) {
+    <h3>{{ title() }}</h3>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        @for (column of columns(); track column.field) {
+          <th>{{ column.title }}</th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of rows(); track $index) {
+        <tr (click)="rowClicked.emit(row)">
+          @for (column of columns(); track column.field) {
+            <td>{{ row[column.field] }}</td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td [attr.colspan]="columns().length">{{ emptyText() }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

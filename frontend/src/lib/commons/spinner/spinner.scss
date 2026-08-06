@@ -1,0 +1,23 @@
+.app-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &__circle {
+    display: inline-block;
+    border: 2px solid var(--renk-cizgi);
+    border-top-color: var(--renk-vurgu);
+    border-radius: 50%;
+    animation: app-spinner-donme 0.8s linear infinite;
+  }
+
+  &__text {
+    color: var(--renk-soluk);
+  }
+}
+
+@keyframes app-spinner-donme {
+  to {
+    transform: rotate(360deg);
+  }
+}

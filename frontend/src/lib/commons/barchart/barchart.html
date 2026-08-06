@@ -1,0 +1,17 @@
+<div class="app-barchart">
+  @if (title()) {
+    <h3>{{ title() }}</h3>
+  }
+
+  @for (item of items(); track item.label) {
+    <div class="app-barchart__row" (click)="barClicked.emit(item)">
+      <span class="app-barchart__label">{{ item.label }}</span>
+      <span class="app-barchart__track">
+        <span class="app-barchart__bar" [style.width.%]="percent(item.value)"></span>
+      </span>
+      <span class="app-barchart__value">{{ item.value }}</span>
+    </div>
+  } @empty {
+    <p class="app-barchart__empty">{{ emptyText() }}</p>
+  }
+</div>

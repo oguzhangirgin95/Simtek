@@ -1,0 +1,27 @@
+import { Component, input, output } from '@angular/core';
+import { BaseComponent } from '../../base/basecomponent/basecomponent';
+
+export interface GridColumn {
+  /** satirdaki alan adi, ornek: 'reportNo' */
+  field: string;
+  /** basliktaki yazi */
+  title: string;
+}
+
+@Component({
+  selector: 'app-grid',
+  imports: [],
+  templateUrl: './grid.html',
+  styleUrl: './grid.scss',
+})
+export class Grid extends BaseComponent {
+  readonly title = input<string>('');
+
+  readonly columns = input<GridColumn[]>([]);
+
+  readonly rows = input<any[]>([]);
+
+  readonly emptyText = input<string>('Kayıt yok');
+
+  readonly rowClicked = output<any>();
+}

@@ -1,0 +1,21 @@
+.app-list {
+  &__row {
+    display: flex;
+    gap: var(--bosluk);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--renk-cizgi);
+  }
+
+  &__key {
+    flex: 0 0 180px;
+    color: var(--renk-soluk);
+  }
+
+  &__value {
+    flex: 1;
+  }
+
+  &__empty {
+    color: var(--renk-soluk);
+  }
+}

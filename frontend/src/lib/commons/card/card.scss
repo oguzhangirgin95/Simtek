@@ -1,0 +1,22 @@
+.app-card {
+  background: #ffffff;
+  border: 1px solid var(--renk-cizgi);
+  border-radius: var(--kose);
+  padding: var(--bosluk);
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--bosluk);
+    margin-bottom: var(--bosluk);
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &__subtitle {
+    color: var(--renk-soluk);
+    font-size: 13px;
+  }
+}

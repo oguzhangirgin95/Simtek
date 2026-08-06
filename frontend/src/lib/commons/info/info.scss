@@ -1,0 +1,24 @@
+.app-info {
+  margin: var(--bosluk) 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--renk-soluk);
+  border-radius: var(--kose);
+  background: #ffffff;
+
+  &--info {
+    border-left-color: var(--renk-vurgu);
+  }
+
+  &--success {
+    border-left-color: #16a34a;
+  }
+
+  &--warning {
+    border-left-color: #d97706;
+  }
+
+  &--error {
+    border-left-color: var(--renk-hata);
+    color: var(--renk-hata);
+  }
+}

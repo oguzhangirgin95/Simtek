@@ -1,0 +1,38 @@
+.app-map {
+  &__svg {
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    border: 1px solid var(--renk-cizgi);
+    border-radius: var(--kose);
+  }
+
+  &__point {
+    cursor: pointer;
+
+    circle {
+      fill: var(--renk-vurgu);
+      fill-opacity: 0.65;
+      stroke: var(--renk-vurgu);
+      stroke-width: 0.3;
+    }
+
+    text {
+      font-size: 2px;
+      fill: var(--renk-yazi);
+    }
+
+    &:hover circle {
+      fill-opacity: 0.9;
+    }
+
+    &--selected circle {
+      fill: var(--renk-hata);
+      stroke: var(--renk-hata);
+    }
+  }
+
+  &__empty {
+    color: var(--renk-soluk);
+  }
+}

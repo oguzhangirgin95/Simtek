@@ -1,0 +1,39 @@
+.app-barchart {
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--bosluk);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  &__label {
+    flex: 0 0 140px;
+    color: var(--renk-soluk);
+    font-size: 13px;
+  }
+
+  &__track {
+    flex: 1;
+    height: 14px;
+    background: var(--renk-cizgi);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    display: block;
+    height: 100%;
+    background: var(--renk-vurgu);
+  }
+
+  &__value {
+    flex: 0 0 40px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  &__empty {
+    color: var(--renk-soluk);
+  }
+}
