@@ -1,20 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FirstlevelModule } from './modules/firstlevel/firstlevel-module';
-import { AnalyticsModule } from './modules/analytics/analytics-module';
-import { MonitoringModule } from './modules/monitoring/monitoring-module';
-import { OperationsModule } from './modules/operations/operations-module';
-import { PersonnelModule } from './modules/personnel/personnel-module';
-import { RegionsModule } from './modules/regions/regions-module';
-import { ReportsModule } from './modules/reports/reports-module';
-import { SettingsModule } from './modules/settings/settings-module';
-import { UnitsModule } from './modules/units/units-module';
-import { VehiclesModule } from './modules/vehicles/vehicles-module';
-import { CommonsModule } from '../lib/commons/commons-module';
 import { BaseModule } from '../lib/base/base-module';
 
+// Feature modulleri (firstlevel, analytics, ...) buraya import ETMEYIN:
+// app.routes.ts uzerinden loadChildren ile lazy yuklenirler; buraya eklemek
+// lazy loading'i bozar ve RouterModule.forChild route'larini root'a tasir.
 @NgModule({
-  declarations: [],
-  imports: [CommonModule, FirstlevelModule, AnalyticsModule, MonitoringModule, OperationsModule, PersonnelModule, RegionsModule, ReportsModule, SettingsModule, UnitsModule, VehiclesModule, CommonsModule, BaseModule],
+  imports: [CommonModule, BaseModule],
 })
 export class AppModule {}

@@ -1,6 +1,4 @@
-import { Component } from '@angular/core';
+import { Directive } from '@angular/core';
 
-@Component({
-  imports: [],
-})
-export class BaseComponent {}
+@Directive()
+export abstract class BaseComponent {}
