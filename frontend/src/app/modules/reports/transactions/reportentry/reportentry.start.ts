@@ -13,13 +13,22 @@ export class ReportentryStart extends BaseComponent implements OnInit {
 
   ngOnInit() {
      this.State.confirmRequest = {
-      username: '',
-      password: '',
+      reportName: '',
+      startDate: '',
+      endDate: '',
     };
     this.State.executeRequest = {
-      username: '',
-      password: '',
+      reportName: '',
+      startDate: '',
+      endDate: '',
     };
 
+  }
+
+  // input degisince state'i gunceller (yeni nesne veriyoruz ki signal tetiklensin)
+  setField(key: string, event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.State.confirmRequest = { ...this.State.confirmRequest, [key]: value };
+    this.State.executeRequest = { ...this.State.executeRequest, [key]: value };
   }
 }

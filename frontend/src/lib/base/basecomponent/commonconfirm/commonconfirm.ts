@@ -8,11 +8,7 @@ import { BaseComponent } from '../basecomponent';
 })
 export class Commonconfirm extends BaseComponent {
   readonly items = computed(() => {
-    const request =
-      this.flowService.get<Record<string, any>>('confirmRequest') ??
-      this.flowService.get<Record<string, any>>('Request') ??
-      {};
-
-    return Object.entries(request).map(([key, value]) => ({ key, value }));
+    const response = this.flowService.get<Record<string, any>>('confirmResponse') ?? {};
+    return Object.entries(response).map(([key, value]) => ({ key, value }));
   });
 }

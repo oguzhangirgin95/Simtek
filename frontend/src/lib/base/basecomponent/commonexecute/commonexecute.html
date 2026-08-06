@@ -1,5 +1,5 @@
 <h2>Sonuç</h2>
 
-@if (response()) {
-  <p>İşlem tamamlandı.</p>
+@for (item of items(); track item.key) {
+  <p><b>{{ item.key }}:</b> {{ item.value }}</p>
 }

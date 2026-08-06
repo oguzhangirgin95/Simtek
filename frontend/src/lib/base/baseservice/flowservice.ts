@@ -1,4 +1,4 @@
-import { Injectable, Signal, computed, inject, signal } from '@angular/core';
+import { Injectable, Injector, Signal, computed, inject, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationStart, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
 import { FlowButton, FlowConfig, FlowStep, ServiceConfig, ValidationError } from '../baseconfig/config';
@@ -11,6 +11,7 @@ import { Validationservice } from './validationservice';
 export class FlowService extends BaseService {
   private readonly router = inject(Router);
   private readonly validationService = inject(Validationservice);
+  private readonly injector = inject(Injector);
 
   constructor() {
     super();
@@ -20,8 +21,6 @@ export class FlowService extends BaseService {
       }
     });
   }
-
-  private readonly services = new Map<string, any>();
 
   private readonly state = new Map<string, any>();
 
@@ -80,6 +79,15 @@ export class FlowService extends BaseService {
 
   public readonly errors = this.select<ValidationError[]>('validationErrors');
 
+  /** devam eden http istek sayisi, interceptor gunceller */
+  public readonly pendingRequests = signal(0);
+
+  /** herhangi bir http istegi devam ediyor mu */
+  public readonly loading = computed<boolean>(() => this.pendingRequests() > 0);
+
+  /** son servis hatasi */
+  public readonly serviceError = this.select<string>('serviceError');
+
   public async next(): Promise<void> {
     const step = this.currentStepConfig();
     if (!step) {
@@ -90,10 +98,6 @@ export class FlowService extends BaseService {
     this.set('validationErrors', errors);
     if (errors.length > 0) {
       return;
-    }
-
-    if (step.service) {
-      await this.callService(step.service);
     }
 
     const nextStep = this.steps()[this.stepIndex() + 1];
@@ -139,28 +143,12 @@ export class FlowService extends BaseService {
     }
   }
 
-  public registerService(name: string, service: any): void {
-    this.services.set(name, service);
-  }
+  private async callService(step: string, config: ServiceConfig): Promise<void> {
+    const service = this.injector.get<any>(config.serviceName);
+    const params = config.params.map((param) => (typeof param === 'string' ? this.getPath(param) : param));
+    const result = service[config.methodName](...params);
 
-  private async callService(config: ServiceConfig): Promise<void> {
-    const service = this.services.get(config.serviceName);
-    const method = service ? service[config.methodName] : undefined;
-
-    if (typeof method !== 'function') {
-      console.warn(`FlowService: '${config.serviceName}.${config.methodName}' bulunamadi.`);
-      return;
-    }
-
-    const params =
-      config.params.length > 0
-        ? config.params.map((param) => (typeof param === 'string' ? this.getPath(param) : param))
-        : [this.get(`${config.methodName}Request`)];
-
-    const result = method.apply(service, params);
-    const response = isObservable(result) ? await firstValueFrom(result) : await result;
-
-    this.set(`${config.methodName}Response`, response);
+    this.set(`${step}Response`, isObservable(result) ? await firstValueFrom(result) : await result);
   }
 
   private validationValue(id: string): any {
@@ -185,5 +173,9 @@ export class FlowService extends BaseService {
     this.config.set(config);
     this.transaction.set(snapshot.parent?.url.map((segment) => segment.path).join('/') ?? '');
     this.currentStep.set(step);
+
+    if (stepConfig?.service) {
+      this.callService(step, stepConfig.service).catch((error) => console.error(error));
+    }
   }
 }

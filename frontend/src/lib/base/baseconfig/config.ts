@@ -1,5 +1,7 @@
+import { Type } from '@angular/core';
+
 export interface ServiceConfig {
-  serviceName: string;
+  serviceName: Type<any>;
   methodName: string;
   params: any[];
 }

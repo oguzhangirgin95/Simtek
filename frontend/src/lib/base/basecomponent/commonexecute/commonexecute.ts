@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { BaseComponent } from '../basecomponent';
 
 @Component({
@@ -7,5 +7,8 @@ import { BaseComponent } from '../basecomponent';
   styleUrl: './commonexecute.scss',
 })
 export class Commonexecute extends BaseComponent {
-  readonly response = this.flowService.select<any>('executeResponse');
+  readonly items = computed(() => {
+    const response = this.flowService.get<Record<string, any>>('executeResponse') ?? {};
+    return Object.entries(response).map(([key, value]) => ({ key, value }));
+  });
 }

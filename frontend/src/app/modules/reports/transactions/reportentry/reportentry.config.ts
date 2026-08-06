@@ -1,4 +1,5 @@
 import { FlowConfig } from "../../../../../lib/base/baseconfig/config";
+import { ReportEntryControllerService } from "../../../../../lib/services/api/reportEntryController.service";
 
 export const ReportEntryConfig: FlowConfig = {
   config: {
@@ -15,9 +16,9 @@ export const ReportEntryConfig: FlowConfig = {
         showBackButton: true,
         validation: [],
         service:{
-          serviceName: "",
+          serviceName: ReportEntryControllerService,
           methodName: "confirm",
-          params:[]
+          params:["confirmRequest"]
         }
       },
       {
@@ -26,9 +27,9 @@ export const ReportEntryConfig: FlowConfig = {
         showBackButton: false,
         validation: [],
         service:{
-          serviceName: "",
+          serviceName: ReportEntryControllerService,
           methodName: "execute",
-          params:[]
+          params:["executeRequest"]
         },
         keepState: true,
         buttons: [

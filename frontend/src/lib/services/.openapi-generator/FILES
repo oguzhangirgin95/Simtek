@@ -1,10 +1,10 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
 api/api.ts
 api/loginController.service.ts
+api/reportEntryController.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -12,6 +12,9 @@ index.ts
 model/loginRequest.ts
 model/loginResponse.ts
 model/models.ts
+model/reportEntryConfirmResponse.ts
+model/reportEntryExecuteResponse.ts
+model/reportEntryRequest.ts
 param.ts
 provide-api.ts
 query.params.ts

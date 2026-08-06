@@ -32,6 +32,10 @@ export abstract class BaseComponent {
 
   public readonly errors = this.flowService.errors;
 
+  public readonly loading = this.flowService.loading;
+
+  public readonly serviceError = this.flowService.serviceError;
+
   public next(): Promise<void> {
     return this.flowService.next();
   }

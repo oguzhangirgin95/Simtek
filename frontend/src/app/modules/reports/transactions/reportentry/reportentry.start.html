@@ -1,1 +1,31 @@
-<p>reportentry.start works!</p>
+<h2>Rapor Girişi</h2>
+
+<div class="field">
+  <label for="reportName">Rapor adı</label>
+  <input
+    id="reportName"
+    type="text"
+    [value]="State.confirmRequest?.reportName ?? ''"
+    (input)="setField('reportName', $event)"
+  />
+</div>
+
+<div class="field">
+  <label for="startDate">Başlangıç tarihi</label>
+  <input
+    id="startDate"
+    type="date"
+    [value]="State.confirmRequest?.startDate ?? ''"
+    (input)="setField('startDate', $event)"
+  />
+</div>
+
+<div class="field">
+  <label for="endDate">Bitiş tarihi</label>
+  <input
+    id="endDate"
+    type="date"
+    [value]="State.confirmRequest?.endDate ?? ''"
+    (input)="setField('endDate', $event)"
+  />
+</div>
