@@ -1,11 +1,12 @@
-package modules.firstlevel.controllers; 
+package modules.firstlevel.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import models.firstlevel.request.LoginRequest;
+import models.firstlevel.response.LoginResponse;
 import modules.firstlevel.business.LoginBusiness;
 
 
@@ -14,7 +15,7 @@ import modules.firstlevel.business.LoginBusiness;
 public class LoginController {
 
     @PostMapping("/eligable")
-    public Boolean Login(LoginRequest loginRequest) {
+    public LoginResponse Login(@RequestBody LoginRequest loginRequest) {
         LoginBusiness tokenBusiness = new LoginBusiness();
         return tokenBusiness.Login(loginRequest);
     }
