@@ -141,7 +141,11 @@
     }
 
     &__panel {
-      width: min(320px, 88vw);
+      position: fixed;
+      top: 68px;
+      right: var(--space);
+      left: var(--space);
+      width: auto;
       max-height: 60vh;
     }
   }

@@ -1,5 +1,8 @@
 <header class="app-header">
-  <span class="app-header__title">{{ labels().title }}</span>
+
+  @if (isLoggedIn()) {
+    <app-menu />
+  }
 
   <app-theme />
 

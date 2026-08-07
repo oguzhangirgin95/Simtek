@@ -7,14 +7,25 @@
   }
 
   &__svg {
+    flex: 0 1 176px;
     width: 176px;
-    height: 176px;
+    max-width: 100%;
+    height: auto;
+    min-width: 0;
   }
 
   &__total {
     font-size: 14px;
     font-weight: 700;
     fill: var(--color-text);
+  }
+
+  &__segment {
+    transition: opacity var(--transition);
+  }
+
+  &__segment:hover {
+    opacity: 0.8;
   }
 
   &__legend {

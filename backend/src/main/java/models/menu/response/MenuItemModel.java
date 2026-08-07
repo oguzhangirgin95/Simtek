@@ -1,5 +1,8 @@
 package models.menu.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MenuItemModel {
 
     public String code;
@@ -7,6 +10,8 @@ public class MenuItemModel {
     public String title;
 
     public String path;
+
+    public List<MenuItemModel> children = new ArrayList<>();
 
     public MenuItemModel() {
     }

@@ -3,10 +3,9 @@
   flex: 1;
 }
 
-.app-shell {
+.app-body {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space);
+  flex-direction: column;
   flex: 1;
   width: 100%;
   max-width: 1600px;
@@ -16,29 +15,9 @@
   padding-right: max(calc(var(--space) * 1.5), env(safe-area-inset-right));
 }
 
-app-menu {
-  position: sticky;
-  top: 84px;
-  flex: 0 0 220px;
-}
-
-.app-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
 @media (max-width: 900px) {
-  .app-shell {
-    flex-direction: column;
-    align-items: stretch;
+  .app-body {
     padding: var(--space);
     padding-bottom: calc(var(--space) + env(safe-area-inset-bottom));
-  }
-
-  app-menu {
-    position: static;
-    flex: none;
   }
 }

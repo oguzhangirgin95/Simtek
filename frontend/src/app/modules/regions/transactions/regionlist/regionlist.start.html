@@ -19,6 +19,7 @@
     [columns]="columns()"
     [rows]="State.MapStatistics?.cities ?? []"
     [emptyText]="labels().empty"
+    clickable
     (rowClicked)="selectRow($event)"
   />
 </app-card>

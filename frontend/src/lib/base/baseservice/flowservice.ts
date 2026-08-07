@@ -1,5 +1,5 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
-import { ActivatedRouteSnapshot, ActivationStart, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, ActivationStart, NavigationEnd, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
 import {
   FlowButton,
@@ -26,11 +26,17 @@ export class FlowService extends BaseService {
       if (event instanceof ActivationStart) {
         this.readRoute(event.snapshot);
       }
+      if (event instanceof NavigationEnd) {
+        this.url.set(event.urlAfterRedirects);
+      }
     });
   }
 
 
   public readonly token = signal<string | undefined>(undefined);
+
+  /** Acik olan adres; menu gibi yerler bunu dinler */
+  public readonly url = signal<string>('');
 
   public readonly isLoggedIn = computed<boolean>(() => !!this.token());
 

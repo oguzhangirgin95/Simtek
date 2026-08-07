@@ -34,52 +34,57 @@
   <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
 </div>
 
-<div class="content">
-  <app-card [title]="labels().listTitle + ' (' + (State.TotalCount ?? 0) + ')'" [subtitle]="labels().listHint">
-    <app-grid
-      [columns]="columns()"
-      [rows]="State.PoliceList ?? []"
-      [emptyText]="labels().emptyList"
-      (rowClicked)="selectPolice($event)"
-    />
-  </app-card>
+<app-card [title]="labels().listTitle + ' (' + (State.TotalCount ?? 0) + ')'" [subtitle]="labels().listHint">
+  <app-grid
+    [columns]="columns()"
+    [rows]="State.PoliceList ?? []"
+    [emptyText]="labels().emptyList"
+    clickable
+    (rowClicked)="selectPolice($event)"
+  />
+  <app-pagination
+    [totalCount]="State.TotalCount ?? 0"
+    [pageNumber]="State.Request?.pageNumber ?? 1"
+    [pageSize]="State.Request?.pageSize ?? 20"
+    (pageChange)="setPage($event)"
+  />
+</app-card>
 
-  <app-card [title]="labels().detailTitle">
-    @if (!State.SelectedPoliceId) {
-      <app-info [message]="labels().selectFirst" />
-    } @else {
-      <app-detailcard
-        [title]="State.PoliceDetail?.fullName"
-        [subtitle]="State.PoliceDetail?.rank"
-        [imageUrl]="State.PoliceDetail?.photoUrl"
-      />
+<app-modal
+  [open]="!!State.SelectedPoliceId"
+  [title]="State.PoliceDetail?.fullName ?? labels().detailTitle"
+  (closed)="closeDetail()"
+>
+  <app-detailcard
+    [title]="State.PoliceDetail?.fullName"
+    [subtitle]="State.PoliceDetail?.rank"
+    [imageUrl]="State.PoliceDetail?.photoUrl"
+  />
 
-      @if (State.PoliceDetail?.overDailyLimit) {
-        <app-info [message]="labels().overLimit" variant="error" />
-      }
+  @if (State.PoliceDetail?.overDailyLimit) {
+    <app-info [message]="labels().overLimit" variant="error" />
+  }
 
-      <app-tabs [tabs]="tabs()" [active]="State.ActiveTab" (activeChange)="setTab($event)" />
+  <app-tabs [tabs]="tabs()" [active]="State.ActiveTab" (activeChange)="setTab($event)" />
 
-      @switch (State.ActiveTab) {
-        @case ('arac') {
-          @if (State.VehicleDetail?.found) {
-            <app-detailcard
-              [title]="State.VehicleDetail?.plate"
-              [subtitle]="State.VehicleDetail?.brand + ' ' + State.VehicleDetail?.model"
-              [imageUrl]="State.VehicleDetail?.photoUrl"
-              [items]="State.VehicleItems ?? []"
-            />
-          } @else {
-            <app-info [message]="labels().noVehicle" variant="warning" />
-          }
-        }
-        @case ('gorev') {
-          <app-grid [columns]="taskColumns()" [rows]="State.TaskList ?? []" [emptyText]="labels().emptyTask" />
-        }
-        @default {
-          <app-list [items]="State.PoliceItems ?? []" />
-        }
+  @switch (State.ActiveTab) {
+    @case ('arac') {
+      @if (State.VehicleDetail?.found) {
+        <app-detailcard
+          [title]="State.VehicleDetail?.plate"
+          [subtitle]="State.VehicleDetail?.brand + ' ' + State.VehicleDetail?.model"
+          [imageUrl]="State.VehicleDetail?.photoUrl"
+          [items]="State.VehicleItems ?? []"
+        />
+      } @else {
+        <app-info [message]="labels().noVehicle" variant="warning" />
       }
     }
-  </app-card>
-</div>
+    @case ('gorev') {
+      <app-grid [columns]="taskColumns()" [rows]="State.TaskList ?? []" [emptyText]="labels().emptyTask" />
+    }
+    @default {
+      <app-list [items]="State.PoliceItems ?? []" />
+    }
+  }
+</app-modal>

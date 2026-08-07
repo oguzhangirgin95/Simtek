@@ -5,11 +5,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 64px;
-  padding: 0 24px;
+  min-height: 64px;
+  padding: 0 20px;
   padding-top: env(safe-area-inset-top);
-  background: rgba(16, 42, 92, 0.92);
-  backdrop-filter: blur(8px);
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
 
   &::before {
@@ -26,6 +25,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex: none;
     font-size: 17px;
     font-weight: 700;
     letter-spacing: 1.4px;
@@ -40,11 +40,17 @@
     border-radius: 2px;
   }
 
+  app-menu {
+    flex: 1;
+    min-width: 0;
+  }
+
   app-theme {
     margin-left: auto;
   }
 
   &__user {
+    flex: none;
     color: var(--color-muted);
     font-size: 13px;
     font-weight: 600;
@@ -52,16 +58,22 @@
   }
 }
 
+@media (max-width: 1100px) {
+  .app-header app-menu {
+    flex: none;
+  }
+}
+
 @media (max-width: 700px) {
   .app-header {
-    height: 60px;
+    min-height: 60px;
     padding: 0 var(--space);
     padding-top: env(safe-area-inset-top);
     gap: 8px;
 
     &__title {
-      font-size: 15px;
-      letter-spacing: 1px;
+      font-size: 14px;
+      letter-spacing: 0.8px;
     }
 
     &__user {

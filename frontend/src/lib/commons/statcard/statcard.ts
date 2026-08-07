@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, booleanAttribute, input, output } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 import { InfoVariant } from '../info/info';
 
@@ -16,6 +16,8 @@ export class Statcard extends BaseComponent {
   readonly hint = input<string>('');
 
   readonly variant = input<InfoVariant>('info');
+
+  readonly clickable = input(false, { transform: booleanAttribute });
 
   readonly clicked = output<void>();
 }

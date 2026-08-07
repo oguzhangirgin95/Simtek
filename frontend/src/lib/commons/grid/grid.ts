@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, booleanAttribute, input, output } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 
 export interface GridColumn {
@@ -20,6 +20,8 @@ export class Grid extends BaseComponent {
   readonly rows = input<any[]>([]);
 
   readonly emptyText = input<string>('Kayıt yok');
+
+  readonly clickable = input(false, { transform: booleanAttribute });
 
   readonly rowClicked = output<any>();
 }

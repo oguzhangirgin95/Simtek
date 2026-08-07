@@ -1,5 +1,6 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 import { TURKEY_PROVINCES, TURKEY_VIEWBOX } from './turkey-map';
 
 export interface MapPoint {
@@ -38,7 +39,7 @@ function plain(text: string): string {
 
 @Component({
   selector: 'app-map',
-  imports: [],
+  imports: [Tooltip],
   templateUrl: './map.html',
   styleUrl: './map.scss',
 })
@@ -90,5 +91,21 @@ export class Map extends BaseComponent {
     if (province.point) {
       this.pointClicked.emit(province.point);
     }
+  }
+
+  readonly tooltip = signal<TooltipState>(TOOLTIP_HIDDEN);
+
+  showTooltip(province: Province, event: MouseEvent): void {
+    const value = province.point ? String(province.point.value) : this.emptyText();
+
+    this.tooltip.set({
+      text: `${province.name}: ${value}`,
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
+
+  hideTooltip(): void {
+    this.tooltip.set(TOOLTIP_HIDDEN);
   }
 }

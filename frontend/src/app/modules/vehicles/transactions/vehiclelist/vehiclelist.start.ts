@@ -5,6 +5,8 @@ import { RegionControllerService } from '../../../../../lib/services/api/regionC
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
 import { VehicleControllerService } from '../../../../../lib/services/api/vehicleController.service';
 
+const PAGE_SIZE = 20;
+
 @Component({
   imports: [CommonsModule],
   templateUrl: './vehiclelist.start.html',
@@ -49,7 +51,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.State.Request = { cityId: '', unitId: '', type: '', searchText: '' };
+    this.State.Request = { cityId: '', unitId: '', type: '', searchText: '', pageNumber: 1, pageSize: PAGE_SIZE };
 
     this.getCityList();
     this.getUnitList();
@@ -105,8 +107,13 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Vehicle list:', error));
   }
 
+  setPage(page: number) {
+    this.State.Request = { ...this.State.Request, pageNumber: page };
+    this.getVehicleList();
+  }
+
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request = { ...this.State.Request, [key]: value, pageNumber: 1 };
 
     if (key === 'cityId') {
       this.State.Request = { ...this.State.Request, unitId: '' };
@@ -117,11 +124,15 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   clearFilter() {
-    this.State.Request = { cityId: '', unitId: '', type: '', searchText: '' };
+    this.State.Request = { cityId: '', unitId: '', type: '', searchText: '', pageNumber: 1, pageSize: PAGE_SIZE };
     this.getUnitList();
     this.getVehicleList();
   }
 
+
+  closeDetail() {
+    this.State.SelectedPlate = undefined;
+  }
 
   selectVehicle(row: any) {
     this.State.SelectedPlate = row.plate;

@@ -44,16 +44,22 @@
   <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
 </div>
 
-<div class="stats">
-  <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
-</div>
-
-<div class="content">
-  <app-card [title]="labels().listTitle">
-    <app-grid [columns]="columns()" [rows]="State.TaskList ?? []" [emptyText]="labels().empty" />
-  </app-card>
+<div class="panels">
+  <div class="stats">
+    <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
+  </div>
 
   <app-card [title]="labels().typeChartTitle">
     <app-donutchart [items]="State.TypeChart ?? []" />
   </app-card>
 </div>
+
+<app-card [title]="labels().listTitle">
+  <app-grid [columns]="columns()" [rows]="State.TaskList ?? []" [emptyText]="labels().empty" />
+  <app-pagination
+    [totalCount]="State.TotalCount ?? 0"
+    [pageNumber]="State.Request?.pageNumber ?? 1"
+    [pageSize]="State.Request?.pageSize ?? 20"
+    (pageChange)="setPage($event)"
+  />
+</app-card>

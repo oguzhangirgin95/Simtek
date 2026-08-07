@@ -13,9 +13,9 @@
           [attr.d]="province.path"
           [attr.fill]="province.fill"
           (click)="select(province)"
-        >
-          <title>{{ province.name }}{{ province.point ? ' - ' + province.point.value : '' }}</title>
-        </path>
+          (mousemove)="showTooltip(province, $event)"
+          (mouseleave)="hideTooltip()"
+        ></path>
       }
 
       @for (province of provinces(); track province.name) {
@@ -38,4 +38,6 @@
   } @else {
     <p class="app-map__empty">{{ emptyText() }}</p>
   }
+
+  <app-tooltip [state]="tooltip()" />
 </div>

@@ -31,6 +31,9 @@ public class MenuItem {
     @Column(name = "active", nullable = false)
     public Boolean active;
 
+    @Column(name = "parent_code", length = 50)
+    public String parentCode;
+
     public MenuItem() {
     }
 }

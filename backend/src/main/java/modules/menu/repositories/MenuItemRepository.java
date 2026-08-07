@@ -8,5 +8,7 @@ import models.menu.entity.MenuItem;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
-    List<MenuItem> findByActiveTrueOrderBySortOrderAsc();
+    List<MenuItem> findByActiveTrueAndParentCodeIsNullOrderBySortOrderAsc();
+
+    List<MenuItem> findByActiveTrueAndParentCodeOrderBySortOrderAsc(String parentCode);
 }

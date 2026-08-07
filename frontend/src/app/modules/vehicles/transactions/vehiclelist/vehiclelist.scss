@@ -1,7 +1,4 @@
-.content {
-  --columns: 3fr 2fr;
-}
-
-app-card {
-  margin-bottom: var(--space);
+.panels {
+  --columns: 2fr 1fr;
+  align-items: stretch;
 }

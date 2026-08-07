@@ -34,39 +34,47 @@
   <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
 </div>
 
-<div class="stats">
-  <app-statcard [label]="labels().total" [value]="State.TotalCount ?? 0" />
-  @for (type of State.TypeCounts ?? []; track type.key) {
-    <app-statcard [label]="type.name" [value]="type.count" />
-  }
-</div>
-
-<div class="content">
-  <app-card [title]="labels().listTitle" [subtitle]="labels().listHint">
-    <app-grid
-      [columns]="columns()"
-      [rows]="State.VehicleList ?? []"
-      [emptyText]="labels().empty"
-      (rowClicked)="selectVehicle($event)"
-    />
-  </app-card>
-
-  <div>
-    <app-card [title]="labels().detailTitle">
-      @if (State.VehicleDetail?.found) {
-        <app-detailcard
-          [title]="State.VehicleDetail?.plate"
-          [subtitle]="State.VehicleDetail?.brand + ' ' + State.VehicleDetail?.model"
-          [imageUrl]="State.VehicleDetail?.photoUrl"
-          [items]="State.VehicleItems ?? []"
-        />
-      } @else {
-        <app-info [message]="labels().selectFirst" />
-      }
-    </app-card>
-
-    <app-card [title]="labels().typeChartTitle">
-      <app-donutchart [items]="State.TypeChart ?? []" />
-    </app-card>
+<div class="panels">
+  <div class="stats">
+    @for (type of State.TypeCounts ?? []; track type.name) {
+      <app-statcard [label]="type.name" [value]="type.count" />
+    }
   </div>
+
+  <app-card [title]="labels().typeChartTitle">
+    <app-donutchart [items]="State.TypeChart ?? []" />
+  </app-card>
 </div>
+
+<app-card [title]="labels().listTitle" [subtitle]="labels().listHint">
+  <app-grid
+    [columns]="columns()"
+    [rows]="State.VehicleList ?? []"
+    [emptyText]="labels().empty"
+    clickable
+    (rowClicked)="selectVehicle($event)"
+  />
+  <app-pagination
+    [totalCount]="State.TotalCount ?? 0"
+    [pageNumber]="State.Request?.pageNumber ?? 1"
+    [pageSize]="State.Request?.pageSize ?? 20"
+    (pageChange)="setPage($event)"
+  />
+</app-card>
+
+<app-modal
+  [open]="!!State.SelectedPlate"
+  [title]="State.VehicleDetail?.plate ?? labels().detailTitle"
+  (closed)="closeDetail()"
+>
+  @if (State.VehicleDetail?.found) {
+    <app-detailcard
+      [title]="State.VehicleDetail?.plate"
+      [subtitle]="State.VehicleDetail?.brand + ' ' + State.VehicleDetail?.model"
+      [imageUrl]="State.VehicleDetail?.photoUrl"
+      [items]="State.VehicleItems ?? []"
+    />
+  } @else {
+    <app-info [message]="labels().selectFirst" />
+  }
+</app-modal>

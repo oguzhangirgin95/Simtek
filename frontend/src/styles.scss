@@ -36,6 +36,11 @@ body {
   margin: 0;
 }
 
+body.app-modal-open,
+body.app-menu-open {
+  overflow: hidden;
+}
+
 body {
   font-family: 'Segoe UI', Roboto, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 15px;
@@ -201,8 +206,17 @@ app-card {
   margin-bottom: var(--space);
 }
 
-.filters .field {
+.filters > app-select,
+.filters > app-input {
   flex: 1 1 200px;
+  min-width: 0;
+}
+
+.filters > app-button {
+  flex: 0 0 auto;
+}
+
+.filters .field {
   margin-bottom: 0;
 }
 
@@ -221,6 +235,11 @@ app-card {
   margin-bottom: var(--space);
 }
 
+.panels > *,
+.content > * {
+  min-width: 0;
+}
+
 .error {
   margin: var(--space) 0;
   color: var(--color-error);
@@ -233,7 +252,7 @@ app-card {
 }
 
 router-outlet ~ * {
-  animation: app-fade-in 260ms ease both;
+  animation: app-fade-in 260ms ease backwards;
 }
 
 @keyframes app-fade-in {
@@ -247,7 +266,7 @@ router-outlet ~ * {
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .panels,
   .content {
     grid-template-columns: 1fr;
@@ -263,7 +282,12 @@ router-outlet ~ * {
     font-size: 20px;
   }
 
-  .filters .field {
+  .filters > app-select,
+  .filters > app-input {
+    flex: 1 1 100%;
+  }
+
+  .filters > app-button {
     flex: 1 1 100%;
   }
 

@@ -13,5 +13,6 @@ export interface MenuItemModel {
     code?: string;
     title?: string;
     path?: string;
+    children?: Array<MenuItemModel>;
 }
 

@@ -1,4 +1,4 @@
-<div class="app-grid">
+<div class="app-grid" [class.app-grid--clickable]="clickable()">
   @if (title()) {
     <h3>{{ title() }}</h3>
   }
@@ -16,7 +16,7 @@
       @for (row of rows(); track $index) {
         <tr (click)="rowClicked.emit(row)">
           @for (column of columns(); track column.field) {
-            <td>{{ row[column.field] }}</td>
+            <td [attr.data-label]="column.title">{{ row[column.field] }}</td>
           }
         </tr>
       } @empty {

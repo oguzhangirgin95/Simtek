@@ -17,6 +17,9 @@
             [attr.stroke-dasharray]="segment.dash"
             [attr.stroke-dashoffset]="segment.offset"
             transform="rotate(-90 50 50)"
+            class="app-donutchart__segment"
+            (mousemove)="showTooltip(segment, $event)"
+            (mouseleave)="hideTooltip()"
           />
         }
         <text x="50" y="54" text-anchor="middle" class="app-donutchart__total">{{ total() }}</text>
@@ -24,7 +27,7 @@
 
       <ul class="app-donutchart__legend">
         @for (segment of segments(); track segment.label) {
-          <li>
+          <li (mousemove)="showTooltip(segment, $event)" (mouseleave)="hideTooltip()">
             <span class="app-donutchart__dot" [style.background]="segment.color"></span>
             {{ segment.label }} — {{ segment.value }} (%{{ segment.percent }})
           </li>
@@ -34,4 +37,6 @@
   } @else {
     <p class="app-donutchart__empty">{{ emptyText() }}</p>
   }
+
+  <app-tooltip [state]="tooltip()" />
 </div>

@@ -20,8 +20,10 @@ import { Donutchart } from './donutchart/donutchart';
 import { Map } from './map/map';
 import { Menu } from './menu/menu';
 import { Tabs } from './tabs/tabs';
+import { Tooltip } from './tooltip/tooltip';
 import { Theme } from './theme/theme';
 import { Modal } from './modal/modal';
+import { Pagination } from './pagination/pagination';
 import { Spinner } from './spinner/spinner';
 import { Validation } from './validation/validation';
 
@@ -47,7 +49,9 @@ const COMPONENTS = [
   Menu,
   Tabs,
   Theme,
+  Tooltip,
   Modal,
+  Pagination,
   Spinner,
   Validation,
 ];

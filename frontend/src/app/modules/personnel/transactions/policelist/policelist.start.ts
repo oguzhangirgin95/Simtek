@@ -7,6 +7,8 @@ import { TaskControllerService } from '../../../../../lib/services/api/taskContr
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
 import { VehicleControllerService } from '../../../../../lib/services/api/vehicleController.service';
 
+const PAGE_SIZE = 20;
+
 @Component({
   imports: [CommonsModule],
   templateUrl: './policelist.start.html',
@@ -70,7 +72,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.State.Request = { cityId: '', unitId: '', status: '', searchText: '' };
+    this.State.Request = { cityId: '', unitId: '', status: '', searchText: '', pageNumber: 1, pageSize: PAGE_SIZE };
     this.State.ActiveTab = 'kisi';
 
     this.getCityList();
@@ -125,8 +127,13 @@ export class PolicelistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Police list:', error));
   }
 
+  setPage(page: number) {
+    this.State.Request = { ...this.State.Request, pageNumber: page };
+    this.getPoliceList();
+  }
+
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request = { ...this.State.Request, [key]: value, pageNumber: 1 };
 
     if (key === 'cityId') {
       this.State.Request = { ...this.State.Request, unitId: '' };
@@ -137,7 +144,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   clearFilter() {
-    this.State.Request = { cityId: '', unitId: '', status: '', searchText: '' };
+    this.State.Request = { cityId: '', unitId: '', status: '', searchText: '', pageNumber: 1, pageSize: PAGE_SIZE };
     this.getUnitList();
     this.getPoliceList();
   }
@@ -150,6 +157,10 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     this.getPoliceList();
   }
 
+
+  closeDetail() {
+    this.State.SelectedPoliceId = undefined;
+  }
 
   selectPolice(row: any) {
     this.State.SelectedPoliceId = row.id;

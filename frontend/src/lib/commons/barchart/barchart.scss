@@ -4,10 +4,13 @@
     align-items: center;
     gap: var(--space);
     min-height: 44px;
+  }
+
+  &--clickable .app-barchart__row {
     cursor: pointer;
   }
 
-  &__row:hover .app-barchart__bar {
+  &--clickable .app-barchart__row:hover .app-barchart__bar {
     background: var(--color-accent-dark);
   }
 
@@ -47,8 +50,14 @@
 }
 
 @media (max-width: 700px) {
+  .app-barchart__row {
+    flex-wrap: wrap;
+    gap: 4px var(--space);
+    padding: 6px 0;
+  }
+
   .app-barchart__label {
-    flex: 0 0 96px;
+    flex: 1 1 100%;
     font-size: 12px;
   }
 }

@@ -20,15 +20,28 @@ public class MenuBusiness {
         this.menuItemRepository = menuItemRepository;
     }
 
+    /** Menu iki seviyelidir: modul ve altindaki islemler */
     @Transactional(readOnly = true)
     public MenuListResponse MenuList(MenuListRequest menuListRequest) {
 
         MenuListResponse menuListResponse = new MenuListResponse();
 
-        List<MenuItem> items = menuItemRepository.findByActiveTrueOrderBySortOrderAsc();
+        List<MenuItem> modules = menuItemRepository.findByActiveTrueAndParentCodeIsNullOrderBySortOrderAsc();
 
-        for (MenuItem item : items) {
-            menuListResponse.items.add(new MenuItemModel(item.code, item.title, item.path));
+        for (MenuItem module : modules) {
+
+            MenuItemModel moduleModel = new MenuItemModel(module.code, module.title, module.path);
+
+            List<MenuItem> transactions = menuItemRepository
+                    .findByActiveTrueAndParentCodeOrderBySortOrderAsc(module.code);
+
+            for (MenuItem transaction : transactions) {
+                moduleModel.children.add(new MenuItemModel(transaction.code, transaction.title, transaction.path));
+            }
+
+            if (!moduleModel.children.isEmpty()) {
+                menuListResponse.items.add(moduleModel);
+            }
         }
 
         menuListResponse.totalCount = menuListResponse.items.size();

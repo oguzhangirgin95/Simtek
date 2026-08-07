@@ -1,12 +1,13 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 import { ChartItem } from '../barchart/barchart';
+import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 
 const COLORS = ['#4da3ff', '#2fbf5f', '#f5b301', '#e30a17', '#a78bfa', '#00c7be'];
 
 @Component({
   selector: 'app-donutchart',
-  imports: [],
+  imports: [Tooltip],
   templateUrl: './donutchart.html',
   styleUrl: './donutchart.scss',
 })
@@ -38,4 +39,18 @@ export class Donutchart extends BaseComponent {
       return segment;
     });
   });
+
+  readonly tooltip = signal<TooltipState>(TOOLTIP_HIDDEN);
+
+  showTooltip(segment: { label: string; value: number; percent: number }, event: MouseEvent): void {
+    this.tooltip.set({
+      text: `${segment.label}: ${segment.value} (%${segment.percent})`,
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
+
+  hideTooltip(): void {
+    this.tooltip.set(TOOLTIP_HIDDEN);
+  }
 }
