@@ -30,13 +30,11 @@ public class LoginController {
         return loginBusiness.Login(loginRequest);
     }
 
-    /** Cikis */
     @PostMapping(path = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public LogoutResponse Logout(@RequestBody LogoutRequest logoutRequest) {
         return loginBusiness.Logout(logoutRequest);
     }
 
-    /** Token gecerli mi */
     @PostMapping(path = "/currentuser", produces = MediaType.APPLICATION_JSON_VALUE)
     public CurrentUserResponse CurrentUser(@RequestBody CurrentUserRequest currentUserRequest) {
         return loginBusiness.CurrentUser(currentUserRequest);

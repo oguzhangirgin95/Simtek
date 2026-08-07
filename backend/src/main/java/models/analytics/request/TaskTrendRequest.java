@@ -5,7 +5,6 @@ public class TaskTrendRequest {
 
     public String unitId;
 
-    /** kac gunluk trend istendigi, bos ise 7 */
     public Integer dayCount;
 
     public TaskTrendRequest() {

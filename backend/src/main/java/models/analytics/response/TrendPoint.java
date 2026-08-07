@@ -1,7 +1,6 @@
 package models.analytics.response;
 
 public class TrendPoint {
-    /** gun etiketi, ornek: 'Pzt' */
     public String label;
 
     public Integer taskCount;

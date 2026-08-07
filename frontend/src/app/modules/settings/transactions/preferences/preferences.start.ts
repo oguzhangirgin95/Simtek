@@ -78,7 +78,6 @@ export class PreferencesStart extends BaseComponent implements OnInit {
       .toPromise()
       .then((response) => {
         this.State.Message = response?.message;
-        // dil ayari interceptor'un Accept-Language header'ini besler
         this.flowService.set('language', response?.language);
       })
       .catch((error) => console.error('Ayar kaydi:', error));

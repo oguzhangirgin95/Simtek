@@ -27,7 +27,6 @@ public class Vehicle {
     @Column(name = "model_year")
     public Integer modelYear;
 
-    /** Otomobil, Motosiklet */
     @Column(name = "vehicle_type", length = 20)
     public String type;
 

@@ -29,31 +29,26 @@ public class VehicleController {
         this.vehicleBusiness = vehicleBusiness;
     }
 
-    /** Arac envanteri */
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public VehicleListResponse VehicleList(@RequestBody VehicleListRequest vehicleListRequest) {
         return vehicleBusiness.VehicleList(vehicleListRequest);
     }
 
-    /** Secilen polisin arac bilgileri */
     @PostMapping(path = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
     public VehicleDetailResponse VehicleDetail(@RequestBody VehicleDetailRequest vehicleDetailRequest) {
         return vehicleBusiness.VehicleDetail(vehicleDetailRequest);
     }
 
-    /** Arac tipi filtresinin secenekleri */
     @PostMapping(path = "/typelist", produces = MediaType.APPLICATION_JSON_VALUE)
     public VehicleTypeListResponse VehicleTypeList(@RequestBody VehicleTypeListRequest vehicleTypeListRequest) {
         return vehicleBusiness.VehicleTypeList(vehicleTypeListRequest);
     }
 
-    /** Arac ekleme / guncelleme */
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public VehicleSaveResponse VehicleSave(@RequestBody VehicleSaveRequest vehicleSaveRequest) {
         return vehicleBusiness.VehicleSave(vehicleSaveRequest);
     }
 
-    /** Arac silme */
     @PostMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public VehicleDeleteResponse VehicleDelete(@RequestBody VehicleDeleteRequest vehicleDeleteRequest) {
         return vehicleBusiness.VehicleDelete(vehicleDeleteRequest);

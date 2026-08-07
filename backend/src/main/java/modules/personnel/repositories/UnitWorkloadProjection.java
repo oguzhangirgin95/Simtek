@@ -1,6 +1,5 @@
 package modules.personnel.repositories;
 
-/** /dashboard/unitworkload icin birim bazli sayilar */
 public interface UnitWorkloadProjection {
 
     String getUnitId();

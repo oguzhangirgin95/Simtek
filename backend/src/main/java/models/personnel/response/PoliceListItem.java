@@ -23,7 +23,6 @@ public class PoliceListItem {
 
     public String photoUrl;
 
-    /** gunluk gorev limitini asti mi */
     public Boolean overDailyLimit;
 
     public PoliceListItem() {

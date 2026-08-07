@@ -19,7 +19,6 @@ export class Donutchart extends BaseComponent {
 
   readonly total = computed(() => this.items().reduce((toplam, item) => toplam + item.value, 0));
 
-  /** her dilim icin cevre uzunlugu ve baslangic noktasi hesaplanir */
   readonly segments = computed(() => {
     const total = this.total() || 1;
     const cevre = 2 * Math.PI * 40;

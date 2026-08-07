@@ -77,7 +77,6 @@ class DatabaseIntegrationTests {
     @Autowired
     private CryptologyService cryptologyService;
 
-    /* ---------------- migration / seed ---------------- */
 
     @Test
     @Order(1)
@@ -98,7 +97,6 @@ class DatabaseIntegrationTests {
     @Test
     @Order(3)
     void kullanici_veritabanindan_dogrulaniyor() {
-        // sifre frontend'de sifrelenerek gonderilir
         LoginRequest ok = new LoginRequest("oguz", cryptologyService.encryption("1234"));
         assertThat(loginBusiness.Login(ok).success).isTrue();
         assertThat(loginBusiness.Login(ok).token).isEqualTo("TOKEN-OGUZ");
@@ -108,7 +106,6 @@ class DatabaseIntegrationTests {
         assertThat(loginBusiness.Login(new LoginRequest("yok", cryptologyService.encryption("1234"))).success)
                 .isFalse();
 
-        // acik metin parola kabul edilmez
         assertThat(loginBusiness.Login(new LoginRequest("oguz", "1234")).success).isFalse();
     }
 
@@ -122,7 +119,6 @@ class DatabaseIntegrationTests {
         assertThat(cryptologyService.encryption("")).isEmpty();
     }
 
-    /* ---------------- pano sorgulari ---------------- */
 
     @Test
     @Order(4)
@@ -145,7 +141,6 @@ class DatabaseIntegrationTests {
         var workload = dashboardBusiness.UnitWorkload(new DashboardRequest());
         assertThat(workload.cityName).isEqualTo("Ankara");
         assertThat(workload.units).hasSize(6);
-        // her birimde sahada personel olmali
         assertThat(workload.units).allMatch(unit -> unit.activePolice > 0);
         assertThat(workload.totalTaskLoad).isEqualTo(226);
     }
@@ -158,7 +153,6 @@ class DatabaseIntegrationTests {
         assertThat(taskBusiness.TaskTypeList(request).totalTaskCount).isEqualTo(226);
     }
 
-    /* ---------------- listeler ---------------- */
 
     @Test
     @Order(6)
@@ -237,7 +231,6 @@ class DatabaseIntegrationTests {
         overLimit.onlyOverLimit = true;
         var overLimitResult = taskBusiness.TaskList(overLimit);
         assertThat(overLimitResult.totalCount).isEqualTo(76);
-        // limiti asan 8 personelin gorevleri listelenir
         assertThat(overLimitResult.tasks).extracting(task -> task.policeId).doesNotContainNull();
         assertThat(overLimitResult.tasks.stream().map(task -> task.policeId).distinct().count()).isEqualTo(8);
     }
@@ -253,7 +246,6 @@ class DatabaseIntegrationTests {
         assertThat(trend.averageTaskCount).isGreaterThan(0);
     }
 
-    /* ---------------- yazma islemleri ---------------- */
 
     @Test
     @Order(11)
@@ -274,11 +266,9 @@ class DatabaseIntegrationTests {
         assertThat(execute.success).isTrue();
         assertThat(execute.newTaskCount).isEqualTo(before + 1);
 
-        // sayac personel kaydina da yansidi mi
         assertThat(policeBusiness.PoliceDetail(new PoliceDetailRequest("06-1001")).dailyTaskCount)
                 .isEqualTo(before + 1);
 
-        // silince geri donuyor mu
         TaskDeleteRequest delete = new TaskDeleteRequest();
         delete.taskId = execute.taskId;
         assertThat(taskBusiness.TaskDelete(delete).success).isTrue();
@@ -306,14 +296,12 @@ class DatabaseIntegrationTests {
         assertThat(detail.found).isTrue();
         assertThat(detail.fullName).isEqualTo("Test Personel");
 
-        // guncelleme
         save.id = saved.id;
         save.fullName = "Test Personel Guncel";
         assertThat(policeBusiness.PoliceSave(save).success).isTrue();
         assertThat(policeBusiness.PoliceDetail(new PoliceDetailRequest(saved.id)).fullName)
                 .isEqualTo("Test Personel Guncel");
 
-        // hatali birim reddedilmeli
         PoliceSaveRequest invalid = new PoliceSaveRequest();
         invalid.fullName = "Hatali";
         invalid.badgeNumber = "060001";
@@ -321,7 +309,6 @@ class DatabaseIntegrationTests {
         invalid.unitId = "34-B1";
         assertThat(policeBusiness.PoliceSave(invalid).success).isFalse();
 
-        // silme
         PoliceDeleteRequest delete = new PoliceDeleteRequest();
         delete.policeId = saved.id;
         assertThat(policeBusiness.PoliceDelete(delete).success).isTrue();
@@ -345,17 +332,14 @@ class DatabaseIntegrationTests {
         var savedUnit = unitBusiness.UnitSave(unit);
         assertThat(savedUnit.success).isTrue();
 
-        // birimi olan sehir silinemez
         RegionDeleteRequest deleteCity = new RegionDeleteRequest();
         deleteCity.id = "99";
         assertThat(regionBusiness.RegionDelete(deleteCity).success).isFalse();
 
-        // personeli olan birim silinemez
         UnitDeleteRequest deleteUnitWithPolice = new UnitDeleteRequest();
         deleteUnitWithPolice.id = "06-B1";
         assertThat(unitBusiness.UnitDelete(deleteUnitWithPolice).success).isFalse();
 
-        // once birim, sonra sehir silinir
         UnitDeleteRequest deleteUnit = new UnitDeleteRequest();
         deleteUnit.id = savedUnit.id;
         assertThat(unitBusiness.UnitDelete(deleteUnit).success).isTrue();
@@ -401,7 +385,6 @@ class DatabaseIntegrationTests {
         assertThat(loaded.language).isEqualTo("en");
         assertThat(loaded.pageSize).isEqualTo(50);
 
-        // kaydi olmayan token varsayilanlari alir
         assertThat(settingBusiness.SettingGet(new SettingGetRequest("TOKEN-YOK")).language).isEqualTo("tr");
     }
 }

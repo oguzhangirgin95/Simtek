@@ -15,10 +15,6 @@ public interface PoliceRepository extends JpaRepository<Police, String>, JpaSpec
 
     long countByCityId(String cityId);
 
-    /**
-     * First-sight sayilari tek sorguda hesaplanir.
-     * Bos gelen filtreler icin null gonderilir; boylece kosul devre disi kalir.
-     */
     @Query(value = """
             SELECT count(*)                                                          AS "totalPolice",
                    count(*) FILTER (WHERE p.status = 'SAHADA')                       AS "onDuty",
@@ -35,7 +31,6 @@ public interface PoliceRepository extends JpaRepository<Police, String>, JpaSpec
                               @Param("unitId") String unitId,
                               @Param("status") String status);
 
-    /** Harita: sehir bazli toplam ve aktif memur */
     @Query(value = """
             SELECT c.id                                              AS "cityId",
                    c.name                                            AS "cityName",
@@ -56,7 +51,6 @@ public interface PoliceRepository extends JpaRepository<Police, String>, JpaSpec
     List<CityStatisticProjection> cityStatistics(@Param("unitId") String unitId,
                                                  @Param("status") String status);
 
-    /** Birim bazli gorev yogunlugu ve gorev tipi kirilimi */
     @Query(value = """
             SELECT u.id                                                        AS "unitId",
                    u.name                                                      AS "unitName",

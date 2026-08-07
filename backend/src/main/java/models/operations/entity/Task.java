@@ -22,7 +22,6 @@ public class Task {
     @Column(name = "unit_id", length = 20, nullable = false)
     public String unitId;
 
-    /** DEVRIYE, RADAR, MOTOSIKLET, OKUL_GECIDI, KAZA_INCELEME */
     @Column(name = "task_type", length = 20, nullable = false)
     public String type;
 
@@ -35,7 +34,6 @@ public class Task {
     @Column(name = "end_time", length = 5)
     public String endTime;
 
-    /** TAMAMLANDI, DEVAM, PLANLANDI */
     @Column(name = "task_status", length = 20, nullable = false)
     public String status;
 

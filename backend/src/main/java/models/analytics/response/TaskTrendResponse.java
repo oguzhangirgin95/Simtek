@@ -11,7 +11,6 @@ public class TaskTrendResponse {
 
     public Integer totalTaskCount = 0;
 
-    /** gunluk ortalama gorev sayisi */
     public Integer averageTaskCount = 0;
 
     public TaskTrendResponse() {

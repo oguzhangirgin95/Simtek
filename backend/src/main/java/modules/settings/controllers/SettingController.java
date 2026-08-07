@@ -22,13 +22,11 @@ public class SettingController {
         this.settingBusiness = settingBusiness;
     }
 
-    /** Kullanicinin ayarlari */
     @PostMapping(path = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public SettingResponse SettingGet(@RequestBody SettingGetRequest settingGetRequest) {
         return settingBusiness.SettingGet(settingGetRequest);
     }
 
-    /** Ayarlari kaydeder */
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public SettingResponse SettingSave(@RequestBody SettingSaveRequest settingSaveRequest) {
         return settingBusiness.SettingSave(settingSaveRequest);

@@ -19,11 +19,9 @@ public class City {
     @Column(name = "plate_code", length = 5, nullable = false)
     public String plateCode;
 
-    /** harita uzerindeki yatay konum (0-100) */
     @Column(name = "map_x", nullable = false)
     public Double x;
 
-    /** harita uzerindeki dikey konum (0-60) */
     @Column(name = "map_y", nullable = false)
     public Double y;
 

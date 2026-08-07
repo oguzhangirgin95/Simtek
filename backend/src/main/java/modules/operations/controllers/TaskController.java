@@ -28,31 +28,26 @@ public class TaskController {
         this.taskBusiness = taskBusiness;
     }
 
-    /** Gorev listesi */
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskListResponse TaskList(@RequestBody TaskListRequest taskListRequest) {
         return taskBusiness.TaskList(taskListRequest);
     }
 
-    /** Gorev atama onay adimi */
     @PostMapping(path = "/assignconfirm", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskAssignConfirmResponse TaskAssignConfirm(@RequestBody TaskAssignRequest taskAssignRequest) {
         return taskBusiness.TaskAssignConfirm(taskAssignRequest);
     }
 
-    /** Gorev atama gerceklestirme adimi */
     @PostMapping(path = "/assignexecute", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskAssignExecuteResponse TaskAssignExecute(@RequestBody TaskAssignRequest taskAssignRequest) {
         return taskBusiness.TaskAssignExecute(taskAssignRequest);
     }
 
-    /** Gorev silme */
     @PostMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskDeleteResponse TaskDelete(@RequestBody TaskDeleteRequest taskDeleteRequest) {
         return taskBusiness.TaskDelete(taskDeleteRequest);
     }
 
-    /** Gorev tipi filtresi ve tip bazli gorev adetleri */
     @PostMapping(path = "/typelist", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskTypeListResponse TaskTypeList(@RequestBody TaskTypeListRequest taskTypeListRequest) {
         return taskBusiness.TaskTypeList(taskTypeListRequest);

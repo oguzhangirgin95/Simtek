@@ -22,7 +22,6 @@ public class AnalyticsBusiness {
 
     private static final String[] DAY_LABELS = { "Pzt", "Sal", "Car", "Per", "Cum", "Cmt", "Paz" };
 
-    /** gunlere gore dalgalanma orani (%), bugun son gun kabul edilir */
     private static final int[] DAY_FACTORS = { 92, 96, 100, 98, 104, 78, 70 };
 
     private final TaskRepository taskRepository;
@@ -36,10 +35,6 @@ public class AnalyticsBusiness {
         this.cityRepository = cityRepository;
     }
 
-    /**
-     * Gunluk gorev trendi. Veritabaninda tarihli gorev kaydi tutulmadigi icin
-     * bugunun gorev sayisi gun katsayilariyla gecmise dogru olceklenir.
-     */
     @Transactional(readOnly = true)
     public TaskTrendResponse TaskTrend(TaskTrendRequest taskTrendRequest) {
 

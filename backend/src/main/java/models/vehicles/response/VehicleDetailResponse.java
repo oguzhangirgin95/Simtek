@@ -2,7 +2,6 @@ package models.vehicles.response;
 
 public class VehicleDetailResponse {
 
-    /** kayit bulundu mu; false ise diger alanlar bostur */
     public Boolean found = false;
 
     public String plate;

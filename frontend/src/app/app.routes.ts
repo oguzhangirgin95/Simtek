@@ -8,7 +8,6 @@ export const routes: Routes = [
         redirectTo: 'firstlevel',
     },
     {
-        // login akisi guard'siz, yoksa giris de yapilamaz
         path: 'firstlevel',
         loadChildren: () => import('./modules/firstlevel/firstlevel.routes').then((m) => m.routes),
     },

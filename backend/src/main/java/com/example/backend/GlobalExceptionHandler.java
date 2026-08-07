@@ -8,14 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-/**
- * Servislerden hata cikarsa frontend'in okuyabilecegi tek bir formatta doner.
- * Aksi halde Spring'in varsayilan hata sayfasi geliyor ve interceptor mesaji gosteremiyor.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /** Request body bos veya bozuk geldiginde */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> HandleBadRequest(HttpMessageNotReadableException exception,
             HttpServletRequest request) {

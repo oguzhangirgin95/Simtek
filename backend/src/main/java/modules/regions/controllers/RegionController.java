@@ -25,19 +25,16 @@ public class RegionController {
         this.regionBusiness = regionBusiness;
     }
 
-    /** Sehir filtresi ve harita icin sehir listesi */
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public RegionListResponse RegionList(@RequestBody RegionListRequest regionListRequest) {
         return regionBusiness.RegionList(regionListRequest);
     }
 
-    /** Sehir ekleme / guncelleme */
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public RegionSaveResponse RegionSave(@RequestBody RegionSaveRequest regionSaveRequest) {
         return regionBusiness.RegionSave(regionSaveRequest);
     }
 
-    /** Sehir silme */
     @PostMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public RegionDeleteResponse RegionDelete(@RequestBody RegionDeleteRequest regionDeleteRequest) {
         return regionBusiness.RegionDelete(regionDeleteRequest);

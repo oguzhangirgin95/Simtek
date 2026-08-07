@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-// Testler yerel PostgreSQL kurulumu gerektirmesin diye gomulu veritabani kullanilir.
 @SpringBootTest
 @Import(EmbeddedPostgresConfig.class)
 class BackendApplicationTests {

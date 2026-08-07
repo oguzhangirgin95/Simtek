@@ -57,7 +57,6 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
     this.getVehicleList();
   }
 
-  /* ---------------- filtre secenekleri ---------------- */
 
   getCityList() {
     this.regionService
@@ -94,7 +93,6 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Arac tipleri:', error));
   }
 
-  /* ---------------- liste ---------------- */
 
   getVehicleList() {
     this.vehicleService
@@ -124,7 +122,6 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
     this.getVehicleList();
   }
 
-  /* ---------------- detay ---------------- */
 
   selectVehicle(row: any) {
     this.State.SelectedPlate = row.plate;

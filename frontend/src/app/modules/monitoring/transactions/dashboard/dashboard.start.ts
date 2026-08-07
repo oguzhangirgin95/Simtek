@@ -17,7 +17,6 @@ export class DashboardStart extends BaseComponent implements OnInit {
   private readonly unitService = inject(UnitControllerService);
   private readonly policeService = inject(PoliceControllerService);
 
-  /** ekrandaki tum yazilar; resource yoksa ikinci parametredeki varsayilan basilir */
   readonly labels = computed(() => ({
     title: this.getResource('DASHBOARD_TITLE', 'Trafik Polisi Takip Panosu'),
     city: this.getResource('FILTER_CITY', 'Şehir'),
@@ -59,7 +58,6 @@ export class DashboardStart extends BaseComponent implements OnInit {
     this.getDashboard();
   }
 
-  /* ---------------- filtre secenekleri ---------------- */
 
   getCityList() {
     this.regionService
@@ -94,7 +92,6 @@ export class DashboardStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Durum listesi:', error));
   }
 
-  /* ---------------- pano verileri ---------------- */
 
   getDashboard() {
     this.getSummary();
@@ -147,12 +144,10 @@ export class DashboardStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Birim yogunlugu:', error));
   }
 
-  /* ---------------- filtreler ---------------- */
 
   setFilter(key: string, value: string) {
     this.State.Request = { ...this.State.Request, [key]: value };
 
-    // sehir degisince birim listesi yenilenir
     if (key === 'cityId') {
       this.State.Request = { ...this.State.Request, unitId: '' };
       this.getUnitList();

@@ -21,7 +21,6 @@ export class Barchart extends BaseComponent {
 
   readonly barClicked = output<ChartItem>();
 
-  /** en buyuk deger, cubuk genislikleri buna gore hesaplanir */
   readonly maxValue = computed(() => Math.max(1, ...this.items().map((item) => item.value)));
 
   percent(value: number): number {

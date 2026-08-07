@@ -2,9 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 
 export interface GridColumn {
-  /** satirdaki alan adi, ornek: 'reportNo' */
   field: string;
-  /** basliktaki yazi */
   title: string;
 }
 

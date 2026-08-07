@@ -19,7 +19,6 @@ export class Header extends BaseComponent {
     logout: this.getResource('BUTTON_LOGOUT', 'Çıkış'),
   }));
 
-  /** token'dan turetilen kullanici adi: TOKEN-OGUZ -> OGUZ */
   readonly username = computed(() => (this.flowService.token() ?? '').replace('TOKEN-', ''));
 
   logout() {

@@ -54,13 +54,11 @@ public class VehicleBusiness {
         this.unitRepository = unitRepository;
     }
 
-    /** Arac envanteri: sehir / birim / tip filtreleriyle */
     @Transactional(readOnly = true)
     public VehicleListResponse VehicleList(VehicleListRequest vehicleListRequest) {
 
         VehicleListRequest request = vehicleListRequest == null ? new VehicleListRequest() : vehicleListRequest;
 
-        // sehir / birim filtresi personel uzerinden geldigi icin once eslesen personel id'leri bulunur
         List<String> policeIds = null;
         if (HasText(request.cityId) || HasText(request.unitId)) {
             policeIds = new ArrayList<>();
@@ -155,7 +153,6 @@ public class VehicleBusiness {
         };
     }
 
-    /** Secilen polisin araci; policeId veya plaka ile */
     @Transactional(readOnly = true)
     public VehicleDetailResponse VehicleDetail(VehicleDetailRequest vehicleDetailRequest) {
 
@@ -196,7 +193,6 @@ public class VehicleBusiness {
         return response;
     }
 
-    /** Arac tipi filtresinin secenekleri, yanlarinda adet ile */
     @Transactional(readOnly = true)
     public VehicleTypeListResponse VehicleTypeList(VehicleTypeListRequest vehicleTypeListRequest) {
 
@@ -210,7 +206,6 @@ public class VehicleBusiness {
         return response;
     }
 
-    /* ---------------- ekleme / guncelleme / silme ---------------- */
 
     @Transactional
     public VehicleSaveResponse VehicleSave(VehicleSaveRequest request) {
@@ -273,7 +268,6 @@ public class VehicleBusiness {
         return response;
     }
 
-    /* ---------------- yardimcilar ---------------- */
 
     private Map<String, Police> GetPoliceMap() {
         Map<String, Police> map = new HashMap<>();

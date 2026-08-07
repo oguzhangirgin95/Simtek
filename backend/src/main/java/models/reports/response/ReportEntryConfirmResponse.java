@@ -14,10 +14,8 @@ public class ReportEntryConfirmResponse {
 
     public String period;
 
-    /** rapora girecek personel sayisi */
     public Integer policeCount;
 
-    /** rapora girecek gorev sayisi */
     public Integer taskCount;
 
     public String message;

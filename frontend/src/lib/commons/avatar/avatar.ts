@@ -8,7 +8,6 @@ import { BaseComponent } from '../../base/basecomponent/basecomponent';
   styleUrl: './avatar.scss',
 })
 export class Avatar extends BaseComponent {
-  /** foto adresi, bos ise bas harfler gosterilir */
   readonly src = input<string>('');
 
   readonly name = input<string>('');

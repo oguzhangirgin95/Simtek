@@ -32,7 +32,6 @@ public class RegionBusiness {
         this.policeRepository = policeRepository;
     }
 
-    /** Sehir filtresi ve harita icin sehir listesi */
     @Transactional(readOnly = true)
     public RegionListResponse RegionList(RegionListRequest regionListRequest) {
 
@@ -55,7 +54,6 @@ public class RegionBusiness {
         return regionListResponse;
     }
 
-    /** Sehir ekleme / guncelleme */
     @Transactional
     public RegionSaveResponse RegionSave(RegionSaveRequest regionSaveRequest) {
 
@@ -91,7 +89,6 @@ public class RegionBusiness {
         return response;
     }
 
-    /** Sehir silme; bagli birim veya personel varsa silinmez */
     @Transactional
     public RegionDeleteResponse RegionDelete(RegionDeleteRequest regionDeleteRequest) {
 

@@ -45,11 +45,9 @@ public class Police {
     @Column(name = "unit_id", length = 20, nullable = false)
     public String unitId;
 
-    /** SAHADA, MERKEZDE, IZINDE, RAPORLU */
     @Column(name = "status", length = 20, nullable = false)
     public String status;
 
-    /** DEVRIYE, RADAR, MOTOSIKLET, OKUL_GECIDI, KAZA_INCELEME */
     @Column(name = "task_type", length = 20)
     public String taskType;
 

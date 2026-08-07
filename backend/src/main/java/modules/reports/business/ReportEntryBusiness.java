@@ -66,7 +66,6 @@ public class ReportEntryBusiness {
         return reportType;
     }
 
-    /** Rapor tipi secenekleri */
     public ReportTypeListResponse ReportTypeList(ReportTypeListRequest reportTypeListRequest) {
 
         ReportTypeListResponse response = new ReportTypeListResponse();
@@ -78,7 +77,6 @@ public class ReportEntryBusiness {
         return response;
     }
 
-    /** Onay adimi: rapor olusturulmadan once kapsam ozeti doner */
     @Transactional(readOnly = true)
     public ReportEntryConfirmResponse Confirm(ReportEntryRequest request) {
 
@@ -106,7 +104,6 @@ public class ReportEntryBusiness {
         return response;
     }
 
-    /** Gerceklestirme adimi: rapor veritabanina yazilir */
     @Transactional
     public ReportEntryExecuteResponse Execute(ReportEntryRequest request) {
 
@@ -146,7 +143,6 @@ public class ReportEntryBusiness {
         return response;
     }
 
-    /** Olusturulmus raporlar */
     @Transactional(readOnly = true)
     public ReportListResponse ReportList(ReportListRequest reportListRequest) {
 
@@ -179,7 +175,6 @@ public class ReportEntryBusiness {
         return response;
     }
 
-    /* ---------------- yardimcilar ---------------- */
 
     private String GetCityName(String cityId) {
         if (!HasText(cityId)) {

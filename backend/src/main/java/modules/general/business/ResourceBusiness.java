@@ -18,7 +18,6 @@ public class ResourceBusiness {
         this.resourceRepository = resourceRepository;
     }
 
-    /** transactionName'e ait resource listesi; 'general' tum ekranlarda ortak olanlardir */
     @Transactional(readOnly = true)
     public ResourceResponse Get(ResourceRequest resourceRequest) {
 

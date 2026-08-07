@@ -2,7 +2,6 @@ package models.personnel.response;
 
 public class PoliceDetailResponse {
 
-    /** kayit bulundu mu; false ise diger alanlar bostur */
     public Boolean found = false;
 
     public String id;
@@ -45,7 +44,6 @@ public class PoliceDetailResponse {
 
     public Boolean overDailyLimit;
 
-    /** arac detayi icin /vehicle/detail servisine gonderilir */
     public String vehiclePlate;
 
     public PoliceDetailResponse() {

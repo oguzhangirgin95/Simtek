@@ -36,7 +36,6 @@ public class DashboardBusiness {
         this.unitRepository = unitRepository;
     }
 
-    /** Harita: sehir bazli toplam ve aktif memur, tek sorguda gruplanir */
     @Transactional(readOnly = true)
     public MapStatisticsResponse MapStatistics(DashboardRequest dashboardRequest) {
 
@@ -73,7 +72,6 @@ public class DashboardBusiness {
         return response;
     }
 
-    /** First-sight bilgiler: tek sorguda hesaplanir */
     @Transactional(readOnly = true)
     public SummaryResponse Summary(DashboardRequest dashboardRequest) {
 
@@ -102,7 +100,6 @@ public class DashboardBusiness {
         return response;
     }
 
-    /** Birim bazli gorev yogunlugu; cityId verilmezse Ankara doner */
     @Transactional(readOnly = true)
     public UnitWorkloadResponse UnitWorkload(DashboardRequest dashboardRequest) {
 
@@ -147,7 +144,6 @@ public class DashboardBusiness {
         return response;
     }
 
-    /** Bos filtreler sorguda devre disi kalsin diye null'a cevrilir */
     private static String Filter(String value) {
         return value == null || value.trim().isEmpty() ? null : value;
     }

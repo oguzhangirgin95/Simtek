@@ -34,22 +34,18 @@ export abstract class BaseComponent {
     return this.flowService.getResource(key, value);
   }
 
-  /** Hassas veriyi servise gondermeden once sifreler */
   public encryption(value: string): string {
     return this.cryptologyService.encryption(value);
   }
 
-  /** Servisten gelen sifreli veriyi cozer */
   public decryption(value: string): string {
     return this.cryptologyService.decryption(value);
   }
 
-  /** Verilen alanin validasyon mesaji; hata yoksa bos string */
   public getError(id: string): string {
     return this.flowService.getError(id);
   }
 
-  /** Adimin validasyonlarini calistirir; servis cagirmadan once kullanilir */
   public validateCurrentStep(): Promise<boolean> {
     return this.flowService.validateCurrentStep();
   }

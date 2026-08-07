@@ -26,25 +26,21 @@ public class ReportEntryController {
         this.reportEntryBusiness = reportEntryBusiness;
     }
 
-    /** Rapor onay adimi: kapsam ozeti */
     @PostMapping(path = "/confirm", produces = MediaType.APPLICATION_JSON_VALUE)
     public ReportEntryConfirmResponse Confirm(@RequestBody ReportEntryRequest reportEntryRequest) {
         return reportEntryBusiness.Confirm(reportEntryRequest);
     }
 
-    /** Rapor olusturma adimi */
     @PostMapping(path = "/execute", produces = MediaType.APPLICATION_JSON_VALUE)
     public ReportEntryExecuteResponse Execute(@RequestBody ReportEntryRequest reportEntryRequest) {
         return reportEntryBusiness.Execute(reportEntryRequest);
     }
 
-    /** Olusturulmus raporlar */
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ReportListResponse ReportList(@RequestBody ReportListRequest reportListRequest) {
         return reportEntryBusiness.ReportList(reportListRequest);
     }
 
-    /** Rapor tipi secenekleri */
     @PostMapping(path = "/typelist", produces = MediaType.APPLICATION_JSON_VALUE)
     public ReportTypeListResponse ReportTypeList(@RequestBody ReportTypeListRequest reportTypeListRequest) {
         return reportEntryBusiness.ReportTypeList(reportTypeListRequest);

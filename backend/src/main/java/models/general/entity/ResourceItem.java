@@ -16,7 +16,6 @@ public class ResourceItem {
     @Column(name = "id")
     public Long id;
 
-    /** general, login, dashboard, policelist ... */
     @Column(name = "transaction_name", length = 50, nullable = false)
     public String transactionName;
 

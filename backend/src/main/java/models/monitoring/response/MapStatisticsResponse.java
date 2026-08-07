@@ -11,7 +11,6 @@ public class MapStatisticsResponse {
 
     public Integer activePolice = 0;
 
-    /** en yogun sehir (en cok aktif memur) */
     public String busiestCityName;
 
     public Integer busiestCityActivePolice = 0;

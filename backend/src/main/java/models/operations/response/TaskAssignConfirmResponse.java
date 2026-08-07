@@ -2,7 +2,6 @@ package models.operations.response;
 
 public class TaskAssignConfirmResponse {
 
-    /** atama yapilabilir mi */
     public Boolean valid = false;
 
     public String policeId;
@@ -25,7 +24,6 @@ public class TaskAssignConfirmResponse {
 
     public Integer dailyTaskLimit;
 
-    /** bu atama ile limit asilacak mi */
     public Boolean willExceedLimit = false;
 
     public String message;

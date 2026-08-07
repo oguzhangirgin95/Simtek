@@ -21,7 +21,6 @@ import modules.firstlevel.repositories.AppUserRepository;
 @Service
 public class LoginBusiness {
 
-    /** gecerli oturumlar: token -> kullanici adi */
     private static final Map<String, String> TOKENS = new ConcurrentHashMap<>();
 
     private final AppUserRepository appUserRepository;
@@ -33,7 +32,6 @@ public class LoginBusiness {
         this.cryptologyService = cryptologyService;
     }
 
-    /** Kullanici adi ve sifre veritabanindan dogrulanir */
     @Transactional(readOnly = true)
     public LoginResponse Login(LoginRequest loginRequest) {
 
@@ -43,7 +41,6 @@ public class LoginBusiness {
             return loginResponse;
         }
 
-        // sifre frontend'de sifrelenerek gonderilir
         String password = cryptologyService.decryption(loginRequest.password);
 
         Optional<AppUser> user = appUserRepository.findByUsernameAndPassword(loginRequest.username, password);
@@ -60,7 +57,6 @@ public class LoginBusiness {
         return loginResponse;
     }
 
-    /** Cikis: token gecersiz kilinir */
     public LogoutResponse Logout(LogoutRequest logoutRequest) {
 
         if (logoutRequest == null || logoutRequest.token == null) {
@@ -74,7 +70,6 @@ public class LoginBusiness {
                 : new LogoutResponse(true, "Cikis yapildi.");
     }
 
-    /** Token gecerli mi; sayfa yenilendiginde oturumu dogrulamak icin */
     public CurrentUserResponse CurrentUser(CurrentUserRequest currentUserRequest) {
 
         CurrentUserResponse currentUserResponse = new CurrentUserResponse();

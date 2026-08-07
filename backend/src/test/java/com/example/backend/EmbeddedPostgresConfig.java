@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 
-/** Testlerde gercek bir PostgreSQL ayaga kaldirilir, Flyway scriptleri onun uzerinde calisir. */
 @TestConfiguration(proxyBeanMethods = false)
 public class EmbeddedPostgresConfig {
 

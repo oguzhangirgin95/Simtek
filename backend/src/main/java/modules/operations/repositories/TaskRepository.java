@@ -15,7 +15,6 @@ public interface TaskRepository extends JpaRepository<Task, String>, JpaSpecific
 
     void deleteByPoliceId(String policeId);
 
-    /** Gorev tipi dagilimi; cityId bos ise ulke geneli */
     @Query(value = """
             SELECT t.task_type AS "taskType", count(*) AS "typeCount"
             FROM task t
@@ -25,7 +24,6 @@ public interface TaskRepository extends JpaRepository<Task, String>, JpaSpecific
             """, nativeQuery = true)
     List<TaskTypeCountProjection> typeCounts(@Param("cityId") String cityId);
 
-    /** Trend hesabinda kullanilan toplam gorev sayisi */
     @Query(value = """
             SELECT count(*)
             FROM task t

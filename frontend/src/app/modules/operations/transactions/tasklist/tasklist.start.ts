@@ -64,7 +64,6 @@ export class TasklistStart extends BaseComponent implements OnInit {
     this.getTaskList();
   }
 
-  /* ---------------- filtre secenekleri ---------------- */
 
   getCityList() {
     this.regionService
@@ -100,7 +99,6 @@ export class TasklistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Gorev tipleri:', error));
   }
 
-  /* ---------------- liste ---------------- */
 
   getTaskList() {
     this.taskService
@@ -125,7 +123,6 @@ export class TasklistStart extends BaseComponent implements OnInit {
     this.getTaskList();
   }
 
-  /** select bos deger dondurdugu icin boolean'a burada cevriliyor */
   setOverLimit(value: string) {
     this.State.Request = { ...this.State.Request, onlyOverLimit: value === '1' };
     this.getTaskList();

@@ -55,7 +55,6 @@ public class PoliceBusiness {
         this.vehicleRepository = vehicleRepository;
     }
 
-    /* ---------------- ortak yardimcilar ---------------- */
 
     public static Boolean IsOverDailyLimit(Police police) {
         return police.dailyTaskCount > police.dailyTaskLimit;
@@ -99,9 +98,7 @@ public class PoliceBusiness {
         }
     }
 
-    /* ---------------- liste ---------------- */
 
-    /** Sehir / birim / durum filtreleriyle polis listesi; filtre, siralama ve sayfalama veritabaninda yapilir */
     @Transactional(readOnly = true)
     public PoliceListResponse PoliceList(PoliceListRequest policeListRequest) {
 
@@ -153,7 +150,6 @@ public class PoliceBusiness {
         return policeListResponse;
     }
 
-    /** Filtreler yalnizca dolu geldiginde WHERE'e eklenir, boylece indeksler kullanilir */
     private Specification<Police> BuildSpecification(PoliceListRequest request) {
         return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -182,7 +178,6 @@ public class PoliceBusiness {
 
         String field = HasText(request.sortField) ? request.sortField : "badgeNumber";
 
-        // ekrandan gelen isimler entity alanlarina eslenir
         switch (field) {
             case "cityName":
                 field = "cityId";
@@ -206,7 +201,6 @@ public class PoliceBusiness {
         return Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC, field);
     }
 
-    /* ---------------- detay ---------------- */
 
     @Transactional(readOnly = true)
     public PoliceDetailResponse PoliceDetail(PoliceDetailRequest policeDetailRequest) {
@@ -252,7 +246,6 @@ public class PoliceBusiness {
         return response;
     }
 
-    /** Durum filtresinin secenekleri */
     public PoliceStatusListResponse PoliceStatusList(PoliceStatusListRequest policeStatusListRequest) {
 
         PoliceStatusListResponse response = new PoliceStatusListResponse();
@@ -265,7 +258,6 @@ public class PoliceBusiness {
         return response;
     }
 
-    /* ---------------- ekleme / guncelleme / silme ---------------- */
 
     @Transactional
     public PoliceSaveResponse PoliceSave(PoliceSaveRequest request) {
@@ -328,7 +320,6 @@ public class PoliceBusiness {
         return response;
     }
 
-    /** Personel silme; gorevleri ve araci da temizlenir */
     @Transactional
     public PoliceDeleteResponse PoliceDelete(PoliceDeleteRequest request) {
 
@@ -355,7 +346,6 @@ public class PoliceBusiness {
         return response;
     }
 
-    /* ---------------- yardimcilar ---------------- */
 
     private Map<String, String> GetCityNames() {
         Map<String, String> names = new HashMap<>();

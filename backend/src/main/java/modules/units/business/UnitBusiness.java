@@ -35,7 +35,6 @@ public class UnitBusiness {
         this.policeRepository = policeRepository;
     }
 
-    /** Birim filtresi icin birim listesi, cityId verilirse o sehrin birimleri */
     @Transactional(readOnly = true)
     public UnitListResponse UnitList(UnitListRequest unitListRequest) {
 
@@ -59,7 +58,6 @@ public class UnitBusiness {
         return unitListResponse;
     }
 
-    /** Birim ekleme / guncelleme */
     @Transactional
     public UnitSaveResponse UnitSave(UnitSaveRequest unitSaveRequest) {
 
@@ -81,7 +79,6 @@ public class UnitBusiness {
         Unit unit;
 
         if (unitSaveRequest.id == null || unitSaveRequest.id.trim().isEmpty()) {
-            // yeni birim: sehirdeki son siranin bir fazlasi
             int nextSeq = (int) unitRepository.countByCityId(unitSaveRequest.cityId) + 1;
             unit = new Unit();
             unit.id = unitSaveRequest.cityId + "-B" + nextSeq;
@@ -107,7 +104,6 @@ public class UnitBusiness {
         return response;
     }
 
-    /** Birim silme; bagli personel varsa silinmez */
     @Transactional
     public UnitDeleteResponse UnitDelete(UnitDeleteRequest unitDeleteRequest) {
 

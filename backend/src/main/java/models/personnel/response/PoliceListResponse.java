@@ -7,7 +7,6 @@ public class PoliceListResponse {
 
     public List<PoliceListItem> policeList = new ArrayList<>();
 
-    /** filtreye uyan toplam kayit sayisi (sayfalamadan once) */
     public Integer totalCount = 0;
 
     public Integer pageNumber = 0;

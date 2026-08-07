@@ -58,7 +58,6 @@ export class UnitlistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Sehir listesi:', error));
   }
 
-  /** cityId bos gonderilirse backend Ankara doner */
   getUnitWorkload() {
     this.dashboardService
       .unitWorkload(this.State.Request)

@@ -21,7 +21,6 @@ public class AnalyticsController {
         this.analyticsBusiness = analyticsBusiness;
     }
 
-    /** Gunluk gorev trendi */
     @PostMapping(path = "/tasktrend", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskTrendResponse TaskTrend(@RequestBody TaskTrendRequest taskTrendRequest) {
         return analyticsBusiness.TaskTrend(taskTrendRequest);

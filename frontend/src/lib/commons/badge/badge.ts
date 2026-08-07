@@ -9,7 +9,6 @@ import { InfoVariant } from '../info/info';
   styleUrl: './badge.scss',
 })
 export class Badge extends BaseComponent {
-  /** ornek: 'Sahada', 'Izinde', 'Raporlu' */
   readonly text = input<string>('');
 
   readonly variant = input<InfoVariant>('info');

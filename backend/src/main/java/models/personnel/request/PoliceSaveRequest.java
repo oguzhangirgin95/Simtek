@@ -1,7 +1,6 @@
 package models.personnel.request;
 
 public class PoliceSaveRequest {
-    /** dolu ise guncelleme, bos ise yeni kayit */
     public String id;
 
     public String badgeNumber;

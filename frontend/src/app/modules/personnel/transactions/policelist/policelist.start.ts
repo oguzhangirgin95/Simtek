@@ -79,7 +79,6 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     this.getPoliceList();
   }
 
-  /* ---------------- filtre secenekleri ---------------- */
 
   getCityList() {
     this.regionService
@@ -114,7 +113,6 @@ export class PolicelistStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Durum listesi:', error));
   }
 
-  /* ---------------- liste ---------------- */
 
   getPoliceList() {
     this.policeService
@@ -130,7 +128,6 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   setFilter(key: string, value: string) {
     this.State.Request = { ...this.State.Request, [key]: value };
 
-    // sehir degisince birim listesi yenilenir
     if (key === 'cityId') {
       this.State.Request = { ...this.State.Request, unitId: '' };
       this.getUnitList();
@@ -145,7 +142,6 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     this.getPoliceList();
   }
 
-  /** ayni alana tekrar basilirsa yon degisir */
   sortBy(field: string) {
     const sameField = this.State.Request.sortField === field;
     const direction = sameField && this.State.Request.sortDirection === 'ASC' ? 'DESC' : 'ASC';
@@ -154,7 +150,6 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     this.getPoliceList();
   }
 
-  /* ---------------- detay ---------------- */
 
   selectPolice(row: any) {
     this.State.SelectedPoliceId = row.id;

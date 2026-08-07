@@ -69,14 +69,12 @@ public class TaskBusiness {
         }
     }
 
-    /* ---------------- liste ---------------- */
 
     @Transactional(readOnly = true)
     public TaskListResponse TaskList(TaskListRequest taskListRequest) {
 
         TaskListRequest request = taskListRequest == null ? new TaskListRequest() : taskListRequest;
 
-        // limit asanlar filtresi personel uzerinden geldigi icin once o personeller bulunur
         List<String> overLimitPoliceIds = null;
         if (Boolean.TRUE.equals(request.onlyOverLimit)) {
             overLimitPoliceIds = new ArrayList<>();
@@ -167,7 +165,6 @@ public class TaskBusiness {
         };
     }
 
-    /** Gorev tipi filtresinin secenekleri ve adetleri */
     @Transactional(readOnly = true)
     public TaskTypeListResponse TaskTypeList(TaskTypeListRequest taskTypeListRequest) {
 
@@ -187,7 +184,6 @@ public class TaskBusiness {
         return response;
     }
 
-    /* ---------------- gorev atama ---------------- */
 
     @Transactional(readOnly = true)
     public TaskAssignConfirmResponse TaskAssignConfirm(TaskAssignRequest taskAssignRequest) {
@@ -276,7 +272,6 @@ public class TaskBusiness {
         return response;
     }
 
-    /** Gorev silme; personelin gunluk sayaci guncellenir */
     @Transactional
     public TaskDeleteResponse TaskDelete(TaskDeleteRequest request) {
 
@@ -309,7 +304,6 @@ public class TaskBusiness {
         return response;
     }
 
-    /* ---------------- yardimcilar ---------------- */
 
     private Map<String, Police> GetPoliceMap() {
         Map<String, Police> map = new HashMap<>();

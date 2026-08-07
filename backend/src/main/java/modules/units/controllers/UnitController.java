@@ -25,19 +25,16 @@ public class UnitController {
         this.unitBusiness = unitBusiness;
     }
 
-    /** Birim filtresi icin birim listesi */
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitListResponse UnitList(@RequestBody UnitListRequest unitListRequest) {
         return unitBusiness.UnitList(unitListRequest);
     }
 
-    /** Birim ekleme / guncelleme */
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitSaveResponse UnitSave(@RequestBody UnitSaveRequest unitSaveRequest) {
         return unitBusiness.UnitSave(unitSaveRequest);
     }
 
-    /** Birim silme */
     @PostMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitDeleteResponse UnitDelete(@RequestBody UnitDeleteRequest unitDeleteRequest) {
         return unitBusiness.UnitDelete(unitDeleteRequest);

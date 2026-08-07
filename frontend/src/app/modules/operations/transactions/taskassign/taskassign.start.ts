@@ -36,7 +36,6 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    // config'teki servisler bu nesneyi gonderir
     this.State.Request = {
       policeId: '',
       type: '',
@@ -96,7 +95,6 @@ export class TaskassignStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Personel listesi:', error));
   }
 
-  /** sehir / birim sadece personel listesini daraltir, servise gitmez */
   setFilter(key: string, value: string) {
     this.State.Filter = { ...this.State.Filter, [key]: value };
 

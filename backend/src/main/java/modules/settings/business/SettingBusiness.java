@@ -24,7 +24,6 @@ public class SettingBusiness {
         this.appSettingRepository = appSettingRepository;
     }
 
-    /** Kullanicinin ayarlari; kayit yoksa varsayilanlar doner */
     @Transactional(readOnly = true)
     public SettingResponse SettingGet(SettingGetRequest settingGetRequest) {
 
@@ -54,7 +53,6 @@ public class SettingBusiness {
         return response;
     }
 
-    /** Ayarlari kaydeder */
     @Transactional
     public SettingResponse SettingSave(SettingSaveRequest settingSaveRequest) {
 

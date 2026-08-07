@@ -1,7 +1,6 @@
 package models.regions.request;
 
 public class RegionSaveRequest {
-    /** dolu ise guncelleme, bos ise yeni kayit */
     public String id;
 
     public String name;
