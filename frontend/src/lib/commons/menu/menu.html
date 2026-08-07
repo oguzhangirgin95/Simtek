@@ -1,0 +1,14 @@
+<nav class="app-menu">
+  <span class="app-menu__title">{{ title() }}</span>
+
+  @for (item of items(); track item.path) {
+    <button
+      type="button"
+      class="app-menu__item"
+      [class.app-menu__item--active]="isActive(item.path)"
+      (click)="open(item.path)"
+    >
+      {{ item.text }}
+    </button>
+  }
+</nav>

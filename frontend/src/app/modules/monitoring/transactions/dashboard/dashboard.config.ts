@@ -5,8 +5,6 @@ export const DashboardConfig: FlowConfig = {
     steps: [
       {
         step: 'start',
-        showContinueButton: true,
-        showBackButton: true,
         validation: [],
       }
     ],

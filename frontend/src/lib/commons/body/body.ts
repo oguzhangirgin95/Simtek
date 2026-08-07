@@ -1,9 +1,10 @@
 import { Component, computed } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Menu } from '../menu/menu';
 
 @Component({
   selector: 'app-body',
-  imports: [],
+  imports: [Menu],
   templateUrl: './body.html',
   styleUrl: './body.scss',
 })

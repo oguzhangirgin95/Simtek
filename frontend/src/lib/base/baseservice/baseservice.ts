@@ -1,11 +1,15 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
+import { MenuControllerService } from '../../services/api/menuController.service';
 import { ResourceControllerService } from '../../services/api/resourceController.service';
+import { MenuItemModel } from '../../services/model/menuItemModel';
 
 @Injectable({
   providedIn: 'root',
 })
 export abstract class BaseService {
   private readonly resourceControllerService = inject(ResourceControllerService);
+
+  private readonly menuControllerService = inject(MenuControllerService);
 
   private readonly state = new Map<string, any>();
 
@@ -71,5 +75,24 @@ export abstract class BaseService {
         this.resources.update((current) => ({ ...current, ...loaded }));
       })
       .catch((error) => console.error(`Resource load failed: ${group}`, error));
+  }
+
+  private readonly menuItems = signal<MenuItemModel[]>([]);
+
+  private menuLoaded = false;
+
+  public readonly menu = this.menuItems.asReadonly();
+
+  public loadMenu(): void {
+    if (this.menuLoaded) {
+      return;
+    }
+    this.menuLoaded = true;
+
+    this.menuControllerService
+      .menuList({})
+      .toPromise()
+      .then((response) => this.menuItems.set(response?.items ?? []))
+      .catch((error) => console.error('Menu load failed:', error));
   }
 }

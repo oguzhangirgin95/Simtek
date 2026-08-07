@@ -18,6 +18,7 @@ import { Progress } from './progress/progress';
 import { Barchart } from './barchart/barchart';
 import { Donutchart } from './donutchart/donutchart';
 import { Map } from './map/map';
+import { Menu } from './menu/menu';
 import { Tabs } from './tabs/tabs';
 import { Modal } from './modal/modal';
 import { Spinner } from './spinner/spinner';
@@ -42,6 +43,7 @@ const COMPONENTS = [
   Barchart,
   Donutchart,
   Map,
+  Menu,
   Tabs,
   Modal,
   Spinner,

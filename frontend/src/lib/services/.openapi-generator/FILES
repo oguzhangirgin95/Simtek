@@ -6,6 +6,7 @@ api/analyticsController.service.ts
 api/api.ts
 api/dashboardController.service.ts
 api/loginController.service.ts
+api/menuController.service.ts
 api/policeController.service.ts
 api/regionController.service.ts
 api/reportEntryController.service.ts
@@ -27,6 +28,8 @@ model/loginResponse.ts
 model/logoutRequest.ts
 model/logoutResponse.ts
 model/mapStatisticsResponse.ts
+model/menuItemModel.ts
+model/menuListResponse.ts
 model/models.ts
 model/policeDeleteRequest.ts
 model/policeDeleteResponse.ts

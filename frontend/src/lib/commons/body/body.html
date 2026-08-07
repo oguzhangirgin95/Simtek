@@ -1,27 +1,33 @@
-<main class="app-body">
-  @if (loading()) {
-    <p class="loading">{{ loadingText() }}</p>
-  }
-  @if (serviceError()) {
-    <p class="error">{{ serviceError() }}</p>
+<div class="app-shell">
+  @if (isLoggedIn()) {
+    <app-menu />
   }
 
-  <ng-content />
+  <main class="app-body">
+    @if (loading()) {
+      <p class="loading">{{ loadingText() }}</p>
+    }
+    @if (serviceError()) {
+      <p class="error">{{ serviceError() }}</p>
+    }
 
-  @if (!disableLayout()) {
-    <div class="buttons">
-      @if (showBackButton()) {
-        <button type="button" (click)="back()">{{ backText() }}</button>
-      }
-      @if (showContinueButton()) {
-        <button type="button" (click)="next()">{{ continueText() }}</button>
-      }
+    <ng-content />
 
-      @for (button of buttons(); track $index) {
-        @if (isButtonVisible(button)) {
-          <button type="button" (click)="clickButton(button)">{{ button.label }}</button>
+    @if (!disableLayout()) {
+      <div class="buttons">
+        @if (showBackButton()) {
+          <button type="button" (click)="back()">{{ backText() }}</button>
         }
-      }
-    </div>
-  }
-</main>
+        @if (showContinueButton()) {
+          <button type="button" (click)="next()">{{ continueText() }}</button>
+        }
+
+        @for (button of buttons(); track $index) {
+          @if (isButtonVisible(button)) {
+            <button type="button" (click)="clickButton(button)">{{ button.label }}</button>
+          }
+        }
+      </div>
+    }
+  </main>
+</div>

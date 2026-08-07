@@ -7,6 +7,8 @@ export * from './loginResponse';
 export * from './logoutRequest';
 export * from './logoutResponse';
 export * from './mapStatisticsResponse';
+export * from './menuItemModel';
+export * from './menuListResponse';
 export * from './policeDeleteRequest';
 export * from './policeDeleteResponse';
 export * from './policeDetailRequest';
