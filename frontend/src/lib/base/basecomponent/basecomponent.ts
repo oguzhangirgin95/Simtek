@@ -1,21 +1,15 @@
 import { Directive, inject } from '@angular/core';
 import { FlowButton } from '../baseconfig/config';
+import { CryptologyService } from '../baseservice/cryptologyservice';
 import { FlowService } from '../baseservice/flowservice';
 
 @Directive()
 export abstract class BaseComponent {
   protected readonly flowService = inject(FlowService);
 
-  public State: any = new Proxy(
-    {},
-    {
-      get: (target, prop: string) => this.flowService.get(prop),
-      set: (target, prop: string, value: any) => {
-        this.flowService.set(prop, value);
-        return true;
-      },
-    },
-  );
+  protected readonly cryptologyService = inject(CryptologyService);
+
+  public readonly State = this.flowService.State;
 
   public readonly currentStep = this.flowService.currentStep;
 
@@ -30,8 +24,6 @@ export abstract class BaseComponent {
   
   public readonly showFooter = this.flowService.showFooter;
 
-  public readonly errors = this.flowService.errors;
-
   public readonly loading = this.flowService.loading;
 
   public readonly serviceError = this.flowService.serviceError;
@@ -40,6 +32,26 @@ export abstract class BaseComponent {
 
   public getResource(key: string, value: string): string {
     return this.flowService.getResource(key, value);
+  }
+
+  /** Hassas veriyi servise gondermeden once sifreler */
+  public encryption(value: string): string {
+    return this.cryptologyService.encryption(value);
+  }
+
+  /** Servisten gelen sifreli veriyi cozer */
+  public decryption(value: string): string {
+    return this.cryptologyService.decryption(value);
+  }
+
+  /** Verilen alanin validasyon mesaji; hata yoksa bos string */
+  public getError(id: string): string {
+    return this.flowService.getError(id);
+  }
+
+  /** Adimin validasyonlarini calistirir; servis cagirmadan once kullanilir */
+  public validateCurrentStep(): Promise<boolean> {
+    return this.flowService.validateCurrentStep();
   }
 
   public next(): Promise<void> {

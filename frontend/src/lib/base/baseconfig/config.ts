@@ -27,6 +27,7 @@ export enum ValidatorEnum {
 
 export interface ValidationRuleConfig {
   id: string;
+  value: any;
   validatorType?: ValidatorEnum;
   customValidation?: (value: unknown, element?: HTMLInputElement) => boolean;
   validationMessage: string;

@@ -1,27 +1,26 @@
-<h2>{{ title() }}</h2>
+<div class="login-form">
+  <h2>{{ title() }}</h2>
 
-<div class="field">
-  <label for="username">{{ usernameLabel() }}</label>
-  <input id="username" type="text" [value]="State.Request?.username ?? ''" (input)="setField('username', $event)" />
-</div>
+  <app-input
+    id="username"
+    [label]="usernameLabel()"
+    [value]="State.Request?.username ?? ''"
+    (valueChange)="setField('username', $event)"
+  />
 
-<div class="field">
-  <label for="password">{{ passwordLabel() }}</label>
-  <input id="password" type="password" [value]="State.Request?.password ?? ''" (input)="setField('password', $event)" />
-</div>
+  <app-input
+    id="password"
+    type="password"
+    [label]="passwordLabel()"
+    [value]="State.Request?.password ?? ''"
+    (valueChange)="setField('password', $event)"
+  />
 
-@if (errors()?.length) {
-  <ul class="errors">
-    @for (error of errors(); track $index) {
-      <li>{{ error.message }}</li>
-    }
-  </ul>
-}
+  @if (State.loginError) {
+    <p class="error">{{ State.loginError }}</p>
+  }
 
-@if (State.loginError) {
-  <p class="error">{{ State.loginError }}</p>
-}
-
-<div class="buttons">
-  <button type="button" (click)="login()">{{ loginButton() }}</button>
+  <div class="buttons">
+    <button type="button" (click)="login()">{{ loginButton() }}</button>
+  </div>
 </div>

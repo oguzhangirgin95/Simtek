@@ -10,6 +10,6 @@ export const routes: Routes = [
     {
         path: 'start',
         loadComponent: () => import('./login.start').then((m) => m.LoginStart),
-        data: { config: LoginConfig, step: 'start' },
+        data: { config: LoginConfig },
     },
 ];

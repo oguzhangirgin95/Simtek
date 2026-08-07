@@ -12,25 +12,29 @@ export const LoginConfig: FlowConfig = {
          validation: [
           {
             id: 'username',
+            value: 'State.Request.username',
             validatorType: ValidatorEnum.Required,
-            validationMessage: 'VALIDATION_REQUIRED | Username is required'
+            validationMessage: 'VALIDATION_REQUIRED | Kullanıc adını giriniz.'
           },
           {
             id: 'username',
+            value: 'State.Request.username',
             validatorType: ValidatorEnum.Custom,
             customValidation: Validation,
-            validationMessage: 'VALIDATION_CUSTOM | Username cannot be "admin"'
+            validationMessage: 'VALIDATION_CUSTOM | Kullanıcı adı "admin" olamaz'
           },
           {
             id: 'username',
+            value: 'State.Request.username',
             validatorType: ValidatorEnum.Custom,
             customValidation: ValidationLength,
-            validationMessage: 'VALIDATION_LENGTH_CUSTOM | Username cannot be higher than 6 characters'
+            validationMessage: 'VALIDATION_LENGTH_CUSTOM | Kullanıcı adı 6 karakterden fazla olamaz'
           },
           {
             id: 'password',
+            value: 'State.Request.password',
             validatorType: ValidatorEnum.Required,
-            validationMessage: 'VALIDATION_REQUIRED | Password is required'
+            validationMessage: 'VALIDATION_REQUIRED | Parolayı giriniz.'
           }
         ],
       }

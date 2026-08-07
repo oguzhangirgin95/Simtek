@@ -1,12 +1,13 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
+import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { LoginControllerService } from '../../../../../lib/services/api/loginController.service';
 import { LoginResponse } from '../../../../../lib/services/model/loginResponse';
 
 @Component({
   selector: 'app-login-start',
-  imports: [],
+  imports: [CommonsModule],
   templateUrl: './login.start.html',
   styleUrl: './login.scss',
 })
@@ -33,22 +34,34 @@ export class LoginStart extends BaseComponent implements OnInit {
     };
   }
 
-  setField(key: string, event: Event) {
-    const value = (event.target as HTMLInputElement).value;
+  setField(key: string, value: string) {
     this.State.Request = { ...this.State.Request, [key]: value };
   }
 
   login() {
-    this.loginService.login(this.State.Request).toPromise().then((response: LoginResponse | undefined) => {
-        if (response?.token) {
-          this.flowService.token.set(response.token);
-          this.router.navigateByUrl('/monitoring/dashboard');
-        } else {
-          this.State.loginError = 'Kullanıcı adı veya şifre hatalı.';
-        }
-    }).catch(error => {
-      console.error('Login error:', error);
+    this.flowService.validateCurrentStep().then((isValid) => {
+      if (!isValid) {
+        return;
+      }
+      else
+      {
+        const request = {
+          username: this.State.Request.username,
+          password: this.encryption(this.State.Request.password),
+        };
+
+        this.loginService.login(request).toPromise().then((response: LoginResponse | undefined) => {
+            if (response?.token) {
+              this.flowService.token.set(response.token);
+              this.router.navigateByUrl('/monitoring/dashboard/start');
+            } else {
+              this.State.loginError = 'Kullanıcı adı veya şifre hatalı.';
+            }
+        }).catch(error => {
+          console.error('Login error:', error);
+        });
+      }
+      
     });
   }
-
 }

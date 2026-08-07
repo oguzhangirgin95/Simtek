@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.backend.CryptologyService;
+
 import models.firstlevel.entity.AppUser;
 import models.firstlevel.request.CurrentUserRequest;
 import models.firstlevel.request.LoginRequest;
@@ -24,8 +26,11 @@ public class LoginBusiness {
 
     private final AppUserRepository appUserRepository;
 
-    public LoginBusiness(AppUserRepository appUserRepository) {
+    private final CryptologyService cryptologyService;
+
+    public LoginBusiness(AppUserRepository appUserRepository, CryptologyService cryptologyService) {
         this.appUserRepository = appUserRepository;
+        this.cryptologyService = cryptologyService;
     }
 
     /** Kullanici adi ve sifre veritabanindan dogrulanir */
@@ -38,8 +43,10 @@ public class LoginBusiness {
             return loginResponse;
         }
 
-        Optional<AppUser> user = appUserRepository.findByUsernameAndPassword(loginRequest.username,
-                loginRequest.password);
+        // sifre frontend'de sifrelenerek gonderilir
+        String password = cryptologyService.decryption(loginRequest.password);
+
+        Optional<AppUser> user = appUserRepository.findByUsernameAndPassword(loginRequest.username, password);
 
         if (user.isEmpty()) {
             return loginResponse;

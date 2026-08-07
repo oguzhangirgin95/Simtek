@@ -74,6 +74,8 @@ class DatabaseIntegrationTests {
     private LoginBusiness loginBusiness;
     @Autowired
     private ResourceBusiness resourceBusiness;
+    @Autowired
+    private CryptologyService cryptologyService;
 
     /* ---------------- migration / seed ---------------- */
 
@@ -96,12 +98,28 @@ class DatabaseIntegrationTests {
     @Test
     @Order(3)
     void kullanici_veritabanindan_dogrulaniyor() {
-        LoginRequest ok = new LoginRequest("oguz", "1234");
+        // sifre frontend'de sifrelenerek gonderilir
+        LoginRequest ok = new LoginRequest("oguz", cryptologyService.encryption("1234"));
         assertThat(loginBusiness.Login(ok).success).isTrue();
         assertThat(loginBusiness.Login(ok).token).isEqualTo("TOKEN-OGUZ");
 
-        assertThat(loginBusiness.Login(new LoginRequest("oguz", "yanlis")).success).isFalse();
-        assertThat(loginBusiness.Login(new LoginRequest("yok", "1234")).success).isFalse();
+        assertThat(loginBusiness.Login(new LoginRequest("oguz", cryptologyService.encryption("yanlis"))).success)
+                .isFalse();
+        assertThat(loginBusiness.Login(new LoginRequest("yok", cryptologyService.encryption("1234"))).success)
+                .isFalse();
+
+        // acik metin parola kabul edilmez
+        assertThat(loginBusiness.Login(new LoginRequest("oguz", "1234")).success).isFalse();
+    }
+
+    @Test
+    @Order(3)
+    void sifreleme_cozme_calisiyor() {
+        assertThat(cryptologyService.decryption(cryptologyService.encryption("1234"))).isEqualTo("1234");
+        assertThat(cryptologyService.decryption(cryptologyService.encryption("çğıöşü ÇĞİÖŞÜ"))).isEqualTo("çğıöşü ÇĞİÖŞÜ");
+        assertThat(cryptologyService.encryption("1234")).isNotEqualTo("1234");
+        assertThat(cryptologyService.decryption("bozuk-veri")).isEmpty();
+        assertThat(cryptologyService.encryption("")).isEmpty();
     }
 
     /* ---------------- pano sorgulari ---------------- */

@@ -3,13 +3,8 @@ import { PreferencesConfig } from './preferences.config';
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'start',
-    },
-    {
         path: 'start',
         loadComponent: () => import('./preferences.start').then((m) => m.PreferencesStart),
-        data: { config: PreferencesConfig, step: 'start' },
+        data: { config: PreferencesConfig },
     },
 ];

@@ -3,13 +3,8 @@ import { UnitlistConfig } from './unitlist.config';
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'start',
-    },
-    {
         path: 'start',
         loadComponent: () => import('./unitlist.start').then((m) => m.UnitlistStart),
-        data: { config: UnitlistConfig, step: 'start' },
+        data: { config: UnitlistConfig },
     },
 ];

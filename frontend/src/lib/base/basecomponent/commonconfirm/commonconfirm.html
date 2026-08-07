@@ -3,11 +3,3 @@
 @for (item of items(); track item.key) {
   <p><b>{{ item.key }}:</b> {{ item.value }}</p>
 }
-
-@if (errors()?.length) {
-  <ul class="errors">
-    @for (error of errors(); track $index) {
-      <li>{{ error.message }}</li>
-    }
-  </ul>
-}

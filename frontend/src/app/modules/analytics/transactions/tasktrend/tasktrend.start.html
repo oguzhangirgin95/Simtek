@@ -2,7 +2,7 @@
 
 <div class="filters">
   <app-select
-    name="cityId"
+    id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
     [value]="State.Request?.cityId"
@@ -10,7 +10,7 @@
     (valueChange)="setFilter('cityId', $event)"
   />
   <app-select
-    name="unitId"
+    id="unitId"
     [label]="labels().unit"
     [placeholder]="labels().all"
     [value]="State.Request?.unitId"

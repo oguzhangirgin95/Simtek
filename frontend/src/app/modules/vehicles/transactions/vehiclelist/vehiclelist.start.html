@@ -2,7 +2,7 @@
 
 <div class="filters">
   <app-select
-    name="cityId"
+    id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
     [value]="State.Request?.cityId"
@@ -10,7 +10,7 @@
     (valueChange)="setFilter('cityId', $event)"
   />
   <app-select
-    name="unitId"
+    id="unitId"
     [label]="labels().unit"
     [placeholder]="labels().all"
     [value]="State.Request?.unitId"
@@ -18,7 +18,7 @@
     (valueChange)="setFilter('unitId', $event)"
   />
   <app-select
-    name="type"
+    id="type"
     [label]="labels().type"
     [placeholder]="labels().all"
     [value]="State.Request?.type"
@@ -26,7 +26,7 @@
     (valueChange)="setFilter('type', $event)"
   />
   <app-input
-    name="searchText"
+    id="searchText"
     [label]="labels().search"
     [value]="State.Request?.searchText"
     (valueChange)="setFilter('searchText', $event)"

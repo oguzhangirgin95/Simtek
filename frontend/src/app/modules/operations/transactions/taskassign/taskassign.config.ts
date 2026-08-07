@@ -11,16 +11,19 @@ export const TaskassignConfig: FlowConfig = {
         validation: [
           {
             id: 'policeId',
+            value: 'State.Request.policeId',
             validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Personel seçilmeli'
           },
           {
             id: 'type',
+            value: 'State.Request.type',
             validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Görev tipi seçilmeli'
           },
           {
             id: 'location',
+            value: 'State.Request.location',
             validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Görev yeri girilmeli'
           }

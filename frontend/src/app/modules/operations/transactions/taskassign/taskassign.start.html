@@ -3,7 +3,7 @@
 <app-card [title]="labels().formTitle" [subtitle]="labels().hint">
   <div class="filters">
     <app-select
-      name="cityId"
+      id="cityId"
       [label]="labels().city"
       [placeholder]="labels().all"
       [value]="State.Filter?.cityId"
@@ -11,7 +11,7 @@
       (valueChange)="setFilter('cityId', $event)"
     />
     <app-select
-      name="unitId"
+      id="unitId"
       [label]="labels().unit"
       [placeholder]="labels().all"
       [value]="State.Filter?.unitId"
@@ -22,7 +22,7 @@
 
   <div class="filters">
     <app-select
-      name="policeId"
+      id="policeId"
       [label]="labels().police"
       [placeholder]="labels().all"
       [value]="State.Request?.policeId"
@@ -30,7 +30,7 @@
       (valueChange)="setField('policeId', $event)"
     />
     <app-select
-      name="type"
+      id="type"
       [label]="labels().type"
       [placeholder]="labels().all"
       [value]="State.Request?.type"
@@ -38,30 +38,22 @@
       (valueChange)="setField('type', $event)"
     />
     <app-input
-      name="location"
+      id="location"
       [label]="labels().location"
       [value]="State.Request?.location"
       (valueChange)="setField('location', $event)"
     />
     <app-input
-      name="startTime"
+      id="startTime"
       [label]="labels().startTime"
       [value]="State.Request?.startTime"
       (valueChange)="setField('startTime', $event)"
     />
     <app-input
-      name="endTime"
+      id="endTime"
       [label]="labels().endTime"
       [value]="State.Request?.endTime"
       (valueChange)="setField('endTime', $event)"
     />
   </div>
-
-  @if (errors()?.length) {
-    <ul class="errors">
-      @for (error of errors(); track $index) {
-        <li>{{ error.message }}</li>
-      }
-    </ul>
-  }
 </app-card>

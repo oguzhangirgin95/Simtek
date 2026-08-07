@@ -6,15 +6,11 @@ import { BaseService } from './baseservice';
   providedIn: 'root',
 })
 export class Validationservice extends BaseService {
-  /**
-   * Step'in validation kurallarini calistirir, hatalari dondurur.
-   * Deger state'ten okundugu icin okuma islemi getValue ile disaridan verilir.
-   */
-  public validate(rules: ValidationRuleConfig[] = [], getValue: (path: string) => any): ValidationError[] {
+  public validate(rules: ValidationRuleConfig[] = [], getValue: (rule: ValidationRuleConfig) => any): ValidationError[] {
     const errors: ValidationError[] = [];
 
     for (const rule of rules) {
-      const value = getValue(rule.id);
+      const value = getValue(rule);
       if (!this.isValid(rule, value)) {
         errors.push({ id: rule.id, message: rule.validationMessage });
       }
@@ -23,9 +19,7 @@ export class Validationservice extends BaseService {
     return errors;
   }
 
-  /** tek bir kurali kontrol eder */
   public isValid(rule: ValidationRuleConfig, value: any): boolean {
-    // customValidation verildiyse kural odur
     if (rule.customValidation) {
       return rule.customValidation(value);
     }

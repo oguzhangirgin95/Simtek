@@ -30,11 +30,16 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss"
+            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1"
+              ]
             },
             "ssr": {
               "entry": "src/server.ts"
@@ -66,6 +71,68 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "test": {
+              "optimization": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
+            },
+            "uat": {
+              "optimization": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.uat.ts"
+                }
+              ]
+            },
+            "preprod": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.preprod.ts"
+                }
+              ]
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -78,12 +145,29 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "test": {
+              "buildTarget": "frontend:build:test"
+            },
+            "uat": {
+              "buildTarget": "frontend:build:uat"
+            },
+            "preprod": {
+              "buildTarget": "frontend:build:preprod"
+            },
+            "prod": {
+              "buildTarget": "frontend:build:prod"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "include": [
+              "src/**/*.spec.ts"
+            ]
+          }
         }
       }
     }

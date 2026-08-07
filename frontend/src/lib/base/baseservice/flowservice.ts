@@ -1,8 +1,14 @@
-import { Injectable, Injector, Signal, computed, inject, signal } from '@angular/core';
+import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationStart, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
-import { ResourceControllerService } from '../../services/api/resourceController.service';
-import { FlowButton, FlowConfig, FlowStep, ServiceConfig, ValidationError } from '../baseconfig/config';
+import {
+  FlowButton,
+  FlowConfig,
+  FlowStep,
+  ServiceConfig,
+  ValidationError,
+  ValidationRuleConfig,
+} from '../baseconfig/config';
 import { BaseService } from './baseservice';
 import { Validationservice } from './validationservice';
 
@@ -11,9 +17,8 @@ import { Validationservice } from './validationservice';
 })
 export class FlowService extends BaseService {
   private readonly router = inject(Router);
-  private readonly validationService = inject(Validationservice);
   private readonly injector = inject(Injector);
-  private readonly resourceControllerService = inject(ResourceControllerService);
+  private readonly validationService = inject(Validationservice);
 
   constructor() {
     super();
@@ -24,34 +29,16 @@ export class FlowService extends BaseService {
     });
   }
 
-  private readonly state = new Map<string, any>();
 
-  private readonly stateVersion = signal(0);
+  public readonly token = signal<string | undefined>(undefined);
 
-  public set(key: string, value: any): void {
-    this.state.set(key, value);
-    this.stateVersion.update((v) => v + 1);
-  }
+  public readonly isLoggedIn = computed<boolean>(() => !!this.token());
 
-  public get<T>(key: string): T | undefined {
-    this.stateVersion();
-    return this.state.get(key) as T;
-  }
+  public readonly pendingRequests = signal(0);
 
-  public select<T>(key: string): Signal<T | undefined> {
-    return computed(() => this.get<T>(key));
-  }
+  public readonly loading = computed<boolean>(() => this.pendingRequests() > 0);
 
-  public clear(): void {
-    this.state.clear();
-    this.stateVersion.update((v) => v + 1);
-  }
-
-  public getPath<T>(path: string): T | undefined {
-    const parts = path.split('.');
-    const first = this.get<any>(parts[0]);
-    return parts.slice(1).reduce((value, key) => (value == null ? undefined : value[key]), first) as T | undefined;
-  }
+  public readonly serviceError = this.select<string>('serviceError');
 
   public readonly transaction = signal<string>('');
 
@@ -68,78 +55,63 @@ export class FlowService extends BaseService {
   public readonly stepIndex = computed<number>(() => this.steps().findIndex((step) => step.step === this.currentStep()));
 
   public readonly showContinueButton = computed<boolean>(() => this.currentStepConfig()?.showContinueButton === true);
-  
+
   public readonly showBackButton = computed<boolean>(() => this.currentStepConfig()?.showBackButton === true);
-  
+
   public readonly buttons = computed<FlowButton[]>(() => this.currentStepConfig()?.buttons ?? []);
 
   public readonly disableLayout = computed<boolean>(() => this.currentStepConfig()?.disableLayout === true);
 
   public readonly showHeader = computed<boolean>(() => this.currentStepConfig()?.showHeader !== false);
-  
+
   public readonly showFooter = computed<boolean>(() => this.currentStepConfig()?.showFooter !== false);
 
-  public readonly errors = this.select<ValidationError[]>('validationErrors');
+  private readonly validated = signal(false);
 
-  /** devam eden http istek sayisi, interceptor gunceller */
-  public readonly pendingRequests = signal(0);
+  public readonly errors = computed<ValidationError[]>(() => {
+    const step = this.currentStepConfig();
+    if (!this.validated() || !step) {
+      return [];
+    }
 
-  /** herhangi bir http istegi devam ediyor mu */
-  public readonly loading = computed<boolean>(() => this.pendingRequests() > 0);
+    const errors = this.validationService.validate(step.validation, (rule) => this.ruleValue(rule));
 
-  /** son servis hatasi */
-  public readonly serviceError = this.select<string>('serviceError');
+    return errors.map((error) => ({ id: error.id, message: this.ruleMessage(error.message) }));
+  });
 
-  /** oturum bilgisi; transaction state'inden bagimsizdir, clear() silmez */
-  public readonly token = signal<string | undefined>(undefined);
+  public validateCurrentStep(): Promise<boolean> {
+    this.validated.set(true);
 
-  public readonly isLoggedIn = computed<boolean>(() => !!this.token());
-
-  private readonly resources = signal<Record<string, string>>({});
-
-  private readonly loadedResources = new Set<string>();
-
-  public getResource(key: string, value: string): string {
-    return this.resources()[key] ?? value;
+    return Promise.resolve(this.errors().length === 0);
   }
 
-  public loadResources(group: string): void {
-    if (!group || this.loadedResources.has(group)) {
-      return;
-    }
-    this.loadedResources.add(group);
+  public getError(id: string): string {
+    return this.errors().find((error) => error.id === id)?.message ?? '';
+  }
 
-    this.resourceControllerService
-      .get({ transactionName: group })
-      .toPromise()
-      .then((response) => {
-        const resource: Record<string, string> = {};
-        response?.resources?.forEach((item) => (resource[item.key ?? ''] = item.value ?? ''));
-        this.resources.update((current) => ({ ...current, ...resource }));
-      })
-      .catch((error) => {
-        console.error(`Resource yuklenemedi: ${group}`, error);
-      });
+  private ruleValue(rule: ValidationRuleConfig): any {
+    const path = typeof rule.value === 'string' && rule.value.trim() !== '' ? rule.value.trim() : rule.id;
+    return this.getStateValue(path);
+  }
+
+  private ruleMessage(message: string): string {
+    const index = message.indexOf('|');
+    if (index < 0) {
+      return message;
+    }
+
+    return this.getResource(message.slice(0, index).trim(), message.slice(index + 1).trim());
   }
 
   public async next(): Promise<void> {
-    const step = this.currentStepConfig();
-    if (!step) {
-      return;
-    }
-
-    const errors = this.validationService.validate(step.validation, (path) => this.validationValue(path));
-    this.set('validationErrors', errors);
-    if (errors.length > 0) {
+    const isValid = await this.validateCurrentStep();
+    if (!isValid) {
       return;
     }
 
     const nextStep = this.steps()[this.stepIndex() + 1];
     if (nextStep) {
-      const opened = await this.goTo(nextStep.step);
-      if (!opened) {
-        console.warn(`FlowService: '${nextStep.step}' stepi icin route bulunamadi.`);
-      }
+      await this.goTo(nextStep.step);
     }
   }
 
@@ -153,22 +125,22 @@ export class FlowService extends BaseService {
   public goTo(step: string): Promise<boolean> {
     const segments = this.router.url.split('?')[0].split('/');
     segments[segments.length - 1] = step;
+
     return this.router.navigateByUrl(segments.join('/'));
   }
+
 
   public isButtonVisible(button: FlowButton): boolean {
     const isVisible = button.isVisible;
 
-    if (isVisible === undefined) {
-      return true;
-    }
-    if (typeof isVisible === 'boolean') {
-      return isVisible;
+    if (isVisible === undefined || typeof isVisible === 'boolean') {
+      return isVisible !== false;
     }
     if (typeof isVisible === 'function') {
-      return isVisible({ get: <T>(key: string) => this.getPath<T>(key) });
+      return isVisible({ get: <T>(key: string) => this.getStateValue<T>(key) });
     }
-    return this.getPath<boolean>(isVisible.replace(/^state\./, '')) === true;
+
+    return this.getStateValue<boolean>(isVisible) === true;
   }
 
   public clickButton(button: FlowButton): void {
@@ -179,20 +151,15 @@ export class FlowService extends BaseService {
 
   private async callService(step: string, config: ServiceConfig): Promise<void> {
     const service = this.injector.get<any>(config.serviceName);
-    const params = config.params.map((param) => (typeof param === 'string' ? this.getPath(param) : param));
+    const params = config.params.map((param) => (typeof param === 'string' ? this.getStateValue(param) : param));
     const result = service[config.methodName](...params);
 
     this.set(`${step}Response`, isObservable(result) ? await firstValueFrom(result) : await result);
   }
 
-  private validationValue(id: string): any {
-    const value = this.getPath(id);
-    return value === undefined ? this.getPath(`Request.${id}`) : value;
-  }
-
   private readRoute(snapshot: ActivatedRouteSnapshot): void {
     const config = snapshot.data['config'] as FlowConfig | undefined;
-    const step = snapshot.data['step'] as string | undefined;
+    const step = snapshot.routeConfig?.path ?? '';
 
     if (!config || !step) {
       return;
@@ -208,8 +175,9 @@ export class FlowService extends BaseService {
     this.transaction.set(snapshot.parent?.url.map((segment) => segment.path).join('/') ?? '');
     this.currentStep.set(step);
 
-    this.loadResources('general');
+    this.validated.set(false);
 
+    this.loadResources('general');
     this.loadResources(this.transaction());
 
     if (stepConfig?.service) {

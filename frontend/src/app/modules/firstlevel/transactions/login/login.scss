@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-form {
+  width: fit-content;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid var(--renk-cizgi);
+  border-radius: var(--kose);
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.08);
+
+  h2 {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .buttons {
+    margin-top: 20px;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .errors,
+  .error {
+    text-align: center;
+  }
+}

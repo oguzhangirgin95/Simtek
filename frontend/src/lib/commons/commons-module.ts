@@ -21,6 +21,7 @@ import { Map } from './map/map';
 import { Tabs } from './tabs/tabs';
 import { Modal } from './modal/modal';
 import { Spinner } from './spinner/spinner';
+import { Validation } from './validation/validation';
 
 const COMPONENTS = [
   Header,
@@ -44,6 +45,7 @@ const COMPONENTS = [
   Tabs,
   Modal,
   Spinner,
+  Validation,
 ];
 
 @NgModule({

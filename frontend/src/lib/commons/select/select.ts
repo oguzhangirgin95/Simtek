@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Validation } from '../validation/validation';
 
 export interface SelectOption {
   value: string;
@@ -8,21 +9,21 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-select',
-  imports: [],
+  host: { '[attr.id]': 'null' },
+  imports: [Validation],
   templateUrl: './select.html',
   styleUrl: './select.scss',
 })
 export class Select extends BaseComponent {
+  readonly id = input<string>('');
+
   readonly label = input<string>('');
 
   readonly value = input<string>('');
 
   readonly options = input<SelectOption[]>([]);
 
-  /** bos secenek yazisi, ornek: 'Tumu' */
   readonly placeholder = input<string>('');
-
-  readonly name = input<string>('');
 
   readonly disabled = input<boolean>(false);
 

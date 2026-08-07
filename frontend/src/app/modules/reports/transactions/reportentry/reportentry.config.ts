@@ -11,11 +11,13 @@ export const ReportEntryConfig: FlowConfig = {
         validation: [
           {
             id: 'reportName',
+            value: 'State.Request.reportName',
             validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Rapor adı girilmeli'
           },
           {
             id: 'reportType',
+            value: 'State.Request.reportType',
             validatorType: ValidatorEnum.Required,
             validationMessage: 'VALIDATION_REQUIRED | Rapor tipi seçilmeli'
           },

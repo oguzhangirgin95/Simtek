@@ -1,18 +1,16 @@
 <div class="field">
   @if (label()) {
-    <label [attr.for]="name()">{{ label() }}</label>
+    <label [attr.for]="id()">{{ label() }}</label>
   }
 
   <input
-    [id]="name()"
+    [attr.id]="id()"
     [type]="type()"
     [value]="value()"
     [disabled]="disabled()"
-    [class.app-input--error]="!!error()"
+    [class.field-error]="!!getError(id())"
     (input)="onInput($event)"
   />
 
-  @if (error()) {
-    <span class="error">{{ error() }}</span>
-  }
+  <app-validation [id]="id()" />
 </div>
