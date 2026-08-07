@@ -24,6 +24,7 @@ import { Tooltip } from './tooltip/tooltip';
 import { Theme } from './theme/theme';
 import { Modal } from './modal/modal';
 import { Pagination } from './pagination/pagination';
+import { Skeleton } from './skeleton/skeleton';
 import { Spinner } from './spinner/spinner';
 import { Validation } from './validation/validation';
 
@@ -52,6 +53,7 @@ const COMPONENTS = [
   Tooltip,
   Modal,
   Pagination,
+  Skeleton,
   Spinner,
   Validation,
 ];

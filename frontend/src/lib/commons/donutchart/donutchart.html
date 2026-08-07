@@ -34,6 +34,8 @@
         }
       </ul>
     </div>
+  } @else if (loading()) {
+    <app-skeleton [lines]="4" [height]="24" />
   } @else {
     <p class="app-donutchart__empty">{{ emptyText() }}</p>
   }

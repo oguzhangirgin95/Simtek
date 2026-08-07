@@ -1,5 +1,6 @@
 import { Component, booleanAttribute, input, output } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Skeleton } from '../skeleton/skeleton';
 
 export interface GridColumn {
   field: string;
@@ -8,7 +9,7 @@ export interface GridColumn {
 
 @Component({
   selector: 'app-grid',
-  imports: [],
+  imports: [Skeleton],
   templateUrl: './grid.html',
   styleUrl: './grid.scss',
 })

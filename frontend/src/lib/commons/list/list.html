@@ -9,6 +9,10 @@
       <span class="app-list__value">{{ item.value }}</span>
     </div>
   } @empty {
-    <p class="app-list__empty">{{ emptyText() }}</p>
+    @if (loading()) {
+      <app-skeleton [lines]="5" [height]="20" />
+    } @else {
+      <p class="app-list__empty">{{ emptyText() }}</p>
+    }
   }
 </div>

@@ -20,9 +20,19 @@
           }
         </tr>
       } @empty {
-        <tr>
-          <td [attr.colspan]="columns().length">{{ emptyText() }}</td>
-        </tr>
+        @if (loading()) {
+          @for (row of [1, 2, 3, 4, 5]; track row) {
+            <tr>
+              @for (column of columns(); track column.field) {
+                <td [attr.data-label]="column.title"><app-skeleton /></td>
+              }
+            </tr>
+          }
+        } @else {
+          <tr>
+            <td [attr.colspan]="columns().length">{{ emptyText() }}</td>
+          </tr>
+        }
       }
     </tbody>
   </table>

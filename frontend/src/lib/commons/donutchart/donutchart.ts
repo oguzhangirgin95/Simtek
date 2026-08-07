@@ -1,13 +1,14 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 import { ChartItem } from '../barchart/barchart';
+import { Skeleton } from '../skeleton/skeleton';
 import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 
 const COLORS = ['#4da3ff', '#2fbf5f', '#f5b301', '#e30a17', '#a78bfa', '#00c7be'];
 
 @Component({
   selector: 'app-donutchart',
-  imports: [Tooltip],
+  imports: [Skeleton, Tooltip],
   templateUrl: './donutchart.html',
   styleUrl: './donutchart.scss',
 })

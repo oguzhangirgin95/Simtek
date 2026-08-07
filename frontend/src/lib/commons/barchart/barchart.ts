@@ -1,5 +1,6 @@
 import { Component, booleanAttribute, computed, input, output, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Skeleton } from '../skeleton/skeleton';
 import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 
 export interface ChartItem {
@@ -9,7 +10,7 @@ export interface ChartItem {
 
 @Component({
   selector: 'app-barchart',
-  imports: [Tooltip],
+  imports: [Skeleton, Tooltip],
   templateUrl: './barchart.html',
   styleUrl: './barchart.scss',
 })

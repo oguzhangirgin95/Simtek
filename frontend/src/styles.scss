@@ -246,11 +246,6 @@ app-card {
   font-weight: 600;
 }
 
-.loading {
-  margin: var(--space) 0;
-  color: var(--color-muted);
-}
-
 router-outlet ~ * {
   animation: app-fade-in 260ms ease backwards;
 }

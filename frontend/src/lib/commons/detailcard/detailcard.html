@@ -19,6 +19,8 @@
         <span>{{ item.value }}</span>
       </div>
     }
+  } @else if (loading()) {
+    <app-skeleton [lines]="6" [height]="20" />
   } @else {
     <p class="app-detailcard__empty">{{ emptyText() }}</p>
   }

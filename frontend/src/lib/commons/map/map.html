@@ -35,6 +35,8 @@
         </span>
       }
     </div>
+  } @else if (loading()) {
+    <app-skeleton [lines]="1" [height]="300" />
   } @else {
     <p class="app-map__empty">{{ emptyText() }}</p>
   }

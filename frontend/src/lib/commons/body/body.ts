@@ -8,8 +8,6 @@ import { BaseComponent } from '../../base/basecomponent/basecomponent';
   styleUrl: './body.scss',
 })
 export class Body extends BaseComponent {
-  readonly loadingText = computed(() => this.getResource('LOADING', 'Yükleniyor...'));
-
   readonly backText = computed(() => this.getResource('BUTTON_BACK', 'Geri'));
 
   readonly continueText = computed(() => this.getResource('BUTTON_CONTINUE', 'Devam'));

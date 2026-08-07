@@ -1,5 +1,6 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Skeleton } from '../skeleton/skeleton';
 import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 import { TURKEY_PROVINCES, TURKEY_VIEWBOX } from './turkey-map';
 
@@ -39,7 +40,7 @@ function plain(text: string): string {
 
 @Component({
   selector: 'app-map',
-  imports: [Tooltip],
+  imports: [Skeleton, Tooltip],
   templateUrl: './map.html',
   styleUrl: './map.scss',
 })

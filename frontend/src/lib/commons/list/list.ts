@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Skeleton } from '../skeleton/skeleton';
 
 export interface ListItem {
   key: string;
@@ -8,7 +9,7 @@ export interface ListItem {
 
 @Component({
   selector: 'app-list',
-  imports: [],
+  imports: [Skeleton],
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })

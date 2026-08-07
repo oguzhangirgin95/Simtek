@@ -1,7 +1,4 @@
 <main class="app-body">
-  @if (loading()) {
-    <p class="loading">{{ loadingText() }}</p>
-  }
   @if (serviceError()) {
     <p class="error">{{ serviceError() }}</p>
   }

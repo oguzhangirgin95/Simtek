@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { Skeleton } from '../skeleton/skeleton';
 import { ListItem } from '../list/list';
 
 @Component({
   selector: 'app-detailcard',
-  imports: [],
+  imports: [Skeleton],
   templateUrl: './detailcard.html',
   styleUrl: './detailcard.scss',
 })
