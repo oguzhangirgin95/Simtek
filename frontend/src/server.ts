@@ -9,9 +9,49 @@ import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
+const apiAdresi = process.env['API_URL'] ?? 'http://localhost:8080';
+
+/** Adres sema olmadan verilirse (ornegin sunucu adi) https kabul edilir */
+const apiUrl = apiAdresi.startsWith('http') ? apiAdresi : `https://${apiAdresi}`;
+
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+/**
+ * Tarayici backend'i dogrudan cagirmaz, '/api/...' adresine ister.
+ * Burasi istegi backend'e iletir: tek alan adi, CORS gerekmez.
+ */
+app.use('/api', express.raw({ type: () => true, limit: '10mb' }), (req, res) => {
+  const headers: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (typeof value === 'string' && key !== 'host' && key !== 'connection' && key !== 'content-length') {
+      headers[key] = value;
+    }
+  }
+
+  const gonderilecek = req.body as Buffer | undefined;
+  const body = req.method === 'GET' || req.method === 'HEAD' || !gonderilecek?.length
+    ? undefined
+    : new Uint8Array(gonderilecek);
+
+  fetch(apiUrl + req.url, { method: req.method, headers, body })
+    .then(async (response) => {
+      res.status(response.status);
+
+      response.headers.forEach((value, key) => {
+        if (key !== 'content-encoding' && key !== 'transfer-encoding' && key !== 'content-length') {
+          res.setHeader(key, value);
+        }
+      });
+
+      res.send(Buffer.from(await response.arrayBuffer()));
+    })
+    .catch((error) => {
+      console.error('API proxy:', error);
+      res.status(502).json({ message: 'Servise ulasilamadi.' });
+    });
+});
 
 app.use(
   express.static(browserDistFolder, {

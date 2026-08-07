@@ -1,0 +1,54 @@
+databases:
+  - name: simtek-db
+    databaseName: simtek
+    user: simtek
+    plan: free
+
+services:
+  - type: web
+    name: simtek-backend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /v3/api-docs
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SIMTEK_CRYPTO_KEY
+        value: SimtekProdKey0123456789ABCDEF!!!
+      - key: DB_HOST
+        fromDatabase:
+          name: simtek-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: simtek-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: simtek-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: simtek-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: simtek-db
+          property: password
+
+  - type: web
+    name: simtek-frontend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: API_URL
+        fromService:
+          type: web
+          name: simtek-backend
+          property: hostport

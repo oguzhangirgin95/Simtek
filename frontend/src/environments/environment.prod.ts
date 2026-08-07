@@ -1,7 +1,7 @@
 export const environment = {
   name: 'prod',
   production: true,
-  apiUrl: 'https://api.simtek.local',
+  apiUrl: '/api',
   defaultLanguage: 'tr',
   cryptoKey: 'SimtekProdKey0123456789ABCDEF!!!',
 };
