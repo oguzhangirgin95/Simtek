@@ -4,9 +4,9 @@ import { API_ORIGIN } from '../lib/base/baseconfig/apiorigin';
 import { appConfig } from './app.config';
 import { serverRoutes } from './app.routes.server';
 
-const apiAdresi = process.env['API_URL'] ?? 'http://localhost:8080';
+const apiAddress = process.env['API_URL'] ?? 'http://localhost:8080';
 
-const apiUrl = apiAdresi.startsWith('http') ? apiAdresi : `https://${apiAdresi}`;
+const apiUrl = apiAddress.startsWith('http') ? apiAddress : `http://${apiAddress}`;
 
 const serverConfig: ApplicationConfig = {
   providers: [

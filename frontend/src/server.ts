@@ -9,10 +9,9 @@ import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
-const apiAdresi = process.env['API_URL'] ?? 'http://localhost:8080';
+const apiAddress = process.env['API_URL'] ?? 'http://localhost:8080';
 
-/** Adres sema olmadan verilirse (ornegin sunucu adi) https kabul edilir */
-const apiUrl = apiAdresi.startsWith('http') ? apiAdresi : `https://${apiAdresi}`;
+const apiUrl = apiAddress.startsWith('http') ? apiAddress : `http://${apiAddress}`;
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
