@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import * as CryptoJS from 'crypto-js';
+import AES from 'crypto-js/aes';
+import Utf8 from 'crypto-js/enc-utf8';
 import { environment } from '../../../environments/environment';
 import { BaseService } from './baseservice';
 
@@ -7,16 +8,16 @@ import { BaseService } from './baseservice';
   providedIn: 'root',
 })
 export class CryptologyService extends BaseService {
-  private readonly key = CryptoJS.enc.Utf8.parse(environment.cryptoKey);
+  private readonly key = Utf8.parse(environment.cryptoKey);
 
-  private readonly iv = CryptoJS.enc.Utf8.parse(environment.cryptoKey.substring(0, 16));
+  private readonly iv = Utf8.parse(environment.cryptoKey.substring(0, 16));
 
   public encryption(value: string): string {
     if (!value) {
       return '';
     }
 
-    return CryptoJS.AES.encrypt(value, this.key, { iv: this.iv }).toString();
+    return AES.encrypt(value, this.key, { iv: this.iv }).toString();
   }
 
   public decryption(value: string): string {
@@ -25,7 +26,7 @@ export class CryptologyService extends BaseService {
     }
 
     try {
-      return CryptoJS.AES.decrypt(value, this.key, { iv: this.iv }).toString(CryptoJS.enc.Utf8);
+      return AES.decrypt(value, this.key, { iv: this.iv }).toString(Utf8);
     } catch {
       return '';
     }

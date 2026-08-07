@@ -1,4 +1,4 @@
-import { Injectable, Injector, computed, inject, signal } from '@angular/core';
+import { Injectable, Injector, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationStart, NavigationEnd, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
 import {
@@ -30,12 +30,29 @@ export class FlowService extends BaseService {
         this.url.set(event.urlAfterRedirects);
       }
     });
+
+    effect(() => this.writeToken(this.token()));
   }
 
 
-  public readonly token = signal<string | undefined>(undefined);
+  public readonly token = signal<string | undefined>(this.readToken());
 
-  /** Acik olan adres; menu gibi yerler bunu dinler */
+  private readToken(): string | undefined {
+    try {
+      return localStorage.getItem('simtek-token') ?? undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private writeToken(value: string | undefined): void {
+    try {
+      value ? localStorage.setItem('simtek-token', value) : localStorage.removeItem('simtek-token');
+    } catch {
+      return;
+    }
+  }
+
   public readonly url = signal<string>('');
 
   public readonly isLoggedIn = computed<boolean>(() => !!this.token());
@@ -172,19 +189,21 @@ export class FlowService extends BaseService {
     }
 
     const stepConfig = config.config.steps.find((item) => item.step === step);
+    const transaction = snapshot.parent?.url.map((segment) => segment.path).join('/') ?? '';
+    const previous = this.transaction();
 
-    if (step === 'start' && stepConfig?.keepState !== true) {
+    if (step === 'start' && previous !== '' && previous !== transaction && stepConfig?.keepState !== true) {
       this.clear();
     }
 
     this.config.set(config);
-    this.transaction.set(snapshot.parent?.url.map((segment) => segment.path).join('/') ?? '');
+    this.transaction.set(transaction);
     this.currentStep.set(step);
 
     this.validated.set(false);
 
     this.loadResources('general');
-    this.loadResources(this.transaction());
+    this.loadResources(transaction);
 
     if (stepConfig?.service) {
       this.callService(step, stepConfig.service).catch((error) => console.error(error));

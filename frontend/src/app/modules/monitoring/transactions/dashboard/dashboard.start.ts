@@ -1,13 +1,19 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
 import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
+import { Barchart } from '../../../../../lib/commons/barchart/barchart';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
+import { Grid } from '../../../../../lib/commons/grid/grid';
+import { Map } from '../../../../../lib/commons/map/map';
+import { Select } from '../../../../../lib/commons/select/select';
+import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Barchart, Card, Donutchart, Grid, Map, Select, Statcard],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -62,9 +68,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -72,9 +76,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -82,9 +84,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getStatusList() {
-    this.policeService
-      .policeStatusList({})
-      .toPromise()
+    this.once('StatusList', () => this.policeService.policeStatusList({}).toPromise())
       .then((response) => {
         this.State.StatusList = (response?.statuses ?? []).map((status) => ({
           value: status.key,

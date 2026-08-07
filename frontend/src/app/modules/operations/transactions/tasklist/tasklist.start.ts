@@ -1,14 +1,20 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
+import { Button } from '../../../../../lib/commons/button/button';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
+import { Grid } from '../../../../../lib/commons/grid/grid';
+import { Pagination } from '../../../../../lib/commons/pagination/pagination';
+import { Select } from '../../../../../lib/commons/select/select';
+import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
 const PAGE_SIZE = 20;
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Button, Card, Donutchart, Grid, Pagination, Select, Statcard],
   templateUrl: './tasklist.start.html',
   styleUrl: './tasklist.scss',
 })
@@ -68,9 +74,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -78,9 +82,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })

@@ -1,16 +1,26 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
 import { VehicleControllerService } from '../../../../../lib/services/api/vehicleController.service';
+import { Button } from '../../../../../lib/commons/button/button';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Detailcard } from '../../../../../lib/commons/detailcard/detailcard';
+import { Grid } from '../../../../../lib/commons/grid/grid';
+import { Info } from '../../../../../lib/commons/info/info';
+import { Input } from '../../../../../lib/commons/input/input';
+import { List } from '../../../../../lib/commons/list/list';
+import { Modal } from '../../../../../lib/commons/modal/modal';
+import { Pagination } from '../../../../../lib/commons/pagination/pagination';
+import { Select } from '../../../../../lib/commons/select/select';
+import { Tabs } from '../../../../../lib/commons/tabs/tabs';
 
 const PAGE_SIZE = 20;
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Button, Card, Detailcard, Grid, Info, Input, List, Modal, Pagination, Select, Tabs],
   templateUrl: './policelist.start.html',
   styleUrl: './policelist.scss',
 })
@@ -83,9 +93,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -93,9 +101,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -103,9 +109,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getStatusList() {
-    this.policeService
-      .policeStatusList({})
-      .toPromise()
+    this.once('StatusList', () => this.policeService.policeStatusList({}).toPromise())
       .then((response) => {
         this.State.StatusList = (response?.statuses ?? []).map((status) => ({
           value: status.key,

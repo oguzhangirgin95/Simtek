@@ -1,13 +1,15 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Input } from '../../../../../lib/commons/input/input';
+import { Select } from '../../../../../lib/commons/select/select';
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Card, Input, Select],
   templateUrl: './taskassign.start.html',
   styleUrl: './taskassign.scss',
 })
@@ -36,15 +38,17 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.State.Request = {
-      policeId: '',
-      type: '',
-      location: '',
-      startTime: '16:00',
-      endTime: '17:00',
-    };
+    if (!this.State.Request) {
+      this.State.Request = {
+        policeId: '',
+        type: '',
+        location: '',
+        startTime: '16:00',
+        endTime: '17:00',
+      };
 
-    this.State.Filter = { cityId: '', unitId: '' };
+      this.State.Filter = { cityId: '', unitId: '' };
+    }
 
     this.getCityList();
     this.getUnitList();
@@ -53,9 +57,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -63,9 +65,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Filter.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Filter.cityId}`, () => this.unitService.unitList({ cityId: this.State.Filter.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -73,9 +73,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.taskService
-      .taskTypeList({})
-      .toPromise()
+    this.once('TaskTypeList', () => this.taskService.taskTypeList({}).toPromise())
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })

@@ -37,6 +37,14 @@ export abstract class BaseComponent {
     return this.flowService.getResource(key, value);
   }
 
+  public once<T>(key: string, load: () => Promise<T>): Promise<T> {
+    return this.flowService.once(key, load);
+  }
+
+  public forget(prefix: string): void {
+    this.flowService.forget(prefix);
+  }
+
   public encryption(value: string): string {
     return this.cryptologyService.encryption(value);
   }

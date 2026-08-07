@@ -1,12 +1,14 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { ReportEntryControllerService } from '../../../../../lib/services/api/reportEntryController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Input } from '../../../../../lib/commons/input/input';
+import { Select } from '../../../../../lib/commons/select/select';
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Card, Input, Select],
   templateUrl: './reportentry.start.html',
   styleUrl: './reportentry.start.scss',
 })
@@ -33,14 +35,16 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.State.Request = {
-      reportName: '',
-      reportType: '',
-      cityId: '',
-      unitId: '',
-      startDate: '',
-      endDate: '',
-    };
+    if (!this.State.Request) {
+      this.State.Request = {
+        reportName: '',
+        reportType: '',
+        cityId: '',
+        unitId: '',
+        startDate: '',
+        endDate: '',
+      };
+    }
 
     this.getTypeList();
     this.getCityList();
@@ -58,9 +62,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -68,9 +70,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })

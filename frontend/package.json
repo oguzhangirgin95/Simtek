@@ -16,7 +16,11 @@
     "build:preprod": "ng build --configuration preprod",
     "start:preprod": "ng serve --configuration preprod",
     "build:prod": "ng build --configuration prod",
-    "start:prod": "ng serve --configuration prod"
+    "start:prod": "ng serve --configuration prod",
+    "ssr:test": "ng build --configuration test && node dist/frontend/server/server.mjs",
+    "ssr:uat": "ng build --configuration uat && node dist/frontend/server/server.mjs",
+    "ssr:preprod": "ng build --configuration preprod && node dist/frontend/server/server.mjs",
+    "ssr:prod": "ng build --configuration prod && node dist/frontend/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@10.9.3",

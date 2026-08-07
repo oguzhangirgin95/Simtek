@@ -1,12 +1,17 @@
 <header class="app-header">
+  <button type="button" class="app-header__logo"
+    [class.app-header__logo--active]="atHome()"
+    [title]="labels().home" (click)="goHome()">
+    <span class="app-header__title">{{ labels().home }}</span>
+  </button>
 
-  @if (isLoggedIn()) {
+  @if (ready() && isLoggedIn()) {
     <app-menu />
   }
 
   <app-theme />
 
-  @if (isLoggedIn()) {
+  @if (ready() && isLoggedIn()) {
     <span class="app-header__user">{{ username() }}</span>
     <app-button [label]="labels().logout" variant="outline" (clicked)="logout()" />
   }

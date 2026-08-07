@@ -77,6 +77,30 @@ export abstract class BaseService {
       .catch((error) => console.error(`Resource load failed: ${group}`, error));
   }
 
+  private readonly requests = new Map<string, Promise<any>>();
+
+  public once<T>(key: string, load: () => Promise<T>): Promise<T> {
+    if (!this.requests.has(key)) {
+      this.requests.set(
+        key,
+        load().catch((error) => {
+          this.requests.delete(key);
+          throw error;
+        }),
+      );
+    }
+
+    return this.requests.get(key) as Promise<T>;
+  }
+
+  public forget(prefix: string): void {
+    for (const key of Array.from(this.requests.keys())) {
+      if (key.startsWith(prefix)) {
+        this.requests.delete(key);
+      }
+    }
+  }
+
   private readonly menuItems = signal<MenuItemModel[]>([]);
 
   private menuLoaded = false;

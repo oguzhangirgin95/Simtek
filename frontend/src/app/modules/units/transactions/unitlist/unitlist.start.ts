@@ -1,11 +1,15 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
+import { Barchart } from '../../../../../lib/commons/barchart/barchart';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Grid } from '../../../../../lib/commons/grid/grid';
+import { Select } from '../../../../../lib/commons/select/select';
+import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Barchart, Card, Grid, Select, Statcard],
   templateUrl: './unitlist.start.html',
   styleUrl: './unitlist.scss',
 })
@@ -49,9 +53,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })

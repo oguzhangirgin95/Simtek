@@ -1,13 +1,13 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { LoginControllerService } from '../../../../../lib/services/api/loginController.service';
 import { LoginResponse } from '../../../../../lib/services/model/loginResponse';
+import { Input } from '../../../../../lib/commons/input/input';
 
 @Component({
   selector: 'app-login-start',
-  imports: [CommonsModule],
+  imports: [Input],
   templateUrl: './login.start.html',
   styleUrl: './login.scss',
 })

@@ -1,14 +1,24 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { CommonsModule } from '../../../../../lib/commons/commons-module';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
 import { VehicleControllerService } from '../../../../../lib/services/api/vehicleController.service';
+import { Button } from '../../../../../lib/commons/button/button';
+import { Card } from '../../../../../lib/commons/card/card';
+import { Detailcard } from '../../../../../lib/commons/detailcard/detailcard';
+import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
+import { Grid } from '../../../../../lib/commons/grid/grid';
+import { Info } from '../../../../../lib/commons/info/info';
+import { Input } from '../../../../../lib/commons/input/input';
+import { Modal } from '../../../../../lib/commons/modal/modal';
+import { Pagination } from '../../../../../lib/commons/pagination/pagination';
+import { Select } from '../../../../../lib/commons/select/select';
+import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
 const PAGE_SIZE = 20;
 
 @Component({
-  imports: [CommonsModule],
+  imports: [Button, Card, Detailcard, Donutchart, Grid, Info, Input, Modal, Pagination, Select, Statcard],
   templateUrl: './vehiclelist.start.html',
   styleUrl: './vehiclelist.scss',
 })
@@ -61,9 +71,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.regionService
-      .regionList({})
-      .toPromise()
+    this.once('CityList', () => this.regionService.regionList({}).toPromise())
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -71,9 +79,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.unitService
-      .unitList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -81,9 +87,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.vehicleService
-      .vehicleTypeList({})
-      .toPromise()
+    this.once('VehicleTypeList', () => this.vehicleService.vehicleTypeList({}).toPromise())
       .then((response) => {
         this.State.TypeCounts = response?.types ?? [];
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
