@@ -65,7 +65,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -75,7 +75,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   getTypeList() {
@@ -90,7 +90,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
           value: type.count ?? 0,
         }));
       })
-      .catch((error) => console.error('Arac tipleri:', error));
+      .catch((error) => console.error('Vehicle types:', error));
   }
 
 
@@ -102,7 +102,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
         this.State.VehicleList = response?.vehicles ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;
       })
-      .catch((error) => console.error('Arac listesi:', error));
+      .catch((error) => console.error('Vehicle list:', error));
   }
 
   setFilter(key: string, value: string) {
@@ -142,6 +142,6 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
           { key: this.getResource('GRID_UNIT', 'Birim'), value: response?.unitName },
         ];
       })
-      .catch((error) => console.error('Arac detayi:', error));
+      .catch((error) => console.error('Vehicle detail:', error));
   }
 }

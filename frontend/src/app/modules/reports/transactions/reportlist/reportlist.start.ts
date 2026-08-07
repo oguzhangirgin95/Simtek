@@ -53,7 +53,7 @@ export class ReportlistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
-      .catch((error) => console.error('Rapor tipleri:', error));
+      .catch((error) => console.error('Report types:', error));
   }
 
   getReportList() {
@@ -64,7 +64,7 @@ export class ReportlistStart extends BaseComponent implements OnInit {
         this.State.ReportList = response?.reports ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;
       })
-      .catch((error) => console.error('Rapor listesi:', error));
+      .catch((error) => console.error('Report list:', error));
   }
 
   setFilter(key: string, value: string) {

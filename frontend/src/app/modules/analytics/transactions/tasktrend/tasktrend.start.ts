@@ -55,7 +55,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -65,7 +65,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   getTaskTrend() {
@@ -79,7 +79,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
           value: point.taskCount ?? 0,
         }));
       })
-      .catch((error) => console.error('Gorev trendi:', error));
+      .catch((error) => console.error('Task trend:', error));
   }
 
   getTypeList() {
@@ -92,7 +92,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
           value: type.count ?? 0,
         }));
       })
-      .catch((error) => console.error('Gorev tipleri:', error));
+      .catch((error) => console.error('Task types:', error));
   }
 
   setFilter(key: string, value: string) {

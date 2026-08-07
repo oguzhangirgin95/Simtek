@@ -30,6 +30,8 @@ export class DashboardStart extends BaseComponent implements OnInit {
     onReport: this.getResource('STAT_ONREPORT', 'Raporlu'),
     overLimit: this.getResource('STAT_OVERLIMIT', 'Limiti aşan'),
     mapTitle: this.getResource('MAP_TITLE', 'Şehir bazlı aktif memur'),
+    mapHint: this.getResource('MAP_HINT', 'Şehre tıklayarak filtreleyin'),
+    busiest: this.getResource('DASHBOARD_BUSIEST', 'En yoğun şehir'),
     statusChartTitle: this.getResource('STATUS_CHART_TITLE', 'Durum dağılımı'),
     unitWorkloadTitle: this.getResource('UNIT_WORKLOAD_TITLE', 'birim görev yoğunluğu'),
     emptyUnit: this.getResource('EMPTY_UNIT', 'Birim bulunamadı'),
@@ -66,7 +68,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -76,7 +78,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   getStatusList() {
@@ -89,7 +91,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           text: status.name,
         }));
       })
-      .catch((error) => console.error('Durum listesi:', error));
+      .catch((error) => console.error('Status list:', error));
   }
 
 
@@ -110,7 +112,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           value: item.count ?? 0,
         }));
       })
-      .catch((error) => console.error('Ozet:', error));
+      .catch((error) => console.error('Summary:', error));
   }
 
   getMapStatistics() {
@@ -127,7 +129,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           value: city.activePolice ?? 0,
         }));
       })
-      .catch((error) => console.error('Harita:', error));
+      .catch((error) => console.error('Map:', error));
   }
 
   getUnitWorkload() {
@@ -141,7 +143,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           value: unit.taskLoad ?? 0,
         }));
       })
-      .catch((error) => console.error('Birim yogunlugu:', error));
+      .catch((error) => console.error('Unit workload:', error));
   }
 
 

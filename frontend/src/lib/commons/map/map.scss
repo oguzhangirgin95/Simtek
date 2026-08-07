@@ -1,38 +1,69 @@
 .app-map {
   &__svg {
+    display: block;
     width: 100%;
     height: auto;
-    background: #ffffff;
-    border: 1px solid var(--renk-cizgi);
-    border-radius: var(--kose);
   }
 
-  &__point {
+  &__province {
+    stroke: #0a1f44;
+    stroke-width: 1.2;
+    transition: opacity 160ms ease;
+  }
+
+  &__province--data {
     cursor: pointer;
+  }
 
-    circle {
-      fill: var(--renk-vurgu);
-      fill-opacity: 0.65;
-      stroke: var(--renk-vurgu);
-      stroke-width: 0.3;
-    }
+  &__province--data:hover {
+    opacity: 0.75;
+  }
 
-    text {
-      font-size: 2px;
-      fill: var(--renk-yazi);
-    }
+  &__province--selected {
+    stroke: #ffffff;
+    stroke-width: 3;
+  }
 
-    &:hover circle {
-      fill-opacity: 0.9;
-    }
+  &__label {
+    pointer-events: none;
+  }
 
-    &--selected circle {
-      fill: var(--renk-hata);
-      stroke: var(--renk-hata);
-    }
+  &__value {
+    fill: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  &__name {
+    fill: #cddcf2;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__legend {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+    flex-wrap: wrap;
+    margin-top: var(--space);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  &__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__legend-item i {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
   }
 
   &__empty {
-    color: var(--renk-soluk);
+    color: var(--color-muted);
   }
 }

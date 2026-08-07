@@ -29,6 +29,6 @@ export class Header extends BaseComponent {
         this.flowService.token.set(undefined);
         this.router.navigateByUrl('/firstlevel');
       })
-      .catch((error) => console.error('Cikis:', error));
+      .catch((error) => console.error('Logout:', error));
   }
 }

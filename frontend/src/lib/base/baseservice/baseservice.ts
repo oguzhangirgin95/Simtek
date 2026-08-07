@@ -66,10 +66,10 @@ export abstract class BaseService {
       .get({ transactionName: group })
       .toPromise()
       .then((response) => {
-        const gelen: Record<string, string> = {};
-        response?.resources?.forEach((item) => (gelen[item.key ?? ''] = item.value ?? ''));
-        this.resources.update((current) => ({ ...current, ...gelen }));
+        const loaded: Record<string, string> = {};
+        response?.resources?.forEach((item) => (loaded[item.key ?? ''] = item.value ?? ''));
+        this.resources.update((current) => ({ ...current, ...loaded }));
       })
-      .catch((error) => console.error(`Resource yuklenemedi: ${group}`, error));
+      .catch((error) => console.error(`Resource load failed: ${group}`, error));
   }
 }

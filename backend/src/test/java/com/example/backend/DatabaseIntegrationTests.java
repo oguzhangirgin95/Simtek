@@ -80,7 +80,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(1)
-    void scriptler_calisti_ve_veri_yuklendi() {
+    void migrations_applied_and_data_loaded() {
         assertThat(regionBusiness.RegionList(new RegionListRequest()).totalCount).isEqualTo(14);
         assertThat(unitBusiness.UnitList(new UnitListRequest()).totalCount).isEqualTo(45);
         assertThat(unitBusiness.UnitList(new UnitListRequest("06")).totalCount).isEqualTo(6);
@@ -89,14 +89,14 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(2)
-    void resourcelar_veritabanindan_geliyor() {
+    void resources_come_from_database() {
         assertThat(resourceBusiness.Get(new ResourceRequest("general")).resources).isNotEmpty();
         assertThat(resourceBusiness.Get(new ResourceRequest("dashboard")).resources).isNotEmpty();
     }
 
     @Test
     @Order(3)
-    void kullanici_veritabanindan_dogrulaniyor() {
+    void user_is_verified_from_database() {
         LoginRequest ok = new LoginRequest("oguz", cryptologyService.encryption("1234"));
         assertThat(loginBusiness.Login(ok).success).isTrue();
         assertThat(loginBusiness.Login(ok).token).isEqualTo("TOKEN-OGUZ");
@@ -111,7 +111,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(3)
-    void sifreleme_cozme_calisiyor() {
+    void encryption_and_decryption_work() {
         assertThat(cryptologyService.decryption(cryptologyService.encryption("1234"))).isEqualTo("1234");
         assertThat(cryptologyService.decryption(cryptologyService.encryption("çğıöşü ÇĞİÖŞÜ"))).isEqualTo("çğıöşü ÇĞİÖŞÜ");
         assertThat(cryptologyService.encryption("1234")).isNotEqualTo("1234");
@@ -122,7 +122,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(4)
-    void pano_sayilari_dogru() {
+    void dashboard_counts_are_correct() {
         var summary = dashboardBusiness.Summary(new DashboardRequest());
         assertThat(summary.totalPolice).isEqualTo(276);
         assertThat(summary.onDuty + summary.atStation + summary.onLeave + summary.onReport).isEqualTo(276);
@@ -147,7 +147,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(5)
-    void gorev_sayilari_pano_ile_tutarli() {
+    void task_counts_match_dashboard() {
         TaskTypeListRequest request = new TaskTypeListRequest();
         request.cityId = "06";
         assertThat(taskBusiness.TaskTypeList(request).totalTaskCount).isEqualTo(226);
@@ -156,7 +156,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(6)
-    void filtre_siralama_sayfalama_veritabaninda() {
+    void filter_sort_and_paging_run_in_database() {
         PoliceListRequest request = new PoliceListRequest();
         request.cityId = "06";
         request.unitId = "06-B1";
@@ -187,7 +187,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(7)
-    void detay_ve_arac_eslesiyor() {
+    void detail_matches_vehicle() {
         var detail = policeBusiness.PoliceDetail(new PoliceDetailRequest("06-1001"));
         assertThat(detail.found).isTrue();
         assertThat(detail.cityName).isEqualTo("Ankara");
@@ -204,7 +204,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(8)
-    void arac_envanteri_filtreleniyor() {
+    void vehicle_inventory_is_filtered() {
         assertThat(vehicleBusiness.VehicleList(new VehicleListRequest()).totalCount).isEqualTo(276);
 
         VehicleListRequest moto = new VehicleListRequest();
@@ -221,7 +221,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(9)
-    void gorev_listesi_ve_limit_filtresi() {
+    void task_list_and_limit_filter() {
         TaskListRequest single = new TaskListRequest();
         single.policeId = "06-1005";
         assertThat(taskBusiness.TaskList(single).totalCount).isEqualTo(7);
@@ -237,7 +237,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(10)
-    void trend_hesaplaniyor() {
+    void trend_is_calculated() {
         TaskTrendRequest request = new TaskTrendRequest();
         request.cityId = "06";
         var trend = analyticsBusiness.TaskTrend(request);
@@ -249,7 +249,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(11)
-    void gorev_atama_veritabanina_yaziliyor() {
+    void task_assignment_is_written_to_database() {
         TaskAssignRequest request = new TaskAssignRequest();
         request.policeId = "06-1001";
         request.type = "RADAR";
@@ -277,7 +277,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(12)
-    void personel_ekleme_guncelleme_silme() {
+    void police_create_update_delete() {
         PoliceSaveRequest save = new PoliceSaveRequest();
         save.badgeNumber = "069999";
         save.fullName = "Test Personel";
@@ -317,7 +317,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(13)
-    void sehir_ve_birim_crud_kisitlari() {
+    void city_and_unit_crud_constraints() {
         RegionSaveRequest city = new RegionSaveRequest();
         city.id = "99";
         city.name = "Test Sehir";
@@ -348,7 +348,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(14)
-    void rapor_olusturuluyor_ve_listeleniyor() {
+    void report_is_created_and_listed() {
         ReportEntryRequest request = new ReportEntryRequest();
         request.reportName = "Test Raporu";
         request.reportType = "RADAR";
@@ -371,7 +371,7 @@ class DatabaseIntegrationTests {
 
     @Test
     @Order(15)
-    void ayarlar_veritabaninda_saklaniyor() {
+    void settings_are_stored_in_database() {
         SettingSaveRequest save = new SettingSaveRequest();
         save.token = "TOKEN-TEST";
         save.language = "en";

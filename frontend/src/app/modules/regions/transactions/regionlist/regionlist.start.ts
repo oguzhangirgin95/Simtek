@@ -55,7 +55,7 @@ export class RegionlistStart extends BaseComponent implements OnInit {
           value: city.activePolice ?? 0,
         }));
       })
-      .catch((error) => console.error('Harita:', error));
+      .catch((error) => console.error('Map:', error));
   }
 
   selectCity(point: any) {

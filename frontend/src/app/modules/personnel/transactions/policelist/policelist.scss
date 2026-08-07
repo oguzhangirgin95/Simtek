@@ -1,22 +1,3 @@
-.filters {
-  display: flex;
-  gap: var(--bosluk);
-  align-items: flex-end;
-  flex-wrap: wrap;
-  margin-bottom: var(--bosluk);
-
-  .field {
-    margin-bottom: 0;
-    min-width: 170px;
-  }
-}
-
 .content {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: var(--bosluk);
-}
-
-app-card {
-  display: block;
+  --columns: 3fr 2fr;
 }

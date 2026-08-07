@@ -1,23 +1,40 @@
 .app-grid {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
   table {
     width: 100%;
+    min-width: 520px;
     border-collapse: collapse;
-    background: #ffffff;
   }
 
   th,
   td {
-    padding: 8px 10px;
+    padding: 14px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--renk-cizgi);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
   }
 
   th {
-    color: var(--renk-soluk);
-    font-weight: 600;
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background var(--transition);
   }
 
   tbody tr:hover {
-    background: var(--renk-zemin);
+    background: var(--color-surface-2);
+  }
+
+  tbody tr:active {
+    background: var(--color-accent-soft);
   }
 }

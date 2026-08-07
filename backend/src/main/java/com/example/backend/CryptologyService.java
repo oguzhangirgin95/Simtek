@@ -25,7 +25,7 @@ public class CryptologyService {
         byte[] bytes = cryptoKey == null ? new byte[0] : cryptoKey.getBytes(StandardCharsets.UTF_8);
 
         if (bytes.length != 32) {
-            throw new IllegalStateException("app.crypto.key 32 karakter olmali. Ortam dosyasini kontrol edin.");
+            throw new IllegalStateException("app.crypto.key must be 32 characters. Check the environment file.");
         }
 
         this.key = new SecretKeySpec(bytes, "AES");
@@ -46,7 +46,7 @@ public class CryptologyService {
             return Base64.getEncoder().encodeToString(cipher.doFinal(value.getBytes(StandardCharsets.UTF_8)));
 
         } catch (Exception exception) {
-            throw new IllegalStateException("Sifreleme yapilamadi.", exception);
+            throw new IllegalStateException("Encryption failed.", exception);
         }
     }
 

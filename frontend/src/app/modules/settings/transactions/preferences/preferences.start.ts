@@ -53,7 +53,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getSetting() {
@@ -69,7 +69,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
           refreshSeconds: response?.refreshSeconds ?? 0,
         };
       })
-      .catch((error) => console.error('Ayarlar:', error));
+      .catch((error) => console.error('Settings:', error));
   }
 
   saveSetting() {
@@ -80,7 +80,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
         this.State.Message = response?.message;
         this.flowService.set('language', response?.language);
       })
-      .catch((error) => console.error('Ayar kaydi:', error));
+      .catch((error) => console.error('Setting save:', error));
   }
 
   setField(key: string, value: string) {

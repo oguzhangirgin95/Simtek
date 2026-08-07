@@ -59,7 +59,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -69,7 +69,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   getTypeList() {
@@ -79,7 +79,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
-      .catch((error) => console.error('Gorev tipleri:', error));
+      .catch((error) => console.error('Task types:', error));
   }
 
   getPoliceList() {
@@ -92,7 +92,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
           text: `${police.badgeNumber} - ${police.fullName}`,
         }));
       })
-      .catch((error) => console.error('Personel listesi:', error));
+      .catch((error) => console.error('Police list:', error));
   }
 
   setFilter(key: string, value: string) {

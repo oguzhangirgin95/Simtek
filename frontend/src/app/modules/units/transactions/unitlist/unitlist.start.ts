@@ -55,7 +55,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitWorkload() {
@@ -69,7 +69,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
           value: unit.taskLoad ?? 0,
         }));
       })
-      .catch((error) => console.error('Birim yogunlugu:', error));
+      .catch((error) => console.error('Unit workload:', error));
   }
 
   setFilter(key: string, value: string) {

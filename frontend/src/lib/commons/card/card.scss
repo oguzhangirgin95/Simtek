@@ -1,22 +1,35 @@
 .app-card {
-  background: #ffffff;
-  border: 1px solid var(--renk-cizgi);
-  border-radius: var(--kose);
-  padding: var(--bosluk);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: calc(var(--space) * 1.25);
+  transition: border-color var(--transition), box-shadow var(--transition);
+
+  &:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow);
+  }
 
   &__header {
     display: flex;
     align-items: baseline;
-    gap: var(--bosluk);
-    margin-bottom: var(--bosluk);
+    gap: var(--space);
+    padding-bottom: 12px;
+    margin-bottom: var(--space);
+    border-bottom: 1px solid var(--color-border);
 
     h3 {
       margin: 0;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
     }
   }
 
   &__subtitle {
-    color: var(--renk-soluk);
+    margin-left: auto;
+    color: var(--color-muted);
     font-size: 13px;
+    font-weight: 600;
   }
 }

@@ -72,7 +72,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -82,7 +82,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   getTypeList() {
@@ -96,7 +96,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
           value: type.count ?? 0,
         }));
       })
-      .catch((error) => console.error('Gorev tipleri:', error));
+      .catch((error) => console.error('Task types:', error));
   }
 
 
@@ -108,7 +108,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
         this.State.TaskList = response?.tasks ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;
       })
-      .catch((error) => console.error('Gorev listesi:', error));
+      .catch((error) => console.error('Task list:', error));
   }
 
   setFilter(key: string, value: string) {

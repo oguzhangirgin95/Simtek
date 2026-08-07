@@ -2,19 +2,19 @@
   &__body {
     display: flex;
     align-items: center;
-    gap: var(--bosluk);
+    gap: calc(var(--space) * 1.5);
     flex-wrap: wrap;
   }
 
   &__svg {
-    width: 160px;
-    height: 160px;
+    width: 176px;
+    height: 176px;
   }
 
   &__total {
     font-size: 14px;
-    font-weight: 600;
-    fill: var(--renk-yazi);
+    font-weight: 700;
+    fill: var(--color-text);
   }
 
   &__legend {
@@ -25,19 +25,21 @@
     li {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 3px 0;
+      gap: 8px;
+      padding: 6px 0;
       font-size: 13px;
+      font-weight: 600;
     }
   }
 
   &__dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
+    flex: none;
   }
 
   &__empty {
-    color: var(--renk-soluk);
+    color: var(--color-muted);
   }
 }

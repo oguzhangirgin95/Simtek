@@ -1,4 +1,13 @@
-<h2>{{ labels().title }}</h2>
+<div class="page-head">
+  <h2>{{ labels().title }}</h2>
+
+  @if (State.MapStatistics?.busiestCityName) {
+    <span class="page-head__hint">
+      {{ labels().busiest }}: <b>{{ State.MapStatistics.busiestCityName }}</b>
+      ({{ State.MapStatistics.busiestCityActivePolice }})
+    </span>
+  }
+</div>
 
 <div class="filters">
   <app-select
@@ -37,7 +46,7 @@
 </div>
 
 <div class="panels">
-  <app-card [title]="labels().mapTitle">
+  <app-card [title]="labels().mapTitle" [subtitle]="labels().mapHint">
     <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request?.cityId" (pointClicked)="selectCity($event)" />
   </app-card>
 

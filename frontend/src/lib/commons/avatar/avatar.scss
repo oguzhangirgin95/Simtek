@@ -4,7 +4,9 @@
   justify-content: center;
   border-radius: 50%;
   object-fit: cover;
-  background: var(--renk-cizgi);
-  color: var(--renk-ana);
-  font-weight: 600;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }

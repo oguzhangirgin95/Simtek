@@ -54,7 +54,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
-      .catch((error) => console.error('Rapor tipleri:', error));
+      .catch((error) => console.error('Report types:', error));
   }
 
   getCityList() {
@@ -64,7 +64,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
-      .catch((error) => console.error('Sehir listesi:', error));
+      .catch((error) => console.error('City list:', error));
   }
 
   getUnitList() {
@@ -74,7 +74,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
-      .catch((error) => console.error('Birim listesi:', error));
+      .catch((error) => console.error('Unit list:', error));
   }
 
   setField(key: string, value: string) {
