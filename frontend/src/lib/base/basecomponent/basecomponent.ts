@@ -2,12 +2,15 @@ import { Directive, inject } from '@angular/core';
 import { FlowButton } from '../baseconfig/config';
 import { CryptologyService } from '../baseservice/cryptologyservice';
 import { FlowService } from '../baseservice/flowservice';
+import { ThemeService } from '../baseservice/themeservice';
 
 @Directive()
 export abstract class BaseComponent {
   protected readonly flowService = inject(FlowService);
 
   protected readonly cryptologyService = inject(CryptologyService);
+
+  protected readonly themeService = inject(ThemeService);
 
   public readonly State = this.flowService.State;
 

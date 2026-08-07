@@ -40,8 +40,11 @@
     border-radius: 2px;
   }
 
-  &__user {
+  app-theme {
     margin-left: auto;
+  }
+
+  &__user {
     color: var(--color-muted);
     font-size: 13px;
     font-weight: 600;

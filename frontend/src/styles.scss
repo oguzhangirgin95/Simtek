@@ -10,6 +10,7 @@
   --color-accent: #e30a17;
   --color-accent-dark: #b3050f;
   --color-accent-soft: rgba(227, 10, 23, 0.22);
+  --color-on-accent: #ffffff;
 
   --color-success: #2fbf5f;
   --color-warning: #f5b301;
@@ -136,7 +137,7 @@ button {
   border: 1px solid var(--color-accent);
   border-radius: var(--radius);
   background: var(--color-accent);
-  color: #ffffff;
+  color: var(--color-on-accent);
   font-family: inherit;
   font-size: 15px;
   font-weight: 700;

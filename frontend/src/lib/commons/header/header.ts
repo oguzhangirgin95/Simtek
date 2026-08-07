@@ -2,11 +2,12 @@ import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 import { Button } from '../button/button';
+import { Theme } from '../theme/theme';
 import { LoginControllerService } from '../../services/api/loginController.service';
 
 @Component({
   selector: 'app-header',
-  imports: [Button],
+  imports: [Button, Theme],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

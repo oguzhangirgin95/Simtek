@@ -6,7 +6,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: #ffffff;
+  color: var(--color-on-accent);
   background: var(--color-accent);
 
   &--success {
