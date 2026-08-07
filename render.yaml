@@ -3,6 +3,7 @@ databases:
     databaseName: simtek
     user: simtek
     plan: free
+    region: frankfurt
 
 services:
   - type: web
