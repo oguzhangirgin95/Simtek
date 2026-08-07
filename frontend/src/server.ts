@@ -14,12 +14,8 @@ const apiAddress = process.env['API_URL'] ?? 'http://localhost:8080';
 const apiUrl = apiAddress.startsWith('http') ? apiAddress : `http://${apiAddress}`;
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({ trustProxyHeaders: true });
 
-/**
- * Tarayici backend'i dogrudan cagirmaz, '/api/...' adresine ister.
- * Burasi istegi backend'e iletir: tek alan adi, CORS gerekmez.
- */
 app.use('/api', express.raw({ type: () => true, limit: '10mb' }), (req, res) => {
   const headers: Record<string, string> = {};
 
