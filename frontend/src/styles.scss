@@ -213,7 +213,13 @@ app-card {
 }
 
 .filters > app-button {
+  display: flex;
   flex: 0 0 auto;
+}
+
+.filters > app-button .app-button {
+  flex: 1;
+  margin-bottom: 5px;
 }
 
 .filters .field {
@@ -238,6 +244,11 @@ app-card {
 .panels > *,
 .content > * {
   min-width: 0;
+}
+
+.panels > .stats,
+.content > .stats {
+  margin-bottom: 0;
 }
 
 .error {
