@@ -6,6 +6,7 @@ import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 export interface ChartItem {
   label: string;
   value: number;
+  color?: string;
 }
 
 @Component({

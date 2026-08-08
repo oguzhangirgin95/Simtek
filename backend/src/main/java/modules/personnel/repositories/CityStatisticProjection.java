@@ -16,5 +16,7 @@ public interface CityStatisticProjection {
 
     Long getActivePolice();
 
+    Long getOverLimitPolice();
+
     Long getUnitCount();
 }

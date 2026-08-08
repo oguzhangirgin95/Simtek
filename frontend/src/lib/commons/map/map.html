@@ -1,4 +1,4 @@
-<div class="app-map">
+<div class="app-map" [class]="'app-map app-map--' + (variant() || 'accent')">
   @if (title()) {
     <h3>{{ title() }}</h3>
   }
@@ -11,7 +11,7 @@
           [class.app-map__province--data]="!!province.point"
           [class.app-map__province--selected]="isSelected(province)"
           [attr.d]="province.path"
-          [attr.fill]="province.fill"
+          [attr.fill-opacity]="province.opacity"
           (click)="select(province)"
           (mousemove)="showTooltip(province, $event)"
           (mouseleave)="hideTooltip()"
@@ -29,9 +29,9 @@
     </svg>
 
     <div class="app-map__legend">
-      @for (item of legend(); track item.color) {
+      @for (item of legend(); track item.opacity) {
         <span class="app-map__legend-item">
-          <i [style.background]="item.color"></i>{{ item.text }}
+          <i [style.opacity]="item.opacity"></i>{{ item.text }}
         </span>
       }
     </div>

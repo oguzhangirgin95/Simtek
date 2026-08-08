@@ -37,21 +37,22 @@
 </div>
 
 <div class="stats">
-  <app-statcard [label]="labels().totalPolice" [value]="State.Summary?.totalPolice ?? 0" />
-  <app-statcard [label]="labels().onDuty" [value]="State.Summary?.onDuty ?? 0" variant="success" />
-  <app-statcard [label]="labels().atStation" [value]="State.Summary?.atStation ?? 0" />
-  <app-statcard [label]="labels().onLeave" [value]="State.Summary?.onLeave ?? 0" variant="warning" />
-  <app-statcard [label]="labels().onReport" [value]="State.Summary?.onReport ?? 0" variant="warning" />
-  <app-statcard [label]="labels().overLimit" [value]="State.Summary?.overDailyLimit ?? 0" variant="error" />
+  <app-statcard [label]="labels().totalPolice" [value]="State.Summary?.totalPolice ?? 0" clickable (clicked)="selectMetric({ titleKey: 'mapTotalTitle' })" />
+  <app-statcard [label]="labels().onDuty" [value]="State.Summary?.onDuty ?? 0" variant="success" clickable (clicked)="selectMetric({ titleKey: 'mapTotalActiveTitle', status: 'SAHADA', variant: 'success' })" />
+  <app-statcard [label]="labels().atStation" [value]="State.Summary?.atStation ?? 0" variant="teal" clickable (clicked)="selectMetric({ titleKey: 'mapTotalCentralTitle', status: 'MERKEZDE', variant: 'teal' })" />
+  <app-statcard [label]="labels().onLeave" [value]="State.Summary?.onLeave ?? 0" variant="warning" clickable (clicked)="selectMetric({ titleKey: 'mapTotalLeaveTitle', status: 'IZINDE', variant: 'warning' })" />
+  <app-statcard [label]="labels().onReport" [value]="State.Summary?.onReport ?? 0" variant="violet" clickable (clicked)="selectMetric({ titleKey: 'mapTotalReportTitle', status: 'RAPORLU', variant: 'violet' })" />
+  <app-statcard [label]="labels().overLimit" [value]="State.Summary?.overDailyLimit ?? 0" variant="error" clickable (clicked)="selectMetric({ titleKey: 'mapTotalOverlimitTitle', field: 'overLimitPolice', variant: 'error' })" />
 </div>
 
 <div class="panels">
-  <app-card [title]="labels().mapTitle" [subtitle]="labels().mapHint">
-    <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request?.cityId" (pointClicked)="selectCity($event)" />
+  <app-card [title]="mapTitle()" [subtitle]="labels().mapHint">
+    <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request?.cityId" [variant]="State.MapMetric?.variant ?? ''" (pointClicked)="selectCity($event)" />
   </app-card>
 
   <app-card [title]="labels().statusChartTitle">
     <app-donutchart [items]="State.StatusChart ?? []" />
+    <app-donutchart [title]="labels().limitChartTitle" [items]="State.LimitChart ?? []" />
   </app-card>
 </div>
 

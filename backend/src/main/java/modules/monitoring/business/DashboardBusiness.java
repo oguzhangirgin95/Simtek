@@ -54,6 +54,7 @@ public class DashboardBusiness {
             cityStatistic.y = projection.getY();
             cityStatistic.totalPolice = projection.getTotalPolice().intValue();
             cityStatistic.activePolice = projection.getActivePolice().intValue();
+            cityStatistic.overLimitPolice = projection.getOverLimitPolice().intValue();
             cityStatistic.unitCount = projection.getUnitCount().intValue();
             cityStatistic.activePercent = cityStatistic.totalPolice == 0
                     ? 0

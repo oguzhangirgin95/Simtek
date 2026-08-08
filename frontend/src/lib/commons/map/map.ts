@@ -1,5 +1,6 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { InfoVariant } from '../info/info';
 import { Skeleton } from '../skeleton/skeleton';
 import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';
 import { TURKEY_PROVINCES, TURKEY_VIEWBOX } from './turkey-map';
@@ -17,13 +18,11 @@ interface Province {
   path: string;
   cx: number;
   cy: number;
-  fill: string;
+  opacity: number;
   point?: MapPoint;
 }
 
-const NO_DATA = '#16376f';
-
-const SCALE = ['#5c1f34', '#8a1f2f', '#b3151f', '#e30a17'];
+const OPACITY = [0.4, 0.55, 0.7, 0.85, 1];
 
 function plain(text: string): string {
   return text
@@ -53,15 +52,27 @@ export class Map extends BaseComponent {
 
   readonly selectedId = input<string>('');
 
+  readonly variant = input<InfoVariant | ''>('');
+
   readonly pointClicked = output<MapPoint>();
 
   readonly viewBox = TURKEY_VIEWBOX;
 
+  private readonly thresholds = computed<number[]>(() => {
+    const values = [...new Set(this.points().map((point) => point.value))].sort((a, b) => a - b);
+
+    return OPACITY.map((_, index) => values[Math.floor((index * values.length) / OPACITY.length)] ?? 0);
+  });
+
+  private opacityOf(value: number): number {
+    const index = this.thresholds().filter((threshold) => value >= threshold).length - 1;
+
+    return OPACITY[Math.max(0, index)];
+  }
+
   readonly provinces = computed<Province[]>(() => {
     const byName: Record<string, MapPoint> = {};
     this.points().forEach((point) => (byName[plain(point.name)] = point));
-
-    const max = Math.max(1, ...this.points().map((point) => point.value));
 
     return TURKEY_PROVINCES.map((province) => {
       const point = byName[plain(province.name)];
@@ -71,17 +82,17 @@ export class Map extends BaseComponent {
         cx: province.cx,
         cy: province.cy,
         point,
-        fill: point ? SCALE[Math.min(SCALE.length - 1, Math.floor((point.value / max) * SCALE.length))] : NO_DATA,
+        opacity: point ? this.opacityOf(point.value) : 1,
       };
     });
   });
 
   readonly legend = computed(() => {
-    const max = Math.max(1, ...this.points().map((point) => point.value));
-    return SCALE.map((color, index) => ({
-      color,
-      text: `${Math.round((index / SCALE.length) * max)}+`,
-    }));
+    const thresholds = this.thresholds();
+
+    return thresholds
+      .map((threshold, index) => ({ threshold, opacity: OPACITY[index], text: `${threshold}+` }))
+      .filter((item, index) => index === thresholds.length - 1 || item.threshold !== thresholds[index + 1]);
   });
 
   isSelected(province: Province): boolean {

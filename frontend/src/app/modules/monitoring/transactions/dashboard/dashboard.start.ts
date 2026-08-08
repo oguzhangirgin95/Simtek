@@ -16,6 +16,13 @@ import { Map } from '../../../../../lib/commons/map/map';
 import { Select } from '../../../../../lib/commons/select/select';
 import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
+const STATUS_VARIANT: Record<string, string> = {
+  SAHADA: 'success',
+  MERKEZDE: 'teal',
+  IZINDE: 'warning',
+  RAPORLU: 'violet',
+};
+
 @Component({
   imports: [Barchart, Card, Donutchart, Grid, Map, Select, Statcard],
   templateUrl: './dashboard.start.html',
@@ -42,13 +49,27 @@ export class DashboardStart extends BaseComponent implements OnInit {
     onLeave: this.getResource('STAT_ONLEAVE', 'İzinde'),
     onReport: this.getResource('STAT_ONREPORT', 'Raporlu'),
     overLimit: this.getResource('STAT_OVERLIMIT', 'Limiti aşan'),
-    mapTitle: this.getResource('MAP_TITLE', 'Şehir bazlı aktif memur'),
+    withinLimit: this.getResource('STAT_WITHINLIMIT', 'Limit içinde'),
+    limitChartTitle: this.getResource('LIMIT_CHART_TITLE', 'Görev limiti'),
     mapHint: this.getResource('MAP_HINT', 'Şehre tıklayarak filtreleyin'),
     busiest: this.getResource('DASHBOARD_BUSIEST', 'En yoğun şehir'),
     statusChartTitle: this.getResource('STATUS_CHART_TITLE', 'Durum dağılımı'),
     unitWorkloadTitle: this.getResource('UNIT_WORKLOAD_TITLE', 'birim görev yoğunluğu'),
     emptyUnit: this.getResource('EMPTY_UNIT', 'Birim bulunamadı'),
+    mapTotalTitle: this.getResource('MAP_TOTAL_TITLE', 'Şehir bazlı toplam memur'),
+    mapTotalActiveTitle: this.getResource('MAP_TOTAL_ACTIVE_TITLE', 'Şehir bazlı sahada olan memur'),
+    mapTotalCentralTitle: this.getResource('MAP_TOTAL_CENTRAL_TITLE', 'Şehir bazlı merkezde olan memur'),
+    mapTotalLeaveTitle: this.getResource('MAP_TOTAL_LEAVE_TITLE', 'Şehir bazlı izinde olan memur'),
+    mapTotalReportTitle: this.getResource('MAP_TOTAL_REPORT_TITLE', 'Şehir bazlı raporlu olan memur'),
+    mapTotalOverlimitTitle: this.getResource('MAP_TOTAL_OVERLIMIT_TITLE', 'Şehir bazlı limiti aşan memur'),
   }));
+
+  readonly mapTitle = computed(() => {
+    const labels = this.labels() as Record<string, string>;
+    const key = this.State.MapMetric?.titleKey ?? '';
+
+    return labels[key] ?? labels['mapTotalTitle'];
+  });
 
   readonly unitColumns = computed(() => [
     { field: 'unitName', title: this.getResource('GRID_UNIT', 'Birim') },
@@ -118,14 +139,26 @@ export class DashboardStart extends BaseComponent implements OnInit {
         this.State.StatusChart = (response?.statusDistribution ?? []).map((item) => ({
           label: item.name ?? '',
           value: item.count ?? 0,
+          color: `var(--color-${STATUS_VARIANT[item.key ?? ''] ?? 'info'})`,
         }));
+
+        const total = response?.totalPolice ?? 0;
+        const overLimit = response?.overDailyLimit ?? 0;
+
+        this.State.LimitChart = [
+          { label: this.labels().overLimit, value: overLimit, color: 'var(--color-error)' },
+          { label: this.labels().withinLimit, value: Math.max(0, total - overLimit), color: 'var(--color-success)' },
+        ];
       })
       .catch((error) => console.error('Summary:', error));
   }
 
   getMapStatistics() {
+    const metric = this.State.MapMetric;
+    const request = metric ? { ...this.State.Request, status: metric.status } : this.State.Request;
+
     this.dashboardService
-      .mapStatistics(this.State.Request)
+      .mapStatistics(request)
       .toPromise()
       .then((response) => {
         this.State.MapStatistics = response;
@@ -134,7 +167,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           name: city.cityName ?? '',
           x: city.x ?? 0,
           y: city.y ?? 0,
-          value: city.activePolice ?? 0,
+          value: (metric ? city[metric.field as keyof typeof city] : city.totalPolice) ?? 0,
         }));
       })
       .catch((error) => console.error('Map:', error));
@@ -181,10 +214,23 @@ export class DashboardStart extends BaseComponent implements OnInit {
       this.getUnitList();
     }
 
+    if (key === 'status') {
+      this.State.MapMetric = undefined;
+    }
+
     this.getDashboard();
   }
 
   selectCity(point: any) {
     this.setFilter('cityId', point.id);
+  }
+
+  selectMetric(metric: { titleKey: string; status?: string; field?: string; variant?: string }) {
+    this.State.MapMetric =
+      this.State.MapMetric?.titleKey === metric.titleKey
+        ? undefined
+        : { status: '', field: 'totalPolice', variant: '', ...metric };
+
+    this.getMapStatistics();
   }
 }

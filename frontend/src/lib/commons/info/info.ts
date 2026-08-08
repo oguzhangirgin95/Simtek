@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { BaseComponent } from '../../base/basecomponent/basecomponent';
 
-export type InfoVariant = 'info' | 'success' | 'warning' | 'error';
+export type InfoVariant = 'info' | 'success' | 'warning' | 'error' | 'teal' | 'violet';
 
 @Component({
   selector: 'app-info',

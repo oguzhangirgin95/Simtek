@@ -39,6 +39,8 @@ public interface PoliceRepository extends JpaRepository<Police, String>, JpaSpec
                    c.map_y                                           AS "y",
                    count(p.id)                                       AS "totalPolice",
                    count(p.id) FILTER (WHERE p.status = 'SAHADA')    AS "activePolice",
+                   count(p.id) FILTER (WHERE p.daily_task_count > p.daily_task_limit)
+                                                                     AS "overLimitPolice",
                    (SELECT count(*) FROM unit u WHERE u.city_id = c.id) AS "unitCount"
             FROM city c
             LEFT JOIN police p

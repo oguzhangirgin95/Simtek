@@ -1,4 +1,30 @@
 .app-map {
+  --map-color: var(--color-accent);
+
+  &--success {
+    --map-color: var(--color-success);
+  }
+
+  &--warning {
+    --map-color: var(--color-warning);
+  }
+
+  &--error {
+    --map-color: var(--color-error);
+  }
+
+  &--info {
+    --map-color: var(--color-info);
+  }
+
+  &--teal {
+    --map-color: var(--color-teal);
+  }
+
+  &--violet {
+    --map-color: var(--color-violet);
+  }
+
   &__svg {
     display: block;
     width: 100%;
@@ -6,12 +32,14 @@
   }
 
   &__province {
-    stroke: #0a1f44;
+    fill: var(--color-surface);
+    stroke: var(--color-border-strong);
     stroke-width: 1.2;
-    transition: opacity 160ms ease;
+    transition: fill 160ms ease, fill-opacity 160ms ease, opacity 160ms ease;
   }
 
   &__province--data {
+    fill: var(--map-color);
     cursor: pointer;
   }
 
@@ -20,7 +48,7 @@
   }
 
   &__province--selected {
-    stroke: #ffffff;
+    stroke: var(--color-text);
     stroke-width: 3;
   }
 
@@ -61,6 +89,7 @@
     width: 14px;
     height: 14px;
     border-radius: 3px;
+    background: var(--map-color);
   }
 
   &__empty {

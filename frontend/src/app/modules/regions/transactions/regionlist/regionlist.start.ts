@@ -16,7 +16,7 @@ export class RegionlistStart extends BaseComponent implements OnInit {
 
   readonly labels = computed(() => ({
     title: this.getResource('REGIONLIST_TITLE', 'Şehir Bazlı Dağılım'),
-    mapTitle: this.getResource('MAP_TITLE', 'Şehir bazlı aktif memur'),
+    mapTitle: this.getResource('MAP_TOTAL_TITLE', 'Şehir bazlı toplam memur'),
     listTitle: this.getResource('REGIONLIST_LIST', 'Şehirler'),
     listHint: this.getResource('REGIONLIST_HINT', 'Haritada seçmek için satıra tıklayın'),
     totalPolice: this.getResource('STAT_TOTAL', 'Toplam personel'),
@@ -55,7 +55,7 @@ export class RegionlistStart extends BaseComponent implements OnInit {
           name: city.cityName ?? '',
           x: city.x ?? 0,
           y: city.y ?? 0,
-          value: city.activePolice ?? 0,
+          value: city.totalPolice ?? 0,
         }));
       })
       .catch((error) => console.error('Map:', error));

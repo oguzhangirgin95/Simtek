@@ -17,6 +17,7 @@ export interface CityStatistic {
     y?: number;
     totalPolice?: number;
     activePolice?: number;
+    overLimitPolice?: number;
     activePercent?: number;
     unitCount?: number;
 }

@@ -15,6 +15,8 @@ public class CityStatistic {
 
     public Integer activePolice;
 
+    public Integer overLimitPolice;
+
     public Integer activePercent;
 
     public Integer unitCount;
