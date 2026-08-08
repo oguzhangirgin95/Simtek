@@ -3,6 +3,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
 import { FlowService } from '../baseservice/flowservice';
 
+/**
+ * Oturum kontrolü. Token yoksa giriş ekranına yönlendirir.
+ *
+ * Sunucu tarafı render'ında token localStorage'dan okunamadığı için kontrol
+ * atlanıyor; yoksa her SSR isteği girişe yönlenir ve tarayıcıya boş sayfa
+ * giderdi. Asıl kontrol tarayıcıda yapılıyor.
+ */
 export const AuthGuard: CanActivateFn = () => {
   const flowService = inject(FlowService);
   

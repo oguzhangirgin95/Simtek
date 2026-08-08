@@ -1,8 +1,9 @@
 import { InjectionToken } from '@angular/core';
 
 /**
- * Tarayici istekleri '/api/...' adresine gider, Node sunucusu backend'e iletir.
- * Sunucu tarafi render'inda gorece adres calismadigi icin backend adresi buradan verilir.
+ * Tarayıcı istekleri '/api/...' adresine gider, Node sunucusu bunları backend'e
+ * iletir. Sunucu tarafı render'ında göreli adresin karşılığı olmadığı için
+ * backend'in mutlak adresi buradan veriliyor.
  */
 export const API_ORIGIN = new InjectionToken<string>('API_ORIGIN', {
   providedIn: 'root',

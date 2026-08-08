@@ -1,19 +1,24 @@
 import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
 import { BaseService } from './baseservice';
 
+/** Tek bir tema. colors alanı, :root üzerine yazılan CSS değişkenleridir. */
 export interface Palette {
+  /** Kalıcı anahtar; localStorage'da saklanan değer budur. */
   code: string;
+  /** Tema seçicide görünen ad. */
   name: string;
+  /** '--color-bg' gibi değişken adından değere eşleme. */
   colors: Record<string, string>;
 }
 
 
 /**
- * Uretilen paletler. Bir palet iki tondan olusur:
- * baseHue  -> zemin, kart, cizgi ve yazi renkleri
- * accentHue/accentLight -> vurgu rengi (buton, secili durum)
+ * Palet üretici. Bir palet iki tondan oluşur:
+ * baseHue -> zemin, kart, çizgi ve yazı renkleri
+ * accentHue/accentLight -> vurgu rengi (buton, seçili durum)
  *
- * accentLight degerleri beyaz yazinin okunakli kalacagi en parlak degerdir.
+ * accentLight, üzerine beyaz yazı geldiğinde okunaklı kalan en parlak değerdir;
+ * bu yüzden her renk tonu için ayrı ayrı seçilmiş durumda.
  */
 function build(code: string, name: string, baseHue: number, accentHue: number, accentLight: number): Palette {
   return {
@@ -35,6 +40,13 @@ function build(code: string, name: string, baseHue: number, accentHue: number, a
   };
 }
 
+/**
+ * Seçilebilecek temalar.
+ *
+ * İlk dördü elle ayarlanmış özel paletler; gerisi build() ile hue değerinden
+ * üretiliyor. Sıra tema seçicideki görünüm sırasıdır, varsayılanı belirlemez;
+ * onu DEFAULT_CODE söyler.
+ */
 export const PALETTES: Palette[] = [
   {
     code: 'navy',
@@ -154,27 +166,42 @@ export const PALETTES: Palette[] = [
   build('carnation', 'Karanfil', 336, 330, 48),
 ];
 
+/** Tema seçiminin localStorage'da saklandığı anahtar. */
 const STORAGE_KEY = 'simtek-theme';
 
+/** Hiç seçim yapmamış kullanıcının göreceği tema. */
 const DEFAULT_CODE = 'cobalt';
 
+/**
+ * Tema seçimi.
+ *
+ * Paletin renklerini :root üzerindeki CSS değişkenlerine yazar ve seçimi
+ * localStorage'da saklar. Bileşenler sabit renk yerine bu değişkenleri
+ * kullandığı sürece bütün arayüz seçilen temaya kendiliğinden uyar.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService extends BaseService {
   private readonly document = inject(DOCUMENT);
 
+  /** Seçilebilecek bütün paletler. */
   readonly palettes = PALETTES;
 
+  /** Varsayılan tema. Listenin ilki değil, DEFAULT_CODE ile belirlenen palet;
+   * böylece seçicideki sıralama değişse de varsayılan sabit kalır. */
   readonly defaultPalette = this.palettes.find((item) => item.code === DEFAULT_CODE) ?? this.palettes[0];
 
+  /** Uygulanan paletin kodu. apply() her çağrıldığında güncellenir. */
   readonly current = signal<string>(this.defaultPalette.code);
 
+  /** Servis oluşur oluşmaz saklanan tema uygulanır; ekran renksiz açılmaz. */
   constructor() {
     super();
     this.apply(this.read());
   }
 
+  /** Temayı uygular ve seçimi saklar. Tanınmayan kod varsayılana düşer. */
   apply(code: string): void {
     const palette = this.palettes.find((item) => item.code === code) ?? this.defaultPalette;
 
@@ -182,20 +209,24 @@ export class ThemeService extends BaseService {
       this.document.documentElement.style.setProperty(name, palette.colors[name]),
     );
 
+    // Mobil tarayıcılarda adres çubuğunun rengi de temayla birlikte değişsin.
     this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', palette.colors['--color-bg']);
 
     this.current.set(palette.code);
     this.write(palette.code);
   }
 
+  /** Varsayılan temaya döner. */
   reset(): void {
     this.apply(this.defaultPalette.code);
   }
 
+  /** Sıfırla butonunun pasif olup olmayacağını belirler. */
   isDefault(): boolean {
     return this.current() === this.defaultPalette.code;
   }
 
+  /** Saklanan seçimi okur. Depolamaya erişilemezse varsayılan kod döner. */
   private read(): string {
     try {
       return localStorage.getItem(STORAGE_KEY) ?? this.defaultPalette.code;
@@ -204,6 +235,7 @@ export class ThemeService extends BaseService {
     }
   }
 
+  /** Seçimi saklar. Depolama kapalıysa sessizce geçilir. */
   private write(code: string): void {
     try {
       localStorage.setItem(STORAGE_KEY, code);

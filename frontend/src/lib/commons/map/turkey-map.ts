@@ -1,12 +1,27 @@
+/**
+ * Türkiye haritasının statik geometrisi.
+ *
+ * Burada veri değil yalnızca çizim bilgisi durur; il sayıları çalışma anında
+ * MapPoint olarak eşleştirilir. Eşleme il adı üzerinden yapıldığı için buradaki
+ * adların backend'in döndürdüğü şehir adlarıyla tutması gerekir. Büyük/küçük
+ * harf ve Türkçe karakter farkı sorun değil, o sadeleştiriliyor.
+ */
+
+/** Tek bir ilin SVG şekli. */
 export interface ProvinceShape {
   name: string;
+  /** Sayının ve il adının yazılacağı merkezin yatay konumu. */
   cx: number;
+  /** Sayının ve il adının yazılacağı merkezin dikey konumu. */
   cy: number;
+  /** İlin sınırlarını çizen SVG path verisi. */
   path: string;
 }
 
+/** SVG görüntü alanı. Aşağıdaki path koordinatları bu ölçüye göre çizilmiştir. */
 export const TURKEY_VIEWBOX = '0 0 1000 422.0';
 
+/** 81 ilin şekli, alfabetik sırayla. Elle düzenlenmesi gereken bir liste değil. */
 export const TURKEY_PROVINCES: ProvinceShape[] = [
   { name: 'Adana', cx: 518.9, cy: 326.9, path: 'M556.3 280.8L555.8 286.7L558.0 292.0L554.9 298.8L547.2 299.8L540.9 304.2L533.1 318.6L534.2 328.6L531.5 333.9L539.2 330.8L540.8 331.9L542.4 335.2L541.3 340.8L536.4 345.4L534.6 349.0L535.7 350.6L530.9 356.3L528.4 358.2L521.8 358.2L518.3 362.7L516.4 361.8L517.5 364.0L519.6 360.4L521.1 360.0L520.7 362.1L521.2 360.7L521.1 362.1L524.7 361.8L520.6 364.8L519.4 369.1L516.5 371.7L508.8 370.0L504.7 373.5L503.8 371.2L505.0 369.1L500.8 366.7L500.1 364.1L496.4 363.1L495.5 364.3L503.9 372.1L486.9 361.7L482.6 361.0L488.8 357.9L490.6 352.4L489.8 344.5L483.1 336.5L475.8 317.1L475.9 311.3L479.7 307.3L477.9 296.6L480.2 294.9L488.3 295.6L491.2 294.3L498.1 286.7L497.8 281.3L499.6 278.6L510.8 280.8L519.4 278.4L522.5 271.4L539.9 263.0L547.6 247.7L558.9 244.1L561.2 245.8L564.8 254.2L561.4 258.5L556.3 280.8Z' },
   { name: 'Adıyaman', cx: 665.1, cy: 285.3, path: 'M677.7 269.3L695.9 267.6L701.5 263.0L706.4 262.6L708.5 264.3L706.6 271.9L699.5 276.0L695.2 281.2L693.1 292.3L686.8 296.0L686.8 299.4L675.6 303.8L668.4 309.7L660.7 310.0L651.7 315.2L646.7 313.6L642.6 309.2L632.8 306.0L623.8 308.2L613.0 301.2L613.3 295.3L622.3 287.2L629.8 286.6L634.9 283.3L642.5 284.8L652.9 280.9L650.5 269.4L664.3 262.0L671.5 260.0L676.6 262.1L672.9 267.1L677.7 269.3Z' },
