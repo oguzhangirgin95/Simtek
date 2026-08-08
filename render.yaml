@@ -49,7 +49,4 @@ services:
     dockerContext: ./frontend
     envVars:
       - key: API_URL
-        fromService:
-          type: web
-          name: simtek-backend
-          property: hostport
+        value: https://simtek-backend.onrender.com
