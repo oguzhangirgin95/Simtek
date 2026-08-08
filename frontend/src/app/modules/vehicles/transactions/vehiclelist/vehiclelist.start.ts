@@ -1,4 +1,6 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, catchError, debounceTime, switchMap } from 'rxjs';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
@@ -16,6 +18,7 @@ import { Select } from '../../../../../lib/commons/select/select';
 import { Statcard } from '../../../../../lib/commons/statcard/statcard';
 
 const PAGE_SIZE = 20;
+const SEARCH_DELAY = 400;
 
 @Component({
   imports: [Button, Card, Detailcard, Donutchart, Grid, Info, Input, Modal, Pagination, Select, Statcard],
@@ -26,6 +29,9 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   private readonly vehicleService = inject(VehicleControllerService);
   private readonly regionService = inject(RegionControllerService);
   private readonly unitService = inject(UnitControllerService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly search = new Subject<void>();
 
   readonly labels = computed(() => ({
     title: this.getResource('VEHICLELIST_TITLE', 'Araç Envanteri'),
@@ -67,6 +73,17 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
     this.getUnitList();
     this.getTypeList();
     this.getVehicleList();
+
+    this.search
+      .pipe(
+        debounceTime(SEARCH_DELAY),
+        switchMap(() => this.vehicleService.vehicleList(this.State.Request).pipe(catchError(() => EMPTY))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.State.VehicleList = response?.vehicles ?? [];
+        this.State.TotalCount = response?.totalCount ?? 0;
+      });
   }
 
 
@@ -124,7 +141,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
       this.getUnitList();
     }
 
-    this.getVehicleList();
+    key === 'searchText' ? this.search.next() : this.getVehicleList();
   }
 
   clearFilter() {

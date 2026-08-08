@@ -1,4 +1,6 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, catchError, debounceTime, switchMap } from 'rxjs';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
@@ -18,6 +20,7 @@ import { Select } from '../../../../../lib/commons/select/select';
 import { Tabs } from '../../../../../lib/commons/tabs/tabs';
 
 const PAGE_SIZE = 20;
+const SEARCH_DELAY = 400;
 
 @Component({
   imports: [Button, Card, Detailcard, Grid, Info, Input, List, Modal, Pagination, Select, Tabs],
@@ -30,6 +33,9 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   private readonly taskService = inject(TaskControllerService);
   private readonly regionService = inject(RegionControllerService);
   private readonly unitService = inject(UnitControllerService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly search = new Subject<void>();
 
   readonly labels = computed(() => ({
     title: this.getResource('POLICELIST_TITLE', 'Personel Listesi'),
@@ -89,6 +95,17 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     this.getUnitList();
     this.getStatusList();
     this.getPoliceList();
+
+    this.search
+      .pipe(
+        debounceTime(SEARCH_DELAY),
+        switchMap(() => this.policeService.policeList(this.State.Request).pipe(catchError(() => EMPTY))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.State.PoliceList = response?.policeList ?? [];
+        this.State.TotalCount = response?.totalCount ?? 0;
+      });
   }
 
 
@@ -144,7 +161,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
       this.getUnitList();
     }
 
-    this.getPoliceList();
+    key === 'searchText' ? this.search.next() : this.getPoliceList();
   }
 
   clearFilter() {
