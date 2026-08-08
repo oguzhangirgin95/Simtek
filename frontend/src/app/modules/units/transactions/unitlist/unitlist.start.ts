@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -53,7 +54,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -61,9 +62,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
   }
 
   getUnitWorkload() {
-    this.dashboardService
-      .unitWorkload(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.dashboardService.unitWorkload(this.State.Request))
       .then((response) => {
         this.State.UnitWorkload = response;
         this.State.UnitChart = (response?.units ?? []).map((unit) => ({

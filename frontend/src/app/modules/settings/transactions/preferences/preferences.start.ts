@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
 import { SettingControllerService } from '@lib/services/api/settingController.service';
@@ -51,7 +52,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -59,9 +60,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
   }
 
   getSetting() {
-    this.settingService
-      .settingGet({ token: this.flowService.token() })
-      .toPromise()
+    firstValueFrom(this.settingService.settingGet({ token: this.flowService.token() }))
       .then((response) => {
         this.State.Request = {
           token: this.flowService.token(),
@@ -75,9 +74,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
   }
 
   saveSetting() {
-    this.settingService
-      .settingSave(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.settingService.settingSave(this.State.Request))
       .then((response) => {
         this.State.Message = response?.message;
         this.flowService.set('language', response?.language);

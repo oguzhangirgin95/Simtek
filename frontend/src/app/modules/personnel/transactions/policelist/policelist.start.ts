@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, debounceTime, switchMap } from 'rxjs';
+import { catchError, debounceTime, EMPTY, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { PoliceControllerService } from '@lib/services/api/policeController.service';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -110,7 +110,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -118,7 +118,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -126,7 +126,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getStatusList() {
-    this.once('StatusList', () => this.policeService.policeStatusList({}).toPromise())
+    this.once('StatusList', () => firstValueFrom(this.policeService.policeStatusList({})))
       .then((response) => {
         this.State.StatusList = (response?.statuses ?? []).map((status) => ({
           value: status.key,
@@ -138,9 +138,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
 
 
   getPoliceList() {
-    this.policeService
-      .policeList(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.policeService.policeList(this.State.Request))
       .then((response) => {
         this.State.PoliceList = response?.policeList ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;
@@ -193,9 +191,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getPoliceDetail(policeId: string) {
-    this.policeService
-      .policeDetail({ policeId: policeId })
-      .toPromise()
+    firstValueFrom(this.policeService.policeDetail({ policeId: policeId }))
       .then((response) => {
         this.State.PoliceDetail = response;
         this.State.PoliceItems = [
@@ -219,9 +215,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getVehicleDetail(policeId: string) {
-    this.vehicleService
-      .vehicleDetail({ policeId: policeId })
-      .toPromise()
+    firstValueFrom(this.vehicleService.vehicleDetail({ policeId: policeId }))
       .then((response) => {
         this.State.VehicleDetail = response;
         this.State.VehicleItems = [
@@ -237,9 +231,7 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   getTaskList(policeId: string) {
-    this.taskService
-      .taskList({ policeId: policeId })
-      .toPromise()
+    firstValueFrom(this.taskService.taskList({ policeId: policeId }))
       .then((response) => {
         this.State.TaskList = response?.tasks ?? [];
       })

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { ReportEntryControllerService } from '@lib/services/api/reportEntryController.service';
@@ -51,9 +52,7 @@ export class ReportlistStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.reportService
-      .reportTypeList({})
-      .toPromise()
+    firstValueFrom(this.reportService.reportTypeList({}))
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
@@ -61,9 +60,7 @@ export class ReportlistStart extends BaseComponent implements OnInit {
   }
 
   getReportList() {
-    this.reportService
-      .reportList(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.reportService.reportList(this.State.Request))
       .then((response) => {
         this.State.ReportList = response?.reports ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
 import { ReportEntryControllerService } from '@lib/services/api/reportEntryController.service';
@@ -52,9 +53,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.reportService
-      .reportTypeList({})
-      .toPromise()
+    firstValueFrom(this.reportService.reportTypeList({}))
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
@@ -62,7 +61,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -70,7 +69,7 @@ export class ReportentryStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })

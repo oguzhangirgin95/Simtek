@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, catchError, interval, switchMap } from 'rxjs';
+import { catchError, EMPTY, firstValueFrom, interval, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
 import { PoliceControllerService } from '@lib/services/api/policeController.service';
@@ -97,7 +97,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -105,7 +105,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -113,7 +113,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getStatusList() {
-    this.once('StatusList', () => this.policeService.policeStatusList({}).toPromise())
+    this.once('StatusList', () => firstValueFrom(this.policeService.policeStatusList({})))
       .then((response) => {
         this.State.StatusList = (response?.statuses ?? []).map((status) => ({
           value: status.key,
@@ -131,9 +131,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getSummary() {
-    this.dashboardService
-      .dashboardSummary(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.dashboardService.dashboardSummary(this.State.Request))
       .then((response) => {
         this.State.Summary = response;
         this.State.StatusChart = (response?.statusDistribution ?? []).map((item) => ({
@@ -157,9 +155,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
     const metric = this.State.MapMetric;
     const request = metric ? { ...this.State.Request, status: metric.status } : this.State.Request;
 
-    this.dashboardService
-      .mapStatistics(request)
-      .toPromise()
+    firstValueFrom(this.dashboardService.mapStatistics(request))
       .then((response) => {
         this.State.MapStatistics = response;
         this.State.MapPoints = (response?.cities ?? []).map((city) => ({
@@ -174,9 +170,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   }
 
   getUnitWorkload() {
-    this.dashboardService
-      .unitWorkload(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.dashboardService.unitWorkload(this.State.Request))
       .then((response) => {
         this.State.UnitWorkload = response;
         this.State.UnitChart = (response?.units ?? []).map((unit) => ({

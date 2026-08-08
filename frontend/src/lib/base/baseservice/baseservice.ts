@@ -1,4 +1,5 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { MenuControllerService } from '@lib/services/api/menuController.service';
 import { ResourceControllerService } from '@lib/services/api/resourceController.service';
 import { MenuItemModel } from '@lib/services/model/menuItemModel';
@@ -118,9 +119,7 @@ export abstract class BaseService {
     // İstek başlamadan işaretlenir; aynı anda gelen ikinci çağrı da elenir.
     this.loadedResources.add(group);
 
-    this.resourceControllerService
-      .get({ transactionName: group })
-      .toPromise()
+    firstValueFrom(this.resourceControllerService.get({ transactionName: group }))
       .then((response) => {
         // Gelen liste anahtar/değer nesnesine çevrilip mevcutların üzerine eklenir;
         // böylece 'general' grubu ile ekrana özel grup birlikte yaşayabilir.
@@ -180,9 +179,7 @@ export abstract class BaseService {
     }
     this.menuLoaded = true;
 
-    this.menuControllerService
-      .menuList({})
-      .toPromise()
+    firstValueFrom(this.menuControllerService.menuList({}))
       .then((response) => this.menuItems.set(response?.items ?? []))
       .catch((error) => console.error('Menu load failed:', error));
   }

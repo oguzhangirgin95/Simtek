@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { LoginControllerService } from '@lib/services/api/loginController.service';
@@ -49,7 +50,7 @@ export class LoginStart extends BaseComponent implements OnInit {
           password: this.encryption(this.State.Request.password),
         };
 
-        this.loginService.login(request).toPromise().then((response: LoginResponse | undefined) => {
+        firstValueFrom(this.loginService.login(request)).then((response: LoginResponse | undefined) => {
             if (response?.token) {
               this.flowService.token.set(response.token);
               this.router.navigateByUrl('/monitoring/dashboard/start');

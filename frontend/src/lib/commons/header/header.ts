@@ -1,4 +1,5 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Button } from '../button/button';
@@ -59,9 +60,7 @@ export class Header extends BaseComponent {
    * ekranına dönülür.
    */
   logout() {
-    this.loginService
-      .logout({ token: this.flowService.token() })
-      .toPromise()
+    firstValueFrom(this.loginService.logout({ token: this.flowService.token() }))
       .then(() => {
         this.flowService.token.set(undefined);
         this.router.navigateByUrl('/firstlevel');

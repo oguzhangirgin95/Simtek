@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { PoliceControllerService } from '@lib/services/api/policeController.service';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -57,7 +58,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -65,7 +66,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Filter.cityId}`, () => this.unitService.unitList({ cityId: this.State.Filter.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Filter.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Filter.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -73,7 +74,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.once('TaskTypeList', () => this.taskService.taskTypeList({}).toPromise())
+    this.once('TaskTypeList', () => firstValueFrom(this.taskService.taskTypeList({})))
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
       })
@@ -81,9 +82,7 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   getPoliceList() {
-    this.policeService
-      .policeList({ cityId: this.State.Filter.cityId, unitId: this.State.Filter.unitId })
-      .toPromise()
+    firstValueFrom(this.policeService.policeList({ cityId: this.State.Filter.cityId, unitId: this.State.Filter.unitId }))
       .then((response) => {
         this.State.PoliceList = (response?.policeList ?? []).map((police) => ({
           value: police.id,

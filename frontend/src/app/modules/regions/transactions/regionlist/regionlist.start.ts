@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
 import { Card } from '@lib/commons/card/card';
@@ -45,9 +46,7 @@ export class RegionlistStart extends BaseComponent implements OnInit {
   }
 
   getMapStatistics() {
-    this.dashboardService
-      .mapStatistics(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.dashboardService.mapStatistics(this.State.Request))
       .then((response) => {
         this.State.MapStatistics = response;
         this.State.MapPoints = (response?.cities ?? []).map((city) => ({

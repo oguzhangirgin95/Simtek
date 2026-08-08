@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { AnalyticsControllerService } from '@lib/services/api/analyticsController.service';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -54,7 +55,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
   }
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -62,7 +63,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -70,9 +71,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
   }
 
   getTaskTrend() {
-    this.analyticsService
-      .taskTrend(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.analyticsService.taskTrend(this.State.Request))
       .then((response) => {
         this.State.Trend = response;
         this.State.TrendChart = (response?.points ?? []).map((point) => ({
@@ -84,9 +83,7 @@ export class TasktrendStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.taskService
-      .taskTypeList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    firstValueFrom(this.taskService.taskTypeList({ cityId: this.State.Request.cityId }))
       .then((response) => {
         this.State.TypeChart = (response?.types ?? []).map((type) => ({
           label: type.name ?? '',

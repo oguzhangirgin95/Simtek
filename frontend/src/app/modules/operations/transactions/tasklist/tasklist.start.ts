@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
 import { TaskControllerService } from '@lib/services/api/taskController.service';
@@ -74,7 +75,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -82,7 +83,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -90,9 +91,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.taskService
-      .taskTypeList({ cityId: this.State.Request.cityId })
-      .toPromise()
+    firstValueFrom(this.taskService.taskTypeList({ cityId: this.State.Request.cityId }))
       .then((response) => {
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
         this.State.TypeChart = (response?.types ?? []).map((type) => ({
@@ -105,9 +104,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
 
 
   getTaskList() {
-    this.taskService
-      .taskList(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.taskService.taskList(this.State.Request))
       .then((response) => {
         this.State.TaskList = response?.tasks ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;

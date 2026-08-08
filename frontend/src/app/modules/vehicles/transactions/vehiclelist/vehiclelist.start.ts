@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, debounceTime, switchMap } from 'rxjs';
+import { catchError, debounceTime, EMPTY, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
 import { UnitControllerService } from '@lib/services/api/unitController.service';
@@ -88,7 +88,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
 
 
   getCityList() {
-    this.once('CityList', () => this.regionService.regionList({}).toPromise())
+    this.once('CityList', () => firstValueFrom(this.regionService.regionList({})))
       .then((response) => {
         this.State.CityList = (response?.regions ?? []).map((city) => ({ value: city.id, text: city.name }));
       })
@@ -96,7 +96,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   getUnitList() {
-    this.once(`UnitList:${this.State.Request.cityId}`, () => this.unitService.unitList({ cityId: this.State.Request.cityId }).toPromise())
+    this.once(`UnitList:${this.State.Request.cityId}`, () => firstValueFrom(this.unitService.unitList({ cityId: this.State.Request.cityId })))
       .then((response) => {
         this.State.UnitList = (response?.units ?? []).map((unit) => ({ value: unit.id, text: unit.name }));
       })
@@ -104,7 +104,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   getTypeList() {
-    this.once('VehicleTypeList', () => this.vehicleService.vehicleTypeList({}).toPromise())
+    this.once('VehicleTypeList', () => firstValueFrom(this.vehicleService.vehicleTypeList({})))
       .then((response) => {
         this.State.TypeCounts = response?.types ?? [];
         this.State.TypeList = (response?.types ?? []).map((type) => ({ value: type.key, text: type.name }));
@@ -118,9 +118,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
 
 
   getVehicleList() {
-    this.vehicleService
-      .vehicleList(this.State.Request)
-      .toPromise()
+    firstValueFrom(this.vehicleService.vehicleList(this.State.Request))
       .then((response) => {
         this.State.VehicleList = response?.vehicles ?? [];
         this.State.TotalCount = response?.totalCount ?? 0;
@@ -158,9 +156,7 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   selectVehicle(row: any) {
     this.State.SelectedPlate = row.plate;
 
-    this.vehicleService
-      .vehicleDetail({ plate: row.plate })
-      .toPromise()
+    firstValueFrom(this.vehicleService.vehicleDetail({ plate: row.plate }))
       .then((response) => {
         this.State.VehicleDetail = response;
         this.State.VehicleItems = [
