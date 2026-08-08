@@ -16,6 +16,7 @@ import models.firstlevel.request.LogoutRequest;
 import models.firstlevel.response.CurrentUserResponse;
 import models.firstlevel.response.LoginResponse;
 import models.firstlevel.response.LogoutResponse;
+import modules.features.business.FeatureBusiness;
 import modules.firstlevel.repositories.AppUserRepository;
 
 @Service
@@ -27,9 +28,13 @@ public class LoginBusiness {
 
     private final CryptologyService cryptologyService;
 
-    public LoginBusiness(AppUserRepository appUserRepository, CryptologyService cryptologyService) {
+    private final FeatureBusiness featureBusiness;
+
+    public LoginBusiness(AppUserRepository appUserRepository, CryptologyService cryptologyService,
+            FeatureBusiness featureBusiness) {
         this.appUserRepository = appUserRepository;
         this.cryptologyService = cryptologyService;
+        this.featureBusiness = featureBusiness;
     }
 
     @Transactional(readOnly = true)
@@ -51,6 +56,7 @@ public class LoginBusiness {
 
         loginResponse.success = true;
         loginResponse.token = "TOKEN-" + user.get().username.toUpperCase();
+        loginResponse.features = featureBusiness.EnabledFeatures();
 
         TOKENS.put(loginResponse.token, user.get().username);
 
@@ -87,6 +93,7 @@ public class LoginBusiness {
         currentUserResponse.valid = true;
         currentUserResponse.username = username;
         currentUserResponse.token = currentUserRequest.token;
+        currentUserResponse.features = featureBusiness.EnabledFeatures();
 
         return currentUserResponse;
     }

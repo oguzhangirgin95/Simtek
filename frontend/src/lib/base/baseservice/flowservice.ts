@@ -9,7 +9,9 @@ import {
   ValidationError,
   ValidationRuleConfig,
 } from '../baseconfig/config';
+import { FeatureCode } from '../baseconfig/features';
 import { BaseService } from './baseservice';
+import { FeatureFlagService } from './featureflagservice';
 import { Validationservice } from './validationservice';
 
 /**
@@ -29,6 +31,7 @@ export class FlowService extends BaseService {
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
   private readonly validationService = inject(Validationservice);
+  private readonly featureFlagService = inject(FeatureFlagService);
 
   /** Route olaylarına abone olur ve token'ı saklamak için effect kurar. */
   constructor() {
@@ -101,7 +104,9 @@ export class FlowService extends BaseService {
   public readonly config = signal<FlowConfig | undefined>(undefined);
 
   /** Yapılandırmadaki bütün adımlar. */
-  public readonly steps = computed<FlowStep[]>(() => this.config()?.config.steps ?? []);
+  public readonly steps = computed<FlowStep[]>(() =>
+    (this.config()?.config.steps ?? []).filter((step) => this.isFeatureOn(step.isEnable)),
+  );
 
   /** Geçerli adımın yapılandırması. */
   public readonly currentStepConfig = computed<FlowStep | undefined>(() =>
@@ -138,10 +143,16 @@ export class FlowService extends BaseService {
       return [];
     }
 
-    const errors = this.validationService.validate(step.validation, (rule) => this.ruleValue(rule));
+    const rules = step.validation.filter((rule) => this.isFeatureOn(rule.isEnable));
+    const errors = this.validationService.validate(rules, (rule) => this.ruleValue(rule));
 
     return errors.map((error) => ({ id: error.id, message: this.ruleMessage(error.message) }));
   });
+
+  /** Yapılandırmadaki isEnable alanının karşılığı. Boş bırakılmışsa koşul yok demektir. */
+  private isFeatureOn(code: FeatureCode | undefined): boolean {
+    return !code || this.featureFlagService.isEnableFeature(code);
+  }
 
   /** Doğrulamayı açar ve geçerli adımın geçip geçmediğini döndürür. */
   public validateCurrentStep(): Promise<boolean> {
@@ -220,6 +231,11 @@ export class FlowService extends BaseService {
    * Verilmediğinde buton görünür kabul edilir.
    */
   public isButtonVisible(button: FlowButton): boolean {
+    // Bayrak kapalıysa isVisible'a hiç bakılmaz.
+    if (!this.isFeatureOn(button.isEnable)) {
+      return false;
+    }
+
     const isVisible = button.isVisible;
 
     if (isVisible === undefined || typeof isVisible === 'boolean') {

@@ -9,9 +9,10 @@
  */
 
 
-export interface CurrentUserResponse { 
+export interface CurrentUserResponse {
     valid?: boolean;
     username?: string;
     token?: string;
+    features?: Array<string>;
 }
 

@@ -53,6 +53,7 @@ export class LoginStart extends BaseComponent implements OnInit {
         firstValueFrom(this.loginService.login(request)).then((response: LoginResponse | undefined) => {
             if (response?.token) {
               this.flowService.token.set(response.token);
+              this.featureFlagService.setFeatures(response.features);
               this.router.navigateByUrl('/monitoring/dashboard/start');
             } else {
               this.State.loginError = 'Kullanıcı adı veya şifre hatalı.';

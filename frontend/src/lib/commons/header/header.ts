@@ -63,6 +63,7 @@ export class Header extends BaseComponent {
     firstValueFrom(this.loginService.logout({ token: this.flowService.token() }))
       .then(() => {
         this.flowService.token.set(undefined);
+        this.featureFlagService.clearFeatures();
         this.router.navigateByUrl('/firstlevel');
       })
       .catch((error) => console.error('Logout:', error));

@@ -1,6 +1,8 @@
 import { Directive, inject } from '@angular/core';
 import { FlowButton } from '../baseconfig/config';
+import { FeatureCode } from '../baseconfig/features';
 import { CryptologyService } from '../baseservice/cryptologyservice';
+import { FeatureFlagService } from '../baseservice/featureflagservice';
 import { FlowService } from '../baseservice/flowservice';
 import { ThemeService } from '../baseservice/themeservice';
 
@@ -22,6 +24,8 @@ export abstract class BaseComponent {
   protected readonly cryptologyService = inject(CryptologyService);
 
   protected readonly themeService = inject(ThemeService);
+
+  protected readonly featureFlagService = inject(FeatureFlagService);
 
   /** Ekranlar arasında paylaşılan durum. Hem okuma hem yazma reaktiftir. */
   public readonly State = this.flowService.State;
@@ -75,6 +79,11 @@ export abstract class BaseComponent {
   /** Şifrelenmiş değeri çözer. */
   public decryption(value: string): string {
     return this.cryptologyService.decryption(value);
+  }
+
+  /** Özellik bu ortamda açık mı. */
+  public isEnableFeature(code: FeatureCode): boolean {
+    return this.featureFlagService.isEnableFeature(code);
   }
 
   /** Bir alanın doğrulama hatası; şablonda hata metnini göstermek için. */

@@ -9,8 +9,9 @@
  */
 
 
-export interface LoginResponse { 
+export interface LoginResponse {
     success?: boolean;
     token?: string;
+    features?: Array<string>;
 }
 

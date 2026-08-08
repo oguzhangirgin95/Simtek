@@ -1,4 +1,5 @@
 import { Type } from '@angular/core';
+import { FeatureCode } from './features';
 
 /**
  * Akış yapılandırmasının tip tanımları.
@@ -72,6 +73,8 @@ export interface ValidationRuleConfig {
   minLength?: number;
   /** MaxLength türü için üst sınır. */
   maxLength?: number;
+  /**  Özellik kodu. Verilirse kural yalnızca o bayrak açıkken uygulanır. */
+  isEnable?: FeatureCode;
 }
 
 /** Doğrulama sonucu üretilen, ekranda gösterilecek hata. */
@@ -104,6 +107,8 @@ export interface FlowStep {
   keepState?: boolean;
   /** Adımın altında gösterilecek ek butonlar. */
   buttons?: FlowButton[];
+  /** Özellik kodu. Verilirse adım yalnızca o bayrak açıkken akışta yer alır. */
+  isEnable?: FeatureCode;
 }
 
 /** Buton görünümü. Button bileşeni de aynı tipi kullanır. */
@@ -133,6 +138,8 @@ export interface FlowButton {
    * buton görünür kabul edilir.
    */
   isVisible?: boolean | string | ((ctx: FlowButtonVisibilityContext) => boolean);
+  /**  Özellik kodu. Verilirse buton yalnızca o bayrak açıkken görünür. */
+  isEnable?: FeatureCode;
 }
 
 /**

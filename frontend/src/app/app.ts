@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Body } from '@lib/commons/body/body';
@@ -11,4 +12,15 @@ import { Header } from '@lib/commons/header/header';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App extends BaseComponent {}
+export class App extends BaseComponent implements OnInit {
+  
+  private readonly platformId = inject(PLATFORM_ID);
+
+  ngOnInit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.featureFlagService.ensureLoaded(this.flowService.token());
+  }
+}
