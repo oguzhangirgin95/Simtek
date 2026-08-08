@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String[]",
+      "description": "CORS icin izin verilen origin listesi (virgulle ayrilir). WebConfig tarafindan okunur."
+    },
+    {
+      "name": "app.crypto.key",
+      "type": "java.lang.String",
+      "description": "CryptologyService icin kullanilan AES anahtari. Tam 32 karakter olmalidir."
+    }
+  ]
+}

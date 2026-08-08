@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.1.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> 
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>backend</artifactId>
@@ -53,8 +53,6 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Versiyonlu veritabani scriptleri: src/main/resources/db/migration -->
-		<!-- Spring Boot 4'te Flyway auto-configuration ayri modulde -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-flyway</artifactId>
@@ -72,11 +70,16 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Testlerde gercek PostgreSQL ayaga kaldirilir -->
 		<dependency>
 			<groupId>io.zonky.test</groupId>
 			<artifactId>embedded-postgres</artifactId>
