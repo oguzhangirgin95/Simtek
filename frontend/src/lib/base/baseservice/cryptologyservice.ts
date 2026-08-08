@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import AES from 'crypto-js/aes';
 import Utf8 from 'crypto-js/enc-utf8';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 import { BaseService } from './baseservice';
 
 @Injectable({

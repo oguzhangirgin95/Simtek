@@ -1,6 +1,6 @@
 import { Component, DOCUMENT, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 interface MenuTransaction {
   path: string;

@@ -1,7 +1,7 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
-import { MenuControllerService } from '../../services/api/menuController.service';
-import { ResourceControllerService } from '../../services/api/resourceController.service';
-import { MenuItemModel } from '../../services/model/menuItemModel';
+import { MenuControllerService } from '@lib/services/api/menuController.service';
+import { ResourceControllerService } from '@lib/services/api/resourceController.service';
+import { MenuItemModel } from '@lib/services/model/menuItemModel';
 
 @Injectable({
   providedIn: 'root',

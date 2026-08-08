@@ -1,10 +1,10 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Map } from '../../../../../lib/commons/map/map';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
+import { Card } from '@lib/commons/card/card';
+import { Grid } from '@lib/commons/grid/grid';
+import { Map } from '@lib/commons/map/map';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
   imports: [Card, Grid, Map, Statcard],

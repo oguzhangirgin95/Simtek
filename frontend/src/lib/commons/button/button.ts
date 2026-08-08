@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
-import { FlowButtonVariant } from '../../base/baseconfig/config';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { FlowButtonVariant } from '@lib/base/baseconfig/config';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 @Component({
   selector: 'app-button',

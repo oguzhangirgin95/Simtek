@@ -1,12 +1,12 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { ReportEntryControllerService } from '../../../../../lib/services/api/reportEntryController.service';
-import { Button } from '../../../../../lib/commons/button/button';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Select } from '../../../../../lib/commons/select/select';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { ReportEntryControllerService } from '@lib/services/api/reportEntryController.service';
+import { Button } from '@lib/commons/button/button';
+import { Card } from '@lib/commons/card/card';
+import { Grid } from '@lib/commons/grid/grid';
+import { Select } from '@lib/commons/select/select';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
   imports: [Button, Card, Grid, Select, Statcard],

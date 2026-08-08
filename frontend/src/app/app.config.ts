@@ -4,9 +4,9 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { BaseInterceptor } from '../lib/base/baseinterceptor/baseinterceptor';
-import { provideApi } from '../lib/services/provide-api';
-import { environment } from '../environments/environment';
+import { BaseInterceptor } from '@lib/base/baseinterceptor/baseinterceptor';
+import { provideApi } from '@lib/services/provide-api';
+import { environment } from '@env/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [

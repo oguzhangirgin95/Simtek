@@ -1,10 +1,10 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Button } from '../button/button';
 import { Menu } from '../menu/menu';
 import { Theme } from '../theme/theme';
-import { LoginControllerService } from '../../services/api/loginController.service';
+import { LoginControllerService } from '@lib/services/api/loginController.service';
 
 const HOME = '/monitoring/dashboard/start';
 

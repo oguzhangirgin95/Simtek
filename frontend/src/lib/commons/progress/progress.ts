@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { InfoVariant } from '../info/info';
 
 @Component({

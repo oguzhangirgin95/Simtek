@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Skeleton } from '../skeleton/skeleton';
 import { ListItem } from '../list/list';
 

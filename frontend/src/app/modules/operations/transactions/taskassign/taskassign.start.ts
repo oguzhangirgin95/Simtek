@@ -1,12 +1,12 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
-import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
-import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
-import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Input } from '../../../../../lib/commons/input/input';
-import { Select } from '../../../../../lib/commons/select/select';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { PoliceControllerService } from '@lib/services/api/policeController.service';
+import { RegionControllerService } from '@lib/services/api/regionController.service';
+import { TaskControllerService } from '@lib/services/api/taskController.service';
+import { UnitControllerService } from '@lib/services/api/unitController.service';
+import { Card } from '@lib/commons/card/card';
+import { Input } from '@lib/commons/input/input';
+import { Select } from '@lib/commons/select/select';
 
 @Component({
   imports: [Card, Input, Select],

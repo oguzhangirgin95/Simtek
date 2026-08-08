@@ -1,5 +1,5 @@
 import { Component, computed } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 @Component({
   selector: 'app-body',

@@ -1,15 +1,15 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { AnalyticsControllerService } from '../../../../../lib/services/api/analyticsController.service';
-import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
-import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
-import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
-import { Barchart } from '../../../../../lib/commons/barchart/barchart';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Select } from '../../../../../lib/commons/select/select';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { AnalyticsControllerService } from '@lib/services/api/analyticsController.service';
+import { RegionControllerService } from '@lib/services/api/regionController.service';
+import { TaskControllerService } from '@lib/services/api/taskController.service';
+import { UnitControllerService } from '@lib/services/api/unitController.service';
+import { Barchart } from '@lib/commons/barchart/barchart';
+import { Card } from '@lib/commons/card/card';
+import { Donutchart } from '@lib/commons/donutchart/donutchart';
+import { Grid } from '@lib/commons/grid/grid';
+import { Select } from '@lib/commons/select/select';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
   imports: [Barchart, Card, Donutchart, Grid, Select, Statcard],

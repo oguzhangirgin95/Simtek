@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { ChartItem } from '../barchart/barchart';
 import { Skeleton } from '../skeleton/skeleton';
 import { TOOLTIP_HIDDEN, Tooltip, TooltipState } from '../tooltip/tooltip';

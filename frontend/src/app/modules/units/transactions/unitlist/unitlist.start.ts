@@ -1,12 +1,12 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
-import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
-import { Barchart } from '../../../../../lib/commons/barchart/barchart';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Select } from '../../../../../lib/commons/select/select';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
+import { RegionControllerService } from '@lib/services/api/regionController.service';
+import { Barchart } from '@lib/commons/barchart/barchart';
+import { Card } from '@lib/commons/card/card';
+import { Grid } from '@lib/commons/grid/grid';
+import { Select } from '@lib/commons/select/select';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
   imports: [Barchart, Card, Grid, Select, Statcard],

@@ -1,15 +1,15 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
-import { TaskControllerService } from '../../../../../lib/services/api/taskController.service';
-import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
-import { Button } from '../../../../../lib/commons/button/button';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Pagination } from '../../../../../lib/commons/pagination/pagination';
-import { Select } from '../../../../../lib/commons/select/select';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { RegionControllerService } from '@lib/services/api/regionController.service';
+import { TaskControllerService } from '@lib/services/api/taskController.service';
+import { UnitControllerService } from '@lib/services/api/unitController.service';
+import { Button } from '@lib/commons/button/button';
+import { Card } from '@lib/commons/card/card';
+import { Donutchart } from '@lib/commons/donutchart/donutchart';
+import { Grid } from '@lib/commons/grid/grid';
+import { Pagination } from '@lib/commons/pagination/pagination';
+import { Select } from '@lib/commons/select/select';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 const PAGE_SIZE = 20;
 

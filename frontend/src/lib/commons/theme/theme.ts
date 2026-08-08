@@ -1,6 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
-import { Palette } from '../../base/baseservice/themeservice';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { Palette } from '@lib/base/baseservice/themeservice';
 
 @Component({
   selector: 'app-theme',

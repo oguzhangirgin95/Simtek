@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Validation } from '../validation/validation';
 
 export interface SelectOption {

@@ -2,19 +2,19 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, catchError, interval, switchMap } from 'rxjs';
-import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
-import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
-import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
-import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
-import { SettingControllerService } from '../../../../../lib/services/api/settingController.service';
-import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
-import { Barchart } from '../../../../../lib/commons/barchart/barchart';
-import { Card } from '../../../../../lib/commons/card/card';
-import { Donutchart } from '../../../../../lib/commons/donutchart/donutchart';
-import { Grid } from '../../../../../lib/commons/grid/grid';
-import { Map } from '../../../../../lib/commons/map/map';
-import { Select } from '../../../../../lib/commons/select/select';
-import { Statcard } from '../../../../../lib/commons/statcard/statcard';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
+import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
+import { PoliceControllerService } from '@lib/services/api/policeController.service';
+import { RegionControllerService } from '@lib/services/api/regionController.service';
+import { SettingControllerService } from '@lib/services/api/settingController.service';
+import { UnitControllerService } from '@lib/services/api/unitController.service';
+import { Barchart } from '@lib/commons/barchart/barchart';
+import { Card } from '@lib/commons/card/card';
+import { Donutchart } from '@lib/commons/donutchart/donutchart';
+import { Grid } from '@lib/commons/grid/grid';
+import { Map } from '@lib/commons/map/map';
+import { Select } from '@lib/commons/select/select';
+import { Statcard } from '@lib/commons/statcard/statcard';
 
 const STATUS_VARIANT: Record<string, string> = {
   SAHADA: 'success',

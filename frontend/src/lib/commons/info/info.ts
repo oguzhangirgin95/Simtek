@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { BaseComponent } from '../../base/basecomponent/basecomponent';
+import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 export type InfoVariant = 'info' | 'success' | 'warning' | 'error' | 'teal' | 'violet';
 
