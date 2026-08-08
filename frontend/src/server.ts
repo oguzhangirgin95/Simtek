@@ -20,7 +20,7 @@ app.use('/api', express.raw({ type: () => true, limit: '10mb' }), (req, res) => 
   const headers: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(req.headers)) {
-    if (typeof value === 'string' && key !== 'host' && key !== 'connection' && key !== 'content-length') {
+    if (typeof value === 'string' && key !== 'host' && key !== 'origin' && key !== 'referer' && key !== 'connection' && key !== 'content-length') {
       headers[key] = value;
     }
   }
