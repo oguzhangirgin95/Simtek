@@ -309,7 +309,7 @@ public class PoliceBusiness {
         police.status = HasText(request.status) ? request.status : "MERKEZDE";
         police.taskType = request.taskType;
         police.dailyTaskLimit = request.dailyTaskLimit == null ? 8 : request.dailyTaskLimit;
-        police.photoUrl = "/images/police/" + police.id + ".jpg";
+        police.photoUrl = PortraitUrl(police);
 
         policeRepository.save(police);
 
@@ -365,5 +365,17 @@ public class PoliceBusiness {
 
     private static boolean HasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private static final List<String> FEMALE_NAMES =
+            List.of("Elif", "Zeynep", "Ayse", "Fatma", "Merve", "Selin");
+
+    /** Personel portresi. Ayni personel her zaman ayni fotografi alir. */
+    private static String PortraitUrl(Police police) {
+        String firstName = HasText(police.fullName) ? police.fullName.trim().split(" ")[0] : "";
+        String gender = FEMALE_NAMES.contains(firstName) ? "women" : "men";
+
+        return "https://randomuser.me/api/portraits/" + gender + "/"
+                + Math.floorMod(police.id.hashCode(), 100) + ".jpg";
     }
 }

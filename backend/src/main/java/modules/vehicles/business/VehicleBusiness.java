@@ -232,8 +232,7 @@ public class VehicleBusiness {
         vehicle.lastMaintenanceDate = HasText(request.lastMaintenanceDate)
                 ? LocalDate.parse(request.lastMaintenanceDate)
                 : vehicle.lastMaintenanceDate;
-        vehicle.photoUrl = "/images/vehicle/" + ("Motosiklet".equals(vehicle.type) ? "motosiklet" : "otomobil")
-                + "-1.jpg";
+        vehicle.photoUrl = PhotoUrl(vehicle);
 
         vehicleRepository.save(vehicle);
 
@@ -295,5 +294,26 @@ public class VehicleBusiness {
 
     private static boolean HasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private static final List<String> CAR_PHOTOS = List.of(
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Police_car_from_Turkey.jpg/960px-Police_car_from_Turkey.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Police_car_in_Turkey.JPG/960px-Police_car_in_Turkey.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Police_car_in_Turkey_02.JPG/960px-Police_car_in_Turkey_02.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Police_car_of_Turkey_01.jpg/960px-Police_car_of_Turkey_01.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Police_car_of_Turkey_02.jpg/960px-Police_car_of_Turkey_02.jpg");
+
+    private static final List<String> MOTORCYCLE_PHOTOS = List.of(
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Police_motorcycle_in_Istanbul_Turkey_01.JPG/960px-Police_motorcycle_in_Istanbul_Turkey_01.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Police_motorcycle_in_Istanbul_Turkey_02.JPG/960px-Police_motorcycle_in_Istanbul_Turkey_02.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Police_motorcycle_in_Istanbul_Turkey_03.JPG/960px-Police_motorcycle_in_Istanbul_Turkey_03.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Police_motorcycle_of_Turkey.jpg/960px-Police_motorcycle_of_Turkey.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Polis_Honda_XL1000V_Varadero%2C_Turkey.jpg/960px-Polis_Honda_XL1000V_Varadero%2C_Turkey.jpg");
+
+    /** Arac fotografi. Ayni plaka her zaman ayni fotografi alir. */
+    private static String PhotoUrl(Vehicle vehicle) {
+        List<String> photos = "Motosiklet".equals(vehicle.type) ? MOTORCYCLE_PHOTOS : CAR_PHOTOS;
+
+        return photos.get(Math.floorMod(vehicle.plate.hashCode(), photos.size()));
     }
 }
