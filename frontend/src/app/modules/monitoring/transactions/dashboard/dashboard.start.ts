@@ -1,8 +1,12 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, catchError, interval, switchMap } from 'rxjs';
 import { BaseComponent } from '../../../../../lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '../../../../../lib/services/api/dashboardController.service';
 import { PoliceControllerService } from '../../../../../lib/services/api/policeController.service';
 import { RegionControllerService } from '../../../../../lib/services/api/regionController.service';
+import { SettingControllerService } from '../../../../../lib/services/api/settingController.service';
 import { UnitControllerService } from '../../../../../lib/services/api/unitController.service';
 import { Barchart } from '../../../../../lib/commons/barchart/barchart';
 import { Card } from '../../../../../lib/commons/card/card';
@@ -22,6 +26,9 @@ export class DashboardStart extends BaseComponent implements OnInit {
   private readonly regionService = inject(RegionControllerService);
   private readonly unitService = inject(UnitControllerService);
   private readonly policeService = inject(PoliceControllerService);
+  private readonly settingService = inject(SettingControllerService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly labels = computed(() => ({
     title: this.getResource('DASHBOARD_TITLE', 'Trafik Polisi Takip Panosu'),
@@ -64,6 +71,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
     this.getUnitList();
     this.getStatusList();
     this.getDashboard();
+    this.getAutoRefresh();
   }
 
 
@@ -144,6 +152,24 @@ export class DashboardStart extends BaseComponent implements OnInit {
         }));
       })
       .catch((error) => console.error('Unit workload:', error));
+  }
+
+  getAutoRefresh() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.settingService
+      .settingGet({ token: this.flowService.token() })
+      .pipe(
+        catchError(() => EMPTY),
+        switchMap((response) => {
+          const seconds = response?.refreshSeconds ?? 0;
+          return seconds > 0 ? interval(seconds * 1000) : EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.getDashboard());
   }
 
 
