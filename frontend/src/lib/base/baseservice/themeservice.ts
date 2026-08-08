@@ -156,6 +156,8 @@ export const PALETTES: Palette[] = [
 
 const STORAGE_KEY = 'simtek-theme';
 
+const DEFAULT_CODE = 'cobalt';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -164,7 +166,9 @@ export class ThemeService extends BaseService {
 
   readonly palettes = PALETTES;
 
-  readonly current = signal<string>(PALETTES[0].code);
+  readonly defaultPalette = this.palettes.find((item) => item.code === DEFAULT_CODE) ?? this.palettes[0];
+
+  readonly current = signal<string>(this.defaultPalette.code);
 
   constructor() {
     super();
@@ -172,7 +176,7 @@ export class ThemeService extends BaseService {
   }
 
   apply(code: string): void {
-    const palette = this.palettes.find((item) => item.code === code) ?? this.palettes[0];
+    const palette = this.palettes.find((item) => item.code === code) ?? this.defaultPalette;
 
     Object.keys(palette.colors).forEach((name) =>
       this.document.documentElement.style.setProperty(name, palette.colors[name]),
@@ -185,18 +189,18 @@ export class ThemeService extends BaseService {
   }
 
   reset(): void {
-    this.apply(this.palettes[0].code);
+    this.apply(this.defaultPalette.code);
   }
 
   isDefault(): boolean {
-    return this.current() === this.palettes[0].code;
+    return this.current() === this.defaultPalette.code;
   }
 
   private read(): string {
     try {
-      return localStorage.getItem(STORAGE_KEY) ?? this.palettes[0].code;
+      return localStorage.getItem(STORAGE_KEY) ?? this.defaultPalette.code;
     } catch {
-      return this.palettes[0].code;
+      return this.defaultPalette.code;
     }
   }
 
