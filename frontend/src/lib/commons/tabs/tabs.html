@@ -4,7 +4,7 @@
       type="button"
       class="app-tabs__tab"
       [class.app-tabs__tab--active]="tab.id === active()"
-      (click)="activeChange.emit(tab.id)"
+      (click)="active.set(tab.id)"
     >
       {{ tab.title }}
     </button>

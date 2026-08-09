@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 /** Tek bir sekme başlığı. */
@@ -14,6 +14,9 @@ export interface TabItem {
  *
  * Yalnızca hangi sekmenin seçildiğini bildirir; içeriği kendisi barındırmaz.
  * Hangi sekmede ne gösterileceğine çağıran ekran karar verir.
+ *
+ * Aktif sekme iki yönlü bağlanır: `[(active)]="State.ActiveTab"`. Bir form
+ * alanı olmadığı için ngModel yerine sinyal tabanlı model() kullanılıyor.
  */
 @Component({
   selector: 'app-tabs',
@@ -25,9 +28,6 @@ export class Tabs extends BaseComponent {
   /** Gösterilecek sekmeler, soldan sağa bu sırayla çizilir. */
   readonly tabs = input<TabItem[]>([]);
 
-  /** Aktif sekmenin id'si. */
-  readonly active = input<string>('');
-
-  /** Yeni seçilen sekmenin id'si. */
-  readonly activeChange = output<string>();
+  /** Aktif sekmenin id'si. Sekmeye tıklanınca buradan geri yazılır. */
+  readonly active = model<string>('');
 }

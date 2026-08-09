@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { PoliceControllerService } from '@lib/services/api/policeController.service';
@@ -10,7 +11,7 @@ import { Input } from '@lib/commons/input/input';
 import { Select } from '@lib/commons/select/select';
 
 @Component({
-  imports: [Card, Input, Select],
+  imports: [Card, FormsModule, Input, Select],
   templateUrl: './taskassign.start.html',
   styleUrl: './taskassign.scss',
 })
@@ -93,18 +94,14 @@ export class TaskassignStart extends BaseComponent implements OnInit {
   }
 
   setFilter(key: string, value: string) {
-    this.State.Filter = { ...this.State.Filter, [key]: value };
+    this.State.Filter[key] = value;
 
     if (key === 'cityId') {
-      this.State.Filter = { ...this.State.Filter, unitId: '' };
+      this.State.Filter.unitId = '';
       this.getUnitList();
     }
 
-    this.State.Request = { ...this.State.Request, policeId: '' };
+    this.State.Request.policeId = '';
     this.getPoliceList();
-  }
-
-  setField(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
   }
 }

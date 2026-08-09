@@ -5,31 +5,31 @@
     id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
-    [value]="State.Request?.cityId"
     [options]="State.CityList ?? []"
-    (valueChange)="setFilter('cityId', $event)"
+    [ngModel]="State.Request.cityId"
+    (ngModelChange)="setFilter('cityId', $event)"
   />
   <app-select
     id="unitId"
     [label]="labels().unit"
     [placeholder]="labels().all"
-    [value]="State.Request?.unitId"
     [options]="State.UnitList ?? []"
-    (valueChange)="setFilter('unitId', $event)"
+    [ngModel]="State.Request.unitId"
+    (ngModelChange)="setFilter('unitId', $event)"
   />
   <app-select
     id="status"
     [label]="labels().status"
     [placeholder]="labels().all"
-    [value]="State.Request?.status"
     [options]="State.StatusList ?? []"
-    (valueChange)="setFilter('status', $event)"
+    [ngModel]="State.Request.status"
+    (ngModelChange)="setFilter('status', $event)"
   />
   <app-input
     id="searchText"
     [label]="labels().search"
-    [value]="State.Request?.searchText"
-    (valueChange)="setFilter('searchText', $event)"
+    [ngModel]="State.Request.searchText"
+    (ngModelChange)="setFilter('searchText', $event)"
   />
   <app-button [label]="labels().clear" variant="outline" (clicked)="clearFilter()" />
 </div>
@@ -44,16 +44,16 @@
   />
   <app-pagination
     [totalCount]="State.TotalCount ?? 0"
-    [pageNumber]="State.Request?.pageNumber ?? 1"
-    [pageSize]="State.Request?.pageSize ?? 20"
-    (pageChange)="setPage($event)"
+    [pageNumber]="State.Request.pageNumber"
+    [pageSize]="State.Request.pageSize"
+    (pageNumberChange)="setPage($event)"
   />
 </app-card>
 
 <app-modal
   [open]="!!State.SelectedPoliceId"
   [title]="State.PoliceDetail?.fullName ?? labels().detailTitle"
-  (closed)="closeDetail()"
+  (openChange)="closeDetail()"
 >
   <app-detailcard
     [title]="State.PoliceDetail?.fullName"
@@ -65,7 +65,7 @@
     <app-info [message]="labels().overLimit" variant="error" />
   }
 
-  <app-tabs [tabs]="tabs()" [active]="State.ActiveTab" (activeChange)="setTab($event)" />
+  <app-tabs [tabs]="tabs()" [(active)]="State.ActiveTab" />
 
   @switch (State.ActiveTab) {
     @case ('arac') {

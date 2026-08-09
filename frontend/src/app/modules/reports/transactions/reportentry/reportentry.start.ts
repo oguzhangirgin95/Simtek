@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -9,7 +10,7 @@ import { Input } from '@lib/commons/input/input';
 import { Select } from '@lib/commons/select/select';
 
 @Component({
-  imports: [Card, Input, Select],
+  imports: [Card, FormsModule, Input, Select],
   templateUrl: './reportentry.start.html',
   styleUrl: './reportentry.start.scss',
 })
@@ -76,12 +77,11 @@ export class ReportentryStart extends BaseComponent implements OnInit {
       .catch((error) => console.error('Unit list:', error));
   }
 
-  setField(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+  /** Şehir değişince birim seçimi geçersiz kalır; sıfırlanıp liste yenilenir. */
+  setCity(cityId: string) {
+    this.State.Request.cityId = cityId;
+    this.State.Request.unitId = '';
 
-    if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
-      this.getUnitList();
-    }
+    this.getUnitList();
   }
 }

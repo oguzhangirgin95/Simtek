@@ -5,31 +5,27 @@
     <app-select
       id="language"
       [label]="labels().language"
-      [value]="State.Request?.language"
       [options]="languageList()"
-      (valueChange)="setField('language', $event)"
+      [(ngModel)]="State.Request.language"
     />
     <app-select
       id="pageSize"
       [label]="labels().pageSize"
-      [value]="State.Request?.pageSize"
       [options]="pageSizeList"
-      (valueChange)="setField('pageSize', $event)"
+      [(ngModel)]="State.Request.pageSize"
     />
     <app-select
       id="defaultCityId"
       [label]="labels().defaultCity"
       [placeholder]="labels().all"
-      [value]="State.Request?.defaultCityId"
       [options]="State.CityList ?? []"
-      (valueChange)="setField('defaultCityId', $event)"
+      [(ngModel)]="State.Request.defaultCityId"
     />
     <app-input
       id="refreshSeconds"
       type="number"
       [label]="labels().refresh"
-      [value]="State.Request?.refreshSeconds"
-      (valueChange)="setField('refreshSeconds', $event)"
+      [(ngModel)]="State.Request.refreshSeconds"
     />
   </div>
 

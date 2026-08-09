@@ -6,10 +6,11 @@
   <input
     [attr.id]="id()"
     [type]="type()"
-    [value]="value()"
-    [disabled]="disabled()"
+    [disabled]="isDisabled()"
     [class.field-error]="!!getError(id())"
-    (input)="onInput($event)"
+    [ngModel]="value()"
+    (ngModelChange)="publish($event)"
+    (blur)="onBlur()"
   />
 
   <app-validation [id]="id()" />

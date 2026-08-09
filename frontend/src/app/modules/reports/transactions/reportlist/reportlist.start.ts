@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
@@ -10,7 +11,7 @@ import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
-  imports: [Button, Card, Grid, Select, Statcard],
+  imports: [Button, Card, FormsModule, Grid, Select, Statcard],
   templateUrl: './reportlist.start.html',
   styleUrl: './reportlist.scss',
 })
@@ -69,7 +70,7 @@ export class ReportlistStart extends BaseComponent implements OnInit {
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request[key] = value;
     this.getReportList();
   }
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
@@ -10,7 +11,7 @@ import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
-  imports: [Barchart, Card, Grid, Select, Statcard],
+  imports: [Barchart, Card, FormsModule, Grid, Select, Statcard],
   templateUrl: './unitlist.start.html',
   styleUrl: './unitlist.scss',
 })
@@ -74,7 +75,7 @@ export class UnitlistStart extends BaseComponent implements OnInit {
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request[key] = value;
     this.getUnitWorkload();
   }
 }

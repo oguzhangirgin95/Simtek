@@ -4,6 +4,9 @@ import { MenuControllerService } from '@lib/services/api/menuController.service'
 import { ResourceControllerService } from '@lib/services/api/resourceController.service';
 import { MenuItemModel } from '@lib/services/model/menuItemModel';
 
+/** Sarmalayıcı proxy'den içindeki asıl nesneye ulaşmak için kullanılan anahtar. */
+const RAW = Symbol('raw');
+
 /**
  * Bütün servislerin ortak temeli. Dört işi var:
  *
@@ -57,14 +60,88 @@ export abstract class BaseService {
 
   /** Durum yazar ve dinleyenleri tetikler. */
   public set(key: string, value: any): void {
-    this.state.set(key, value);
+    this.state.set(key, this.raw(value));
     this.stateVersion.update((version) => version + 1);
   }
 
   /** Durum okur. Sürüm sinyalini okuduğu için çağrıldığı yer reaktif olur. */
   public get<T>(key: string): T | undefined {
     this.stateVersion();
-    return this.state.get(key) as T;
+    return this.reactive(this.state.get(key)) as T;
+  }
+
+  /** Sarılmış nesneler; aynı nesne için her seferinde aynı proxy dönsün diye. */
+  private readonly proxies = new WeakMap<object, any>();
+
+  /**
+   * Nesneyi, içindekilerle birlikte reaktif bir proxy'ye sarar.
+   *
+   * En üstteki State proxy'si yalnızca `State.Request = {...}` biçimindeki
+   * yazmaları görür. İki yönlü bağlama ise `State.Request.cityId = $event`
+   * üretir; bu yazma iç nesneye gittiği için sürüm sinyali artmaz ve hiçbir
+   * şablon yenilenmezdi. Burada iç nesneler de sarılarak derindeki yazmalar
+   * da duyuruluyor.
+   *
+   * Yalnızca düz nesneler ve diziler sarılır. Date gibi yerleşik tipler veri
+   * değil davranış taşır; sarıldıklarında iç metotları bozulur.
+   */
+  private reactive<T>(value: T): T {
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
+
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== Array.prototype) {
+      return value;
+    }
+
+    // Zaten sarılmış bir nesne geldiyse asıl hedef üzerinden devam edilir;
+    // yoksa proxy'nin proxy'si oluşur ve her katman sürümü ayrıca artırır.
+    const target: any = (value as any)[RAW] ?? value;
+    const cached = this.proxies.get(target);
+    if (cached) {
+      return cached;
+    }
+
+    const proxy = new Proxy(target, {
+      get: (item, key) => {
+        if (key === RAW) {
+          return item;
+        }
+
+        this.stateVersion();
+        return this.reactive(item[key]);
+      },
+      set: (item, key, next) => {
+        const value = this.raw(next);
+
+        // Aynı değeri tekrar yazmak sürüm artırmaz. ngModel her tuş vuruşunda
+        // yazdığı için bu kontrol olmadan gereksiz yeniden çizim olurdu.
+        if (item[key] === value) {
+          return true;
+        }
+
+        item[key] = value;
+        this.stateVersion.update((version) => version + 1);
+
+        return true;
+      },
+      deleteProperty: (item, key) => {
+        delete item[key];
+        this.stateVersion.update((version) => version + 1);
+
+        return true;
+      },
+    });
+
+    this.proxies.set(target, proxy);
+
+    return proxy;
+  }
+
+  /** Proxy ise sardığı asıl nesneyi, değilse değerin kendisini döndürür. */
+  private raw<T>(value: T): T {
+    return value !== null && typeof value === 'object' ? ((value as any)[RAW] ?? value) : value;
   }
 
   /** Tek bir anahtarı sinyal olarak döndürür. */

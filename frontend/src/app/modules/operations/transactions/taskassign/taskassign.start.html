@@ -6,17 +6,17 @@
       id="cityId"
       [label]="labels().city"
       [placeholder]="labels().all"
-      [value]="State.Filter?.cityId"
       [options]="State.CityList ?? []"
-      (valueChange)="setFilter('cityId', $event)"
+      [ngModel]="State.Filter.cityId"
+      (ngModelChange)="setFilter('cityId', $event)"
     />
     <app-select
       id="unitId"
       [label]="labels().unit"
       [placeholder]="labels().all"
-      [value]="State.Filter?.unitId"
       [options]="State.UnitList ?? []"
-      (valueChange)="setFilter('unitId', $event)"
+      [ngModel]="State.Filter.unitId"
+      (ngModelChange)="setFilter('unitId', $event)"
     />
   </div>
 
@@ -25,35 +25,18 @@
       id="policeId"
       [label]="labels().police"
       [placeholder]="labels().all"
-      [value]="State.Request?.policeId"
       [options]="State.PoliceList ?? []"
-      (valueChange)="setField('policeId', $event)"
+      [(ngModel)]="State.Request.policeId"
     />
     <app-select
       id="type"
       [label]="labels().type"
       [placeholder]="labels().all"
-      [value]="State.Request?.type"
       [options]="State.TypeList ?? []"
-      (valueChange)="setField('type', $event)"
+      [(ngModel)]="State.Request.type"
     />
-    <app-input
-      id="location"
-      [label]="labels().location"
-      [value]="State.Request?.location"
-      (valueChange)="setField('location', $event)"
-    />
-    <app-input
-      id="startTime"
-      [label]="labels().startTime"
-      [value]="State.Request?.startTime"
-      (valueChange)="setField('startTime', $event)"
-    />
-    <app-input
-      id="endTime"
-      [label]="labels().endTime"
-      [value]="State.Request?.endTime"
-      (valueChange)="setField('endTime', $event)"
-    />
+    <app-input id="location" [label]="labels().location" [(ngModel)]="State.Request.location" />
+    <app-input id="startTime" [label]="labels().startTime" [(ngModel)]="State.Request.startTime" />
+    <app-input id="endTime" [label]="labels().endTime" [(ngModel)]="State.Request.endTime" />
   </div>
 </app-card>

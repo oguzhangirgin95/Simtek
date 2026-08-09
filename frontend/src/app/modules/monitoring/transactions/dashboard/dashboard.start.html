@@ -14,25 +14,25 @@
     id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
-    [value]="State.Request?.cityId"
     [options]="State.CityList ?? []"
-    (valueChange)="setFilter('cityId', $event)"
+    [ngModel]="State.Request.cityId"
+    (ngModelChange)="setFilter('cityId', $event)"
   />
   <app-select
     id="unitId"
     [label]="labels().unit"
     [placeholder]="labels().all"
-    [value]="State.Request?.unitId"
     [options]="State.UnitList ?? []"
-    (valueChange)="setFilter('unitId', $event)"
+    [ngModel]="State.Request.unitId"
+    (ngModelChange)="setFilter('unitId', $event)"
   />
   <app-select
     id="status"
     [label]="labels().status"
     [placeholder]="labels().all"
-    [value]="State.Request?.status"
     [options]="State.StatusList ?? []"
-    (valueChange)="setFilter('status', $event)"
+    [ngModel]="State.Request.status"
+    (ngModelChange)="setFilter('status', $event)"
   />
 </div>
 
@@ -47,7 +47,7 @@
 
 <div class="panels">
   <app-card [title]="mapTitle()" [subtitle]="labels().mapHint">
-    <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request?.cityId" [variant]="State.MapMetric?.variant ?? ''" (pointClicked)="selectCity($event)" />
+    <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request.cityId" [variant]="State.MapMetric?.variant ?? ''" (pointClicked)="selectCity($event)" />
   </app-card>
 
   <app-card [title]="labels().statusChartTitle">

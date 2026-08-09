@@ -1,12 +1,15 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 /**
  * Sayfalama şeridi.
  *
- * Hangi sayfada olduğumuzu kendi tutmaz: değişimi dışarı bildirir, göstereceği
- * sayfayı her zaman pageNumber girdisinden okur. Böylece sayfa numarası tek
- * yerde, ekranın isteğinde durur.
+ * Sayfa numarası iki yönlü bağlanır: `[(pageNumber)]="State.Request.pageNumber"`.
+ * Sayfa değişince liste yeniden çekileceği için ekranlar tek yön bağlayıp
+ * (pageNumberChange) dinler; alan bileşenlerindeki ngModel düzeniyle aynı.
+ *
+ * Hangi sayfada olduğunu kendi tutmaz, her zaman bağlanan değerden okur.
+ * Böylece sayfa numarası tek yerde, ekranın isteğinde durur.
  */
 @Component({
   selector: 'app-pagination',
@@ -18,14 +21,11 @@ export class Pagination extends BaseComponent {
   /** Filtreye uyan toplam kayıt sayısı; sayfadaki kayıt sayısı değil. */
   readonly totalCount = input<number>(0);
 
-  /** Görüntülenen sayfa, 1'den başlar. */
-  readonly pageNumber = input<number>(1);
+  /** Görüntülenen sayfa, 1'den başlar. Sayfaya tıklanınca buradan geri yazılır. */
+  readonly pageNumber = model<number>(1);
 
   /** Sayfa başına kayıt. Toplam sayfa sayısı buradan hesaplanır. */
   readonly pageSize = input<number>(20);
-
-  /** Gidilmek istenen sayfa. */
-  readonly pageChange = output<number>();
 
   /** Toplam sayfa sayısı. Hiç kayıt yokken bile en az bir sayfa vardır. */
   readonly pageCount = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize())));
@@ -63,7 +63,7 @@ export class Pagination extends BaseComponent {
    */
   go(page: number): void {
     if (page >= 1 && page <= this.pageCount() && page !== this.pageNumber()) {
-      this.pageChange.emit(page);
+      this.pageNumber.set(page);
     }
   }
 }

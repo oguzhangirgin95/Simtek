@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, EMPTY, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -21,7 +22,7 @@ const PAGE_SIZE = 20;
 const SEARCH_DELAY = 400;
 
 @Component({
-  imports: [Button, Card, Detailcard, Donutchart, Grid, Info, Input, Modal, Pagination, Select, Statcard],
+  imports: [Button, Card, Detailcard, Donutchart, FormsModule, Grid, Info, Input, Modal, Pagination, Select, Statcard],
   templateUrl: './vehiclelist.start.html',
   styleUrl: './vehiclelist.scss',
 })
@@ -127,15 +128,16 @@ export class VehiclelistStart extends BaseComponent implements OnInit {
   }
 
   setPage(page: number) {
-    this.State.Request = { ...this.State.Request, pageNumber: page };
+    this.State.Request.pageNumber = page;
     this.getVehicleList();
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value, pageNumber: 1 };
+    this.State.Request[key] = value;
+    this.State.Request.pageNumber = 1;
 
     if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
+      this.State.Request.unitId = '';
       this.getUnitList();
     }
 

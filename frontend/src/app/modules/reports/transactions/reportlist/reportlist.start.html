@@ -5,9 +5,9 @@
     id="reportType"
     [label]="labels().type"
     [placeholder]="labels().all"
-    [value]="State.Request?.reportType"
     [options]="State.TypeList ?? []"
-    (valueChange)="setFilter('reportType', $event)"
+    [ngModel]="State.Request.reportType"
+    (ngModelChange)="setFilter('reportType', $event)"
   />
   <app-button [label]="labels().newReport" (clicked)="newReport()" />
 </div>

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { AnalyticsControllerService } from '@lib/services/api/analyticsController.service';
@@ -13,7 +14,7 @@ import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
 
 @Component({
-  imports: [Barchart, Card, Donutchart, Grid, Select, Statcard],
+  imports: [Barchart, Card, Donutchart, FormsModule, Grid, Select, Statcard],
   templateUrl: './tasktrend.start.html',
   styleUrl: './tasktrend.scss',
 })
@@ -94,10 +95,10 @@ export class TasktrendStart extends BaseComponent implements OnInit {
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request[key] = value;
 
     if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
+      this.State.Request.unitId = '';
       this.getUnitList();
       this.getTypeList();
     }

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
@@ -7,7 +8,7 @@ import { LoginResponse } from '@lib/services/model/loginResponse';
 import { Input } from '@lib/commons/input/input';
 
 @Component({
-  imports: [Input],
+  imports: [FormsModule, Input],
   templateUrl: './login.start.html',
   styleUrl: './login.scss',
 })
@@ -32,10 +33,6 @@ export class LoginStart extends BaseComponent implements OnInit {
       username: '',
       password: '',
     };
-  }
-
-  setField(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
   }
 
   login() {

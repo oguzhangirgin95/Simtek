@@ -5,17 +5,17 @@
     id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
-    [value]="State.Request?.cityId"
     [options]="State.CityList ?? []"
-    (valueChange)="setFilter('cityId', $event)"
+    [ngModel]="State.Request.cityId"
+    (ngModelChange)="setFilter('cityId', $event)"
   />
   <app-select
     id="unitId"
     [label]="labels().unit"
     [placeholder]="labels().all"
-    [value]="State.Request?.unitId"
     [options]="State.UnitList ?? []"
-    (valueChange)="setFilter('unitId', $event)"
+    [ngModel]="State.Request.unitId"
+    (ngModelChange)="setFilter('unitId', $event)"
   />
 </div>
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -15,7 +16,7 @@ import { Statcard } from '@lib/commons/statcard/statcard';
 const PAGE_SIZE = 20;
 
 @Component({
-  imports: [Button, Card, Donutchart, Grid, Pagination, Select, Statcard],
+  imports: [Button, Card, Donutchart, FormsModule, Grid, Pagination, Select, Statcard],
   templateUrl: './tasklist.start.html',
   styleUrl: './tasklist.scss',
 })
@@ -113,15 +114,16 @@ export class TasklistStart extends BaseComponent implements OnInit {
   }
 
   setPage(page: number) {
-    this.State.Request = { ...this.State.Request, pageNumber: page };
+    this.State.Request.pageNumber = page;
     this.getTaskList();
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value, pageNumber: 1 };
+    this.State.Request[key] = value;
+    this.State.Request.pageNumber = 1;
 
     if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
+      this.State.Request.unitId = '';
       this.getUnitList();
       this.getTypeList();
     }
@@ -130,7 +132,7 @@ export class TasklistStart extends BaseComponent implements OnInit {
   }
 
   setOverLimit(value: string) {
-    this.State.Request = { ...this.State.Request, onlyOverLimit: value === '1' };
+    this.State.Request.onlyOverLimit = value === '1';
     this.getTaskList();
   }
 

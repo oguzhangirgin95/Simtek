@@ -2,19 +2,13 @@
 
 <app-card [title]="labels().formTitle" [subtitle]="labels().hint">
   <div class="filters">
-    <app-input
-      id="reportName"
-      [label]="labels().name"
-      [value]="State.Request?.reportName"
-      (valueChange)="setField('reportName', $event)"
-    />
+    <app-input id="reportName" [label]="labels().name" [(ngModel)]="State.Request.reportName" />
     <app-select
       id="reportType"
       [label]="labels().type"
       [placeholder]="labels().all"
-      [value]="State.Request?.reportType"
       [options]="State.TypeList ?? []"
-      (valueChange)="setField('reportType', $event)"
+      [(ngModel)]="State.Request.reportType"
     />
   </div>
 
@@ -23,31 +17,18 @@
       id="cityId"
       [label]="labels().city"
       [placeholder]="labels().all"
-      [value]="State.Request?.cityId"
       [options]="State.CityList ?? []"
-      (valueChange)="setField('cityId', $event)"
+      [ngModel]="State.Request.cityId"
+      (ngModelChange)="setCity($event)"
     />
     <app-select
       id="unitId"
       [label]="labels().unit"
       [placeholder]="labels().all"
-      [value]="State.Request?.unitId"
       [options]="State.UnitList ?? []"
-      (valueChange)="setField('unitId', $event)"
+      [(ngModel)]="State.Request.unitId"
     />
-    <app-input
-      id="startDate"
-      type="date"
-      [label]="labels().startDate"
-      [value]="State.Request?.startDate"
-      (valueChange)="setField('startDate', $event)"
-    />
-    <app-input
-      id="endDate"
-      type="date"
-      [label]="labels().endDate"
-      [value]="State.Request?.endDate"
-      (valueChange)="setField('endDate', $event)"
-    />
+    <app-input id="startDate" type="date" [label]="labels().startDate" [(ngModel)]="State.Request.startDate" />
+    <app-input id="endDate" type="date" [label]="labels().endDate" [(ngModel)]="State.Request.endDate" />
   </div>
 </app-card>

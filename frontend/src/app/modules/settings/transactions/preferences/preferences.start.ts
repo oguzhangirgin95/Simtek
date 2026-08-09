@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { RegionControllerService } from '@lib/services/api/regionController.service';
@@ -10,7 +11,7 @@ import { Input } from '@lib/commons/input/input';
 import { Select } from '@lib/commons/select/select';
 
 @Component({
-  imports: [Button, Card, Info, Input, Select],
+  imports: [Button, Card, FormsModule, Info, Input, Select],
   templateUrl: './preferences.start.html',
   styleUrl: './preferences.scss',
 })
@@ -45,7 +46,9 @@ export class PreferencesStart extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.State.Request = { token: this.flowService.token(), language: 'tr', pageSize: 20, defaultCityId: '', refreshSeconds: 0 };
+    // pageSize metin tutuluyor: seçenek değerleri metin olduğu için seçili
+    // seçenek ancak böyle eşleşir. Servise giderken sayıya çevriliyor.
+    this.State.Request = { token: this.flowService.token(), language: 'tr', pageSize: '20', defaultCityId: '', refreshSeconds: 0 };
 
     this.getCityList();
     this.getSetting();
@@ -65,7 +68,7 @@ export class PreferencesStart extends BaseComponent implements OnInit {
         this.State.Request = {
           token: this.flowService.token(),
           language: response?.language ?? 'tr',
-          pageSize: response?.pageSize ?? 20,
+          pageSize: String(response?.pageSize ?? 20),
           defaultCityId: response?.defaultCityId ?? '',
           refreshSeconds: response?.refreshSeconds ?? 0,
         };
@@ -74,16 +77,18 @@ export class PreferencesStart extends BaseComponent implements OnInit {
   }
 
   saveSetting() {
-    firstValueFrom(this.settingService.settingSave(this.State.Request))
+    // Alan boşaltıldığında sayı alanı null döner; sunucu sıfır bekliyor.
+    const request = {
+      ...this.State.Request,
+      pageSize: Number(this.State.Request.pageSize),
+      refreshSeconds: Number(this.State.Request.refreshSeconds ?? 0),
+    };
+
+    firstValueFrom(this.settingService.settingSave(request))
       .then((response) => {
         this.State.Message = response?.message;
         this.flowService.set('language', response?.language);
       })
       .catch((error) => console.error('Setting save:', error));
-  }
-
-  setField(key: string, value: string) {
-    const numeric = key === 'pageSize' || key === 'refreshSeconds';
-    this.State.Request = { ...this.State.Request, [key]: numeric ? Number(value) : value };
   }
 }

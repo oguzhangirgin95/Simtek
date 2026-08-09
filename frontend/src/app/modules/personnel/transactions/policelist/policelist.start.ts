@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, EMPTY, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { PoliceControllerService } from '@lib/services/api/policeController.service';
@@ -23,7 +24,7 @@ const PAGE_SIZE = 20;
 const SEARCH_DELAY = 400;
 
 @Component({
-  imports: [Button, Card, Detailcard, Grid, Info, Input, List, Modal, Pagination, Select, Tabs],
+  imports: [Button, Card, Detailcard, FormsModule, Grid, Info, Input, List, Modal, Pagination, Select, Tabs],
   templateUrl: './policelist.start.html',
   styleUrl: './policelist.scss',
 })
@@ -147,15 +148,16 @@ export class PolicelistStart extends BaseComponent implements OnInit {
   }
 
   setPage(page: number) {
-    this.State.Request = { ...this.State.Request, pageNumber: page };
+    this.State.Request.pageNumber = page;
     this.getPoliceList();
   }
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value, pageNumber: 1 };
+    this.State.Request[key] = value;
+    this.State.Request.pageNumber = 1;
 
     if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
+      this.State.Request.unitId = '';
       this.getUnitList();
     }
 
@@ -172,7 +174,8 @@ export class PolicelistStart extends BaseComponent implements OnInit {
     const sameField = this.State.Request.sortField === field;
     const direction = sameField && this.State.Request.sortDirection === 'ASC' ? 'DESC' : 'ASC';
 
-    this.State.Request = { ...this.State.Request, sortField: field, sortDirection: direction };
+    this.State.Request.sortField = field;
+    this.State.Request.sortDirection = direction;
     this.getPoliceList();
   }
 
@@ -236,9 +239,5 @@ export class PolicelistStart extends BaseComponent implements OnInit {
         this.State.TaskList = response?.tasks ?? [];
       })
       .catch((error) => console.error('Task list:', error));
-  }
-
-  setTab(tabId: string) {
-    this.State.ActiveTab = tabId;
   }
 }

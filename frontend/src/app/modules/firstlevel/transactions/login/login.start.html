@@ -1,20 +1,9 @@
 <div class="login-form">
   <h2>{{ title() }}</h2>
 
-  <app-input
-    id="username"
-    [label]="usernameLabel()"
-    [value]="State.Request?.username ?? ''"
-    (valueChange)="setField('username', $event)"
-  />
+  <app-input id="username" [label]="usernameLabel()" [(ngModel)]="State.Request.username" />
 
-  <app-input
-    id="password"
-    type="password"
-    [label]="passwordLabel()"
-    [value]="State.Request?.password ?? ''"
-    (valueChange)="setField('password', $event)"
-  />
+  <app-input id="password" type="password" [label]="passwordLabel()" [(ngModel)]="State.Request.password" />
 
   @if (State.loginError) {
     <p class="error">{{ State.loginError }}</p>

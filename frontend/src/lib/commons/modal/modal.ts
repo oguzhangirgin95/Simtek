@@ -1,12 +1,15 @@
-import { Component, DOCUMENT, DestroyRef, effect, inject, input, output } from '@angular/core';
+import { Component, DOCUMENT, DestroyRef, effect, inject, input, model } from '@angular/core';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 
 /**
  * Ortalanmış diyalog. İçerik ng-content ile dışarıdan verilir.
  *
- * Açık olup olmadığını kendi tutmaz: open girdisiyle yönetilir, kapanmak
- * istediğinde closed yayar. Böylece diyaloğun görünürlüğü onu açan ekranın
- * durumuyla tek bir yerde kalır.
+ * Görünürlük iki yönlü bağlanır: `[(open)]="State.DetailOpen"`. Görünürlüğü
+ * türetilmiş bir ifadeden okuyan ekranlar (seçili kayıt var mı gibi) tek yön
+ * bağlayıp (openChange) dinler ve kapanışta o kaydı temizler.
+ *
+ * Açık olup olmadığını kendi tutmaz, her zaman bağlanan değerden okur; böylece
+ * diyaloğun görünürlüğü onu açan ekranın durumuyla tek bir yerde kalır.
  */
 @Component({
   selector: 'app-modal',
@@ -23,11 +26,11 @@ export class Modal extends BaseComponent {
   /** Diyaloğun başlığı. */
   readonly title = input<string>('');
 
-  /** Diyaloğun görünür olup olmadığı. */
-  readonly open = input<boolean>(false);
-
-  /** Kapatma isteği: çarpıya basıldığında, dışına tıklandığında ya da Escape ile. */
-  readonly closed = output<void>();
+  /**
+   * Diyaloğun görünür olup olmadığı. Çarpıya basıldığında, dışına
+   * tıklandığında ya da Escape ile false yazılır.
+   */
+  readonly open = model<boolean>(false);
 
   /** Diyalog açıkken sayfanın kaymasını engelleyen gövde sınıfını yönetir. */
   constructor() {
@@ -47,7 +50,7 @@ export class Modal extends BaseComponent {
    */
   onEscape(): void {
     if (this.open()) {
-      this.closed.emit();
+      this.open.set(false);
     }
   }
 }

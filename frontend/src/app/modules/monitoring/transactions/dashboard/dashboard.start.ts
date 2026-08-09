@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { catchError, EMPTY, firstValueFrom, interval, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
@@ -24,7 +25,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Donutchart, Grid, Map, Select, Statcard],
+  imports: [Barchart, Card, Donutchart, FormsModule, Grid, Map, Select, Statcard],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -201,10 +202,10 @@ export class DashboardStart extends BaseComponent implements OnInit {
 
 
   setFilter(key: string, value: string) {
-    this.State.Request = { ...this.State.Request, [key]: value };
+    this.State.Request[key] = value;
 
     if (key === 'cityId') {
-      this.State.Request = { ...this.State.Request, unitId: '' };
+      this.State.Request.unitId = '';
       this.getUnitList();
     }
 

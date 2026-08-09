@@ -5,9 +5,9 @@
     id="cityId"
     [label]="labels().city"
     [placeholder]="labels().all"
-    [value]="State.Request?.cityId"
     [options]="State.CityList ?? []"
-    (valueChange)="setFilter('cityId', $event)"
+    [ngModel]="State.Request.cityId"
+    (ngModelChange)="setFilter('cityId', $event)"
   />
 </div>
 
