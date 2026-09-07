@@ -85,6 +85,29 @@ export interface ValidationError {
   message: string;
 }
 
+/** Balonun hedefe göre duracağı yön. */
+export type TourPosition = 'top' | 'bottom' | 'left' | 'right';
+
+/**
+ * Tanıtım turundaki tek bir durak. Duraklar dizideki sırayla gösterilir.
+ *
+ * Hedef, ekrandaki bir elemanın id'si ile bulunur; metinler
+ * ValidationRuleConfig'teki gibi 'ANAHTAR|varsayılan metin' biçimini destekler.
+ */
+export interface TourStepConfig {
+  /** Işık tutulacak elemanın id'si; ekranda benzersiz olmalı. */
+  id: string;
+  /** Balonun başlığı. */
+  title: string;
+  /** Balonun açıklaması. */
+  text: string;
+  /**
+   * Balonun hedefe göre yeri. Verilmezse hedef ekranın alt yarısındaysa
+   * üstünde, değilse altında gösterilir.
+   */
+  position?: TourPosition;
+}
+
 /** Akıştaki tek bir adım. Adı route path'i ile aynıdır. */
 export interface FlowStep {
   /** Route path'i, örneğin 'start'. */
@@ -107,6 +130,8 @@ export interface FlowStep {
   keepState?: boolean;
   /** Adımın altında gösterilecek ek butonlar. */
   buttons?: FlowButton[];
+  /** Bu adım ilk kez açıldığında sırayla gösterilecek tanıtım turu. */
+  tour?: TourStepConfig[];
   /** Özellik kodu. Verilirse adım yalnızca o bayrak açıkken akışta yer alır. */
   isEnable?: FeatureCode;
 }
