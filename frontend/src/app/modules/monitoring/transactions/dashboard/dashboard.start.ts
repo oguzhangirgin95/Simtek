@@ -13,6 +13,7 @@ import { UnitControllerService } from '@lib/services/api/unitController.service'
 import { Barchart } from '@lib/commons/barchart/barchart';
 import { Card } from '@lib/commons/card/card';
 import { Donutchart } from '@lib/commons/donutchart/donutchart';
+import { DocumentViewConfig, Documentview } from '@lib/commons/documentview/documentview';
 import { GenericListConfig, Genericlist } from '@lib/commons/genericlist/genericlist';
 import { InfoVariant } from '@lib/commons/info/info';
 import { Map } from '@lib/commons/map/map';
@@ -27,7 +28,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Donutchart, FormsModule, Genericlist, Map, Select, Statcard],
+  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Map, Select, Statcard],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -81,6 +82,17 @@ export class DashboardStart extends BaseComponent implements OnInit {
    * Sütunlar ve satır sonundaki butonlar burada tanımlanır; bileşen yalnızca
    * bunu çizer. Başka bir ekran aynı bileşeni kendi config'i ile kullanır.
    */
+  /** Birim verisinin sütunları. Hem liste hem belge aynı tanımı kullanır. */
+  private readonly unitColumns = computed(() => [
+    { field: 'unitName', title: this.getResource('GRID_UNIT', 'Birim') },
+    { field: 'totalPolice', title: this.getResource('GRID_TOTALPOLICE', 'Personel') },
+    { field: 'activePolice', title: this.getResource('GRID_ACTIVEPOLICE', 'Sahada') },
+    { field: 'patrol', title: this.getResource('GRID_PATROL', 'Devriye') },
+    { field: 'radar', title: this.getResource('GRID_RADAR', 'Radar') },
+    { field: 'motorcycle', title: this.getResource('GRID_MOTORCYCLE', 'Motosiklet') },
+    { field: 'taskLoad', title: this.getResource('GRID_TASKLOAD', 'Görev') },
+  ]);
+
   readonly unitListConfig = computed<GenericListConfig>(() => {
     const view = this.getResource('ACTION_VIEW', 'Görüntüle');
     const edit = this.getResource('ACTION_EDIT', 'Düzenle');
@@ -96,13 +108,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
           format: (unit) => this.getLoadLabel(unit.loadPercent ?? 0),
           variant: (unit) => this.getLoadVariant(unit.loadPercent ?? 0),
         },
-        { field: 'unitName', title: this.getResource('GRID_UNIT', 'Birim') },
-        { field: 'totalPolice', title: this.getResource('GRID_TOTALPOLICE', 'Personel') },
-        { field: 'activePolice', title: this.getResource('GRID_ACTIVEPOLICE', 'Sahada') },
-        { field: 'patrol', title: this.getResource('GRID_PATROL', 'Devriye') },
-        { field: 'radar', title: this.getResource('GRID_RADAR', 'Radar') },
-        { field: 'motorcycle', title: this.getResource('GRID_MOTORCYCLE', 'Motosiklet') },
-        { field: 'taskLoad', title: this.getResource('GRID_TASKLOAD', 'Görev') },
+        ...this.unitColumns(),
       ],
       actions: [
         { key: 'view', label: view, click: (unit) => this.viewUnit(unit) },
@@ -119,6 +125,20 @@ export class DashboardStart extends BaseComponent implements OnInit {
       emptyText: this.labels().emptyUnit,
     };
   });
+
+  /**
+   * Birim tablosunun belge yapılandırması.
+   *
+   * Aynı satırlar CSV ve PDF çıktısına da girsin diye sütunlar listeyle
+   * paylaşılıyor; durum sütunu belgeye alınmıyor.
+   */
+  readonly unitDocumentConfig = computed<DocumentViewConfig>(() => ({
+    title: `${this.State.UnitWorkload?.cityName ?? ''} ${this.labels().unitWorkloadTitle}`,
+    fileName: this.getResource('DOCUMENT_FILENAME', 'birim-gorev-yogunlugu'),
+    description: this.getResource('DOCUMENT_DESCRIPTION', 'Seçili filtrelere göre hazırlanmıştır.'),
+    columns: this.unitColumns(),
+    emptyText: this.labels().emptyUnit,
+  }));
 
   /** Son tıklanan işlem; örneğin çalıştığını göstermek için kartın altında yazar. */
   readonly unitActionText = computed(() => {
@@ -306,7 +326,8 @@ ${Object.values(unit).join(';')}`;
     link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
     link.download = `${unit.unitName ?? 'birim'}.csv`;
     link.click();
-    URL.revokeObjectURL(link.href);
+
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   }
 
   /** Birimi arşivler. Gerçek ekranda burada arşivleme servisi çağrılır. */

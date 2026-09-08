@@ -64,3 +64,7 @@
   <app-barchart [items]="State.UnitChart ?? []" />
   <app-genericlist [config]="unitListConfig()" [rows]="State.UnitWorkload?.units ?? []" />
 </app-card>
+
+<app-card>
+  <app-documentview [config]="unitDocumentConfig()" [rows]="State.UnitWorkload?.units ?? []" />
+</app-card>
