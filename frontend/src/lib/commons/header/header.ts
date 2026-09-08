@@ -1,9 +1,11 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Button } from '../button/button';
 import { Menu } from '../menu/menu';
 import { Theme } from '../theme/theme';
+import { LoginControllerService } from '@lib/services/api/loginController.service';
 
 /** "Pano" butonunun gittiği ekran. */
 const HOME = '/monitoring/dashboard/start';
@@ -16,6 +18,8 @@ const HOME = '/monitoring/dashboard/start';
   styleUrl: './header.scss',
 })
 export class Header extends BaseComponent {
+  private readonly loginService = inject(LoginControllerService);
+
   private readonly router = inject(Router);
 
   /**
@@ -37,15 +41,8 @@ export class Header extends BaseComponent {
   /** Zaten panodaysak "Pano" butonunu göstermeye gerek yok. */
   readonly atHome = computed(() => this.flowService.url() === HOME);
 
-  /** Kullanıcı adı Keycloak token'ının içindeki preferred_username alanından okunur. */
-  readonly username = computed(() => {
-    const token = this.flowService.token();
-    try {
-      return token ? JSON.parse(atob(token.split('.')[1])).preferred_username ?? '' : '';
-    } catch {
-      return '';
-    }
-  });
+  /** Token 'TOKEN-<kullanıcı>' biçiminde geldiği için önek atılarak ad elde edilir. */
+  readonly username = computed(() => (this.flowService.token() ?? '').replace('TOKEN-', ''));
 
   /** İlk çizim tamamlanınca kullanıcıya özel kısımların önü açılır. */
   constructor() {
@@ -59,12 +56,16 @@ export class Header extends BaseComponent {
   }
 
   /**
-   * Çıkış. Token Keycloak'tan geldiği ve sunucuda tutulmadığı için elden
-   * silinmesi yeterli.
+   * Çıkış. Önce sunucudaki oturum kapatılır, sonra token silinip giriş
+   * ekranına dönülür.
    */
   logout() {
-    this.flowService.token.set(undefined);
-    this.featureFlagService.clearFeatures();
-    this.router.navigateByUrl('/firstlevel');
+    firstValueFrom(this.loginService.logout({ token: this.flowService.token() }))
+      .then(() => {
+        this.flowService.token.set(undefined);
+        this.featureFlagService.clearFeatures();
+        this.router.navigateByUrl('/firstlevel');
+      })
+      .catch((error) => console.error('Logout:', error));
   }
 }

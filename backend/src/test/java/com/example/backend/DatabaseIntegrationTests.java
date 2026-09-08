@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import models.analytics.request.TaskTrendRequest;
+import models.firstlevel.request.LoginRequest;
 import models.general.request.ResourceRequest;
 import models.monitoring.request.DashboardRequest;
 import models.operations.request.TaskAssignRequest;
@@ -26,6 +27,7 @@ import models.regions.request.RegionListRequest;
 import models.regions.request.RegionSaveRequest;
 import models.reports.request.ReportEntryRequest;
 import models.reports.request.ReportListRequest;
+import models.settings.request.SettingGetRequest;
 import models.settings.request.SettingSaveRequest;
 import models.units.request.UnitDeleteRequest;
 import models.units.request.UnitListRequest;
@@ -34,6 +36,7 @@ import models.vehicles.request.VehicleDetailRequest;
 import models.vehicles.request.VehicleListRequest;
 import models.vehicles.request.VehicleTypeListRequest;
 import modules.analytics.business.AnalyticsBusiness;
+import modules.firstlevel.business.LoginBusiness;
 import modules.general.business.ResourceBusiness;
 import modules.monitoring.business.DashboardBusiness;
 import modules.operations.business.TaskBusiness;
@@ -68,6 +71,8 @@ class DatabaseIntegrationTests {
     @Autowired
     private SettingBusiness settingBusiness;
     @Autowired
+    private LoginBusiness loginBusiness;
+    @Autowired
     private ResourceBusiness resourceBusiness;
     @Autowired
     private CryptologyService cryptologyService;
@@ -87,6 +92,21 @@ class DatabaseIntegrationTests {
     void resources_come_from_database() {
         assertThat(resourceBusiness.Get(new ResourceRequest("general")).resources).isNotEmpty();
         assertThat(resourceBusiness.Get(new ResourceRequest("dashboard")).resources).isNotEmpty();
+    }
+
+    @Test
+    @Order(3)
+    void user_is_verified_from_database() {
+        LoginRequest ok = new LoginRequest("oguz", cryptologyService.encryption("1234"));
+        assertThat(loginBusiness.Login(ok).success).isTrue();
+        assertThat(loginBusiness.Login(ok).token).isEqualTo("TOKEN-OGUZ");
+
+        assertThat(loginBusiness.Login(new LoginRequest("oguz", cryptologyService.encryption("yanlis"))).success)
+                .isFalse();
+        assertThat(loginBusiness.Login(new LoginRequest("yok", cryptologyService.encryption("1234"))).success)
+                .isFalse();
+
+        assertThat(loginBusiness.Login(new LoginRequest("oguz", "1234")).success).isFalse();
     }
 
     @Test
@@ -353,17 +373,18 @@ class DatabaseIntegrationTests {
     @Order(15)
     void settings_are_stored_in_database() {
         SettingSaveRequest save = new SettingSaveRequest();
+        save.token = "TOKEN-TEST";
         save.language = "en";
         save.pageSize = 50;
         save.defaultCityId = "06";
         save.refreshSeconds = 30;
 
-        assertThat(settingBusiness.SettingSave(save, "oguz").success).isTrue();
+        assertThat(settingBusiness.SettingSave(save).success).isTrue();
 
-        var loaded = settingBusiness.SettingGet("oguz");
+        var loaded = settingBusiness.SettingGet(new SettingGetRequest("TOKEN-TEST"));
         assertThat(loaded.language).isEqualTo("en");
         assertThat(loaded.pageSize).isEqualTo(50);
 
-        assertThat(settingBusiness.SettingGet("yok").language).isEqualTo("tr");
+        assertThat(settingBusiness.SettingGet(new SettingGetRequest("TOKEN-YOK")).language).isEqualTo("tr");
     }
 }

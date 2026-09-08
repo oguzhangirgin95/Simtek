@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import models.settings.entity.AppSetting;
+import models.settings.request.SettingGetRequest;
 import models.settings.request.SettingSaveRequest;
 import models.settings.response.SettingResponse;
 import modules.settings.repositories.AppSettingRepository;
@@ -24,7 +25,7 @@ public class SettingBusiness {
     }
 
     @Transactional(readOnly = true)
-    public SettingResponse SettingGet(String username) {
+    public SettingResponse SettingGet(SettingGetRequest settingGetRequest) {
 
         SettingResponse response = new SettingResponse();
         response.success = true;
@@ -34,11 +35,11 @@ public class SettingBusiness {
         response.refreshSeconds = DEFAULT_REFRESH_SECONDS;
         response.message = "Varsayilan ayarlar.";
 
-        if (username == null) {
+        if (settingGetRequest == null || settingGetRequest.token == null) {
             return response;
         }
 
-        AppSetting setting = appSettingRepository.findById(username).orElse(null);
+        AppSetting setting = appSettingRepository.findById(settingGetRequest.token).orElse(null);
         if (setting == null) {
             return response;
         }
@@ -53,19 +54,17 @@ public class SettingBusiness {
     }
 
     @Transactional
-    public SettingResponse SettingSave(SettingSaveRequest settingSaveRequest, String username) {
+    public SettingResponse SettingSave(SettingSaveRequest settingSaveRequest) {
 
         SettingResponse response = new SettingResponse();
 
-        if (settingSaveRequest == null || username == null || username.isEmpty()) {
+        if (settingSaveRequest == null || settingSaveRequest.token == null || settingSaveRequest.token.isEmpty()) {
             response.message = "Oturum bulunamadi.";
             return response;
         }
 
-        // Anahtar kullanici adi. Keycloak token'i her yenilemede degistigi ve
-        // 100 karaktere sigmadigi icin anahtar olarak kullanilamiyor.
-        AppSetting setting = appSettingRepository.findById(username).orElseGet(AppSetting::new);
-        setting.token = username;
+        AppSetting setting = appSettingRepository.findById(settingSaveRequest.token).orElseGet(AppSetting::new);
+        setting.token = settingSaveRequest.token;
         setting.language = settingSaveRequest.language == null || settingSaveRequest.language.isEmpty()
                 ? DEFAULT_LANGUAGE
                 : settingSaveRequest.language;
