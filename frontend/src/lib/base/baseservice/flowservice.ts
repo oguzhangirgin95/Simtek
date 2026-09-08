@@ -1,4 +1,4 @@
-import { Injectable, Injector, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivationStart, NavigationEnd, Router } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
 import {
@@ -33,7 +33,7 @@ export class FlowService extends BaseService {
   private readonly validationService = inject(Validationservice);
   private readonly featureFlagService = inject(FeatureFlagService);
 
-  /** Route olaylarına abone olur ve token'ı saklamak için effect kurar. */
+  /** Route olaylarına abone olur. */
   constructor() {
     super();
 
@@ -47,37 +47,17 @@ export class FlowService extends BaseService {
         this.url.set(event.urlAfterRedirects);
       }
     });
-
-    // Token her değiştiğinde saklanır; giriş ve çıkış ayrıca yazma çağırmaz.
-    effect(() => this.writeToken(this.token()));
   }
 
-
-  /** Oturum token'ı. Değiştiğinde yukarıdaki effect ile localStorage'a yazılır. */
-  public readonly token = signal<string | undefined>(this.readToken());
 
   /**
-   * Saklanan token'ı okur.
+   * Oturum token'ı. Yalnızca bellekte durur, hiçbir yere yazılmaz.
    *
-   * Sunucu tarafı render'ında ve gizli sekmede localStorage erişilemeyebilir;
-   * bu durumda hata fırlatmak yerine oturum yokmuş gibi davranılır.
+   * Depolamaya yazılsaydı sayfa kapandıktan sonra da diskte kalır ve siteye
+   * script sızdıran bir açıkta okunabilirdi. Bunun bedeli, sekme yenilenince
+   * oturumun bitmesi: token gider, AuthGuard giriş ekranına yönlendirir.
    */
-  private readToken(): string | undefined {
-    try {
-      return localStorage.getItem('simtek-token') ?? undefined;
-    } catch {
-      return undefined;
-    }
-  }
-
-  /** Token'ı saklar, boşsa siler. Depolama kapalıysa sessizce geçilir. */
-  private writeToken(value: string | undefined): void {
-    try {
-      value ? localStorage.setItem('simtek-token', value) : localStorage.removeItem('simtek-token');
-    } catch {
-      return;
-    }
-  }
+  public readonly token = signal<string | undefined>(undefined);
 
   /** Açık olan adres. Menüde aktif ekranı işaretlemek için kullanılır. */
   public readonly url = signal<string>('');
