@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, EMPTY, firstValueFrom, interval, switchMap } from 'rxjs';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { DashboardControllerService } from '@lib/services/api/dashboardController.service';
@@ -12,7 +13,8 @@ import { UnitControllerService } from '@lib/services/api/unitController.service'
 import { Barchart } from '@lib/commons/barchart/barchart';
 import { Card } from '@lib/commons/card/card';
 import { Donutchart } from '@lib/commons/donutchart/donutchart';
-import { Grid } from '@lib/commons/grid/grid';
+import { GenericListConfig, Genericlist } from '@lib/commons/genericlist/genericlist';
+import { InfoVariant } from '@lib/commons/info/info';
 import { Map } from '@lib/commons/map/map';
 import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
@@ -25,7 +27,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Donutchart, FormsModule, Grid, Map, Select, Statcard],
+  imports: [Barchart, Card, Donutchart, FormsModule, Genericlist, Map, Select, Statcard],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -35,6 +37,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
   private readonly unitService = inject(UnitControllerService);
   private readonly policeService = inject(PoliceControllerService);
   private readonly settingService = inject(SettingControllerService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -72,15 +75,57 @@ export class DashboardStart extends BaseComponent implements OnInit {
     return labels[key] ?? labels['mapTotalTitle'];
   });
 
-  readonly unitColumns = computed(() => [
-    { field: 'unitName', title: this.getResource('GRID_UNIT', 'Birim') },
-    { field: 'totalPolice', title: this.getResource('GRID_TOTALPOLICE', 'Personel') },
-    { field: 'activePolice', title: this.getResource('GRID_ACTIVEPOLICE', 'Sahada') },
-    { field: 'patrol', title: this.getResource('GRID_PATROL', 'Devriye') },
-    { field: 'radar', title: this.getResource('GRID_RADAR', 'Radar') },
-    { field: 'motorcycle', title: this.getResource('GRID_MOTORCYCLE', 'Motosiklet') },
-    { field: 'taskLoad', title: this.getResource('GRID_TASKLOAD', 'Görev') },
-  ]);
+  /**
+   * Birim tablosunun genericlist yapılandırması.
+   *
+   * Sütunlar ve satır sonundaki butonlar burada tanımlanır; bileşen yalnızca
+   * bunu çizer. Başka bir ekran aynı bileşeni kendi config'i ile kullanır.
+   */
+  readonly unitListConfig = computed<GenericListConfig>(() => {
+    const view = this.getResource('ACTION_VIEW', 'Görüntüle');
+    const edit = this.getResource('ACTION_EDIT', 'Düzenle');
+    const download = this.getResource('ACTION_EXPORT', 'Dışa aktar');
+    const archive = this.getResource('ACTION_ARCHIVE', 'Arşivle');
+
+    return {
+      columns: [
+        {
+          field: 'loadPercent',
+          title: this.getResource('GRID_STATUS', 'Durum'),
+          type: 'badge',
+          format: (unit) => this.getLoadLabel(unit.loadPercent ?? 0),
+          variant: (unit) => this.getLoadVariant(unit.loadPercent ?? 0),
+        },
+        { field: 'unitName', title: this.getResource('GRID_UNIT', 'Birim') },
+        { field: 'totalPolice', title: this.getResource('GRID_TOTALPOLICE', 'Personel') },
+        { field: 'activePolice', title: this.getResource('GRID_ACTIVEPOLICE', 'Sahada') },
+        { field: 'patrol', title: this.getResource('GRID_PATROL', 'Devriye') },
+        { field: 'radar', title: this.getResource('GRID_RADAR', 'Radar') },
+        { field: 'motorcycle', title: this.getResource('GRID_MOTORCYCLE', 'Motosiklet') },
+        { field: 'taskLoad', title: this.getResource('GRID_TASKLOAD', 'Görev') },
+      ],
+      actions: [
+        { key: 'view', label: view, click: (unit) => this.viewUnit(unit) },
+        { key: 'edit', label: edit, click: (unit) => this.editUnit(unit) },
+        { key: 'export', label: download, variant: 'secondary', click: (unit) => this.exportUnit(unit) },
+        {
+          key: 'archive',
+          label: archive,
+          variant: 'secondary',
+          visible: (unit) => (unit.loadPercent ?? 0) < 80,
+          click: (unit) => this.archiveUnit(unit),
+        },
+      ],
+      emptyText: this.labels().emptyUnit,
+    };
+  });
+
+  /** Son tıklanan işlem; örneğin çalıştığını göstermek için kartın altında yazar. */
+  readonly unitActionText = computed(() => {
+    const action = this.State.UnitAction;
+
+    return action ? `${action.label}: ${action.unitName}` : '';
+  });
 
   constructor() {
     super();
@@ -218,6 +263,60 @@ export class DashboardStart extends BaseComponent implements OnInit {
 
   selectCity(point: any) {
     this.setFilter('cityId', point.id);
+  }
+
+  /** Görev yüküne göre etiket rengi. */
+  getLoadVariant(percent: number): InfoVariant {
+    if (percent >= 80) {
+      return 'error';
+    }
+
+    return percent >= 50 ? 'warning' : 'success';
+  }
+
+  /** Görev yüküne göre etiket metni. */
+  getLoadLabel(percent: number): string {
+    if (percent >= 80) {
+      return this.getResource('LOAD_HIGH', 'Yoğun');
+    }
+
+    return percent >= 50 ? this.getResource('LOAD_NORMAL', 'Normal') : this.getResource('LOAD_LOW', 'Düşük');
+  }
+
+  /** Seçilen birimi filtreye taşır. */
+  viewUnit(unit: any) {
+    this.setUnitAction(this.getResource('ACTION_VIEW', 'Görüntüle'), unit);
+    this.setFilter('unitId', unit.unitId ?? '');
+  }
+
+  /** Birim düzenleme ekranına gider. */
+  editUnit(unit: any) {
+    this.setUnitAction(this.getResource('ACTION_EDIT', 'Düzenle'), unit);
+    this.router.navigateByUrl('/units/unitlist/start');
+  }
+
+  /** Satırı CSV olarak indirir. */
+  exportUnit(unit: any) {
+    this.setUnitAction(this.getResource('ACTION_EXPORT', 'Dışa aktar'), unit);
+
+    const csv = `${Object.keys(unit).join(';')}
+${Object.values(unit).join(';')}`;
+    const link = document.createElement('a');
+
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    link.download = `${unit.unitName ?? 'birim'}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  /** Birimi arşivler. Gerçek ekranda burada arşivleme servisi çağrılır. */
+  archiveUnit(unit: any) {
+    this.setUnitAction(this.getResource('ACTION_ARCHIVE', 'Arşivle'), unit);
+  }
+
+  /** Yapılan son işlemi kartın üstünde göstermek için saklar. */
+  setUnitAction(label: string, unit: any) {
+    this.State.UnitAction = { label, unitName: unit.unitName ?? '' };
   }
 
   selectMetric(metric: { titleKey: string; status?: string; field?: string; variant?: string }) {

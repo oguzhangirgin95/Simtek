@@ -56,11 +56,11 @@
   </app-card>
 </div>
 
-<app-card id="dashboardUnits" [title]="(State.UnitWorkload?.cityName ?? '') + ' ' + labels().unitWorkloadTitle">
+<app-card
+  id="dashboardUnits"
+  [title]="(State.UnitWorkload?.cityName ?? '') + ' ' + labels().unitWorkloadTitle"
+  [subtitle]="unitActionText()"
+>
   <app-barchart [items]="State.UnitChart ?? []" />
-  <app-grid
-    [columns]="unitColumns()"
-    [rows]="State.UnitWorkload?.units ?? []"
-    [emptyText]="labels().emptyUnit"
-  />
+  <app-genericlist [config]="unitListConfig()" [rows]="State.UnitWorkload?.units ?? []" />
 </app-card>
