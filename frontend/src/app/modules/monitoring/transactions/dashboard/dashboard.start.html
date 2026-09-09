@@ -47,7 +47,10 @@
 
 <div class="panels">
   <app-card id="dashboardMap" [title]="mapTitle()" [subtitle]="labels().mapHint">
-    <app-map [points]="State.MapPoints ?? []" [selectedId]="State.Request.cityId" [variant]="State.MapMetric?.variant ?? ''" (pointClicked)="selectCity($event)" />
+    <app-unity
+      [data]="{ points: State.MapPoints ?? [], selectedId: State.Request.cityId, variant: State.MapMetric?.variant ?? '' }"
+      (message)="setFilter('cityId', $event)"
+    />
   </app-card>
 
   <app-card [title]="labels().statusChartTitle">

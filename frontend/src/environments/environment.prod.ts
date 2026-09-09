@@ -4,6 +4,8 @@ export const environment = {
   apiUrl: '/api',
   defaultLanguage: 'tr',
   cryptoKey: 'SimtekProdKey0123456789ABCDEF!!!',
+  // Unity WebGL ciktisinin adresi; icinde Unity'nin kendi index.html'i beklenir.
+  unity: { url: '/unity/' },
   keycloak: {
     url: 'http://localhost:8081',
     realm: 'simtek',

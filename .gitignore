@@ -1,2 +1,5 @@
 # Yerel Keycloak dagitimi (bin/lib/data). Tema ve kurulum betigi keycloak/ altinda.
 .keycloak/
+
+# Unity WebGL ciktisi: derlenmis, buyuk (onlarca MB) ve kaynak degil.
+frontend/public/unity/

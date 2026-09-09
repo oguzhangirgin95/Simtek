@@ -16,9 +16,9 @@ import { Donutchart } from '@lib/commons/donutchart/donutchart';
 import { DocumentViewConfig, Documentview } from '@lib/commons/documentview/documentview';
 import { GenericListConfig, Genericlist } from '@lib/commons/genericlist/genericlist';
 import { InfoVariant } from '@lib/commons/info/info';
-import { Map } from '@lib/commons/map/map';
 import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
+import { Unity } from '@lib/commons/unity/unity';
 
 const STATUS_VARIANT: Record<string, string> = {
   SAHADA: 'success',
@@ -28,7 +28,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Map, Select, Statcard],
+  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Select, Statcard, Unity],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -279,10 +279,6 @@ export class DashboardStart extends BaseComponent implements OnInit {
     }
 
     this.getDashboard();
-  }
-
-  selectCity(point: any) {
-    this.setFilter('cityId', point.id);
   }
 
   /** Görev yüküne göre etiket rengi. */
