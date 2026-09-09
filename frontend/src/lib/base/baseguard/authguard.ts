@@ -1,10 +1,11 @@
 import { PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn } from '@angular/router';
 import { FlowService } from '../baseservice/flowservice';
+import { KeycloakService } from '../baseservice/keycloakservice';
 
 /**
- * Oturum kontrolü. Token yoksa giriş ekranına yönlendirir.
+ * Oturum kontrolü. Token yoksa Keycloak'ın giriş sayfasına yönlendirir.
  *
  * Sunucu tarafı render'ında token localStorage'dan okunamadığı için kontrol
  * atlanıyor; yoksa her SSR isteği girişe yönlenir ve tarayıcıya boş sayfa
@@ -12,8 +13,8 @@ import { FlowService } from '../baseservice/flowservice';
  */
 export const AuthGuard: CanActivateFn = () => {
   const flowService = inject(FlowService);
-  
-  const router = inject(Router);
+
+  const keycloakService = inject(KeycloakService);
 
   if (!isPlatformBrowser(inject(PLATFORM_ID))) {
     return true;
@@ -23,5 +24,7 @@ export const AuthGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.parseUrl('/firstlevel');
+  keycloakService.login();
+
+  return false;
 };

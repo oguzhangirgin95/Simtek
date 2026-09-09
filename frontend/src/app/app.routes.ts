@@ -5,11 +5,7 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'firstlevel',
-    },
-    {
-        path: 'firstlevel',
-        loadChildren: () => import('./modules/firstlevel/firstlevel.routes').then((m) => m.routes),
+        redirectTo: 'monitoring/dashboard/start',
     },
     {
         path: 'analytics',

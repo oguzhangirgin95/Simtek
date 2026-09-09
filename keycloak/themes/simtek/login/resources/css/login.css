@@ -1,0 +1,467 @@
+/* Simtek giris ekrani.
+   Renk ve olculer frontend/src/styles.scss ile ayni; ust/alt serit
+   uygulamanin header/footer'ini daha alcak ve kirmizi olarak tekrarliyor. */
+
+:root {
+  --color-bg: hsl(224 45% 8%);
+  --color-surface: hsl(224 42% 14%);
+  --color-surface-2: hsl(224 40% 19%);
+  --color-border: hsl(224 38% 28%);
+  --color-text: hsl(224 30% 97%);
+  --color-muted: hsl(224 25% 74%);
+  --color-accent: hsl(216 75% 51%);
+  --color-accent-dark: hsl(216 78% 42%);
+  --color-accent-soft: hsl(216 75% 51% / 0.24);
+  --color-on-accent: #ffffff;
+  --color-error: #ff6b78;
+
+  --color-red: hsl(0 72% 46%);
+  --color-red-dark: hsl(0 70% 33%);
+
+  --space: 16px;
+  --radius: 10px;
+  --touch: 52px;
+  --bar: 44px;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --transition: 160ms ease;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: radial-gradient(1100px 520px at 50% -15%, hsl(216 70% 22% / 0.55), transparent 65%), var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Yavasca donen isik supurmesi. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -45vmax;
+  z-index: -1;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 292deg,
+    hsl(0 80% 55% / 0.13) 322deg,
+    hsl(216 90% 60% / 0.16) 348deg,
+    transparent 360deg
+  );
+  animation: radar 22s linear infinite;
+}
+
+@keyframes radar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Realm adini yazan varsayilan serit; yerine kendi seritlerimiz var. */
+#kc-header {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- sayfa -- */
+
+.login-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--bar) + 24px) var(--space);
+
+  /* Cok soluk izgara; asagida yavasca kayiyor. */
+  background-image: linear-gradient(hsl(216 45% 62% / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(216 45% 62% / 0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  animation: grid-drift 22s linear infinite;
+}
+
+/* Suruklenen iki isik lekesi: kirmizi ve mavi (tepe lambasi hissi). */
+.login-page::before,
+.login-page::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 52vmax;
+  height: 52vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.42;
+  will-change: transform;
+}
+
+.login-page::before {
+  top: -16vmax;
+  left: -14vmax;
+  background: radial-gradient(circle, var(--color-red) 0%, transparent 62%);
+  animation: drift-red 13s ease-in-out infinite alternate;
+}
+
+.login-page::after {
+  right: -14vmax;
+  bottom: -16vmax;
+  background: radial-gradient(circle, var(--color-accent) 0%, transparent 62%);
+  animation: drift-blue 16s ease-in-out infinite alternate;
+}
+
+@keyframes grid-drift {
+  to {
+    background-position: 46px 46px;
+  }
+}
+
+@keyframes drift-red {
+  from {
+    transform: translate3d(-4vmax, -2vmax, 0) scale(1);
+  }
+  to {
+    transform: translate3d(10vmax, 8vmax, 0) scale(1.2);
+  }
+}
+
+@keyframes drift-blue {
+  from {
+    transform: translate3d(4vmax, 2vmax, 0) scale(1.15);
+  }
+  to {
+    transform: translate3d(-9vmax, -7vmax, 0) scale(1);
+  }
+}
+
+/* ------------------------------------------------------- ust / alt serit -- */
+
+.app-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--bar);
+  padding: 0 14px;
+  background: linear-gradient(180deg, var(--color-red), var(--color-red-dark));
+  color: #fff;
+}
+
+.app-bar--top {
+  top: 0;
+  padding-top: env(safe-area-inset-top);
+  height: calc(var(--bar) + env(safe-area-inset-top));
+  border-bottom: 1px solid hsl(0 60% 26%);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.38);
+}
+
+.app-bar--bottom {
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(var(--bar) + env(safe-area-inset-bottom));
+  border-top: 1px solid hsl(0 60% 26%);
+  box-shadow: 0 -8px 22px rgb(0 0 0 / 0.38);
+}
+
+.app-bar__logo {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+}
+
+.app-bar__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------- dil secici ---- */
+
+/* base/login/template.ftl kendi acilir menusunu ciziyor; onun yerine
+   login.ftl'deki iki dugmeyi kullaniyoruz. */
+#kc-locale {
+  display: none;
+}
+
+.lang {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.lang__item {
+  min-width: 34px;
+  padding: 3px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-muted);
+  background: hsl(224 40% 19% / 0.7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-align: center;
+  text-decoration: none;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.lang__item:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong, hsl(224 36% 40%));
+}
+
+.lang__item--active {
+  color: var(--color-on-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+/* -------------------------------------------------------------- kart ----- */
+
+.login-form {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  padding: 38px 32px 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: hsl(224 42% 14% / 0.9);
+  animation: card-glow 8s ease-in-out infinite;
+}
+
+/* Kenarda kirmizidan maviye donen cok hafif bir isik. */
+@keyframes card-glow {
+  0%,
+  100% {
+    box-shadow: var(--shadow), 0 0 0 1px hsl(0 75% 55% / 0.3), 0 0 46px hsl(0 75% 55% / 0.16);
+  }
+  50% {
+    box-shadow: var(--shadow), 0 0 0 1px hsl(216 85% 60% / 0.3), 0 0 46px hsl(216 85% 60% / 0.16);
+  }
+}
+
+/* Kart uzerinde transform ANIMASYONU YOK: kart, icindeki position:fixed
+   seritlerin kapsayici blogu olur ve seritler ekrana degil karta yapisirdi.
+   Bu yuzden giris animasyonu icerideki elemanlarda. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.brand {
+  display: block;
+  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    badge-pulse 8s ease-in-out 560ms infinite;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 12px;
+}
+
+/* Rozetin cevresinde kirmizidan maviye donen hafif bir hale. */
+@keyframes badge-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55)) drop-shadow(0 0 12px hsl(0 80% 55% / 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55)) drop-shadow(0 0 14px hsl(216 90% 60% / 0.55));
+  }
+}
+
+.brand-text {
+  display: block;
+}
+
+#kc-page-title {
+  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
+  margin: 0 0 26px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#kc-page-title::after {
+  content: '';
+  display: block;
+  width: 52px;
+  height: 3px;
+  margin: 14px auto 0;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+
+/* -------------------------------------------------------------- form ----- */
+
+#kc-form-login {
+  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 160ms both;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--space);
+}
+
+.field label {
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  height: var(--touch);
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.field input.field-error {
+  border-color: var(--color-error);
+}
+
+.buttons {
+  margin-top: 24px;
+}
+
+button,
+.button {
+  display: block;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0 24px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.button {
+  text-align: center;
+  text-decoration: none;
+  line-height: var(--touch);
+}
+
+button:hover,
+.button:hover {
+  background: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
+}
+
+button:active,
+.button:active {
+  transform: scale(0.98);
+}
+
+.error {
+  margin: var(--space) 0 0;
+  color: var(--color-error);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Keycloak'in kendi bildirim kutusu (oturum suresi doldu gibi). */
+.alert {
+  margin-bottom: var(--space);
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  font-size: 14px;
+  text-align: center;
+}
+
+.alert-error {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.alert .pf-c-alert__icon {
+  display: none;
+}
+
+/* -------------------------------------------------------------- mobil ---- */
+
+@media (max-width: 700px) {
+  .login-form {
+    padding: 34px 20px 30px;
+  }
+
+  .brand {
+    width: 72px;
+    height: 72px;
+  }
+
+  .app-bar__title {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  .login-page,
+  .login-page::before,
+  .login-page::after,
+  .login-form,
+  .brand,
+  #kc-page-title,
+  #kc-form-login {
+    animation: none;
+  }
+}

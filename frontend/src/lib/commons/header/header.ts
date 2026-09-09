@@ -1,11 +1,10 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { BaseComponent } from '@lib/base/basecomponent/basecomponent';
 import { Button } from '../button/button';
 import { Menu } from '../menu/menu';
 import { Theme } from '../theme/theme';
-import { LoginControllerService } from '@lib/services/api/loginController.service';
+import { KeycloakService } from '@lib/base/baseservice/keycloakservice';
 
 /** "Pano" butonunun gittiği ekran. */
 const HOME = '/monitoring/dashboard/start';
@@ -18,7 +17,7 @@ const HOME = '/monitoring/dashboard/start';
   styleUrl: './header.scss',
 })
 export class Header extends BaseComponent {
-  private readonly loginService = inject(LoginControllerService);
+  private readonly keycloakService = inject(KeycloakService);
 
   private readonly router = inject(Router);
 
@@ -41,8 +40,8 @@ export class Header extends BaseComponent {
   /** Zaten panodaysak "Pano" butonunu göstermeye gerek yok. */
   readonly atHome = computed(() => this.flowService.url() === HOME);
 
-  /** Token 'TOKEN-<kullanıcı>' biçiminde geldiği için önek atılarak ad elde edilir. */
-  readonly username = computed(() => (this.flowService.token() ?? '').replace('TOKEN-', ''));
+  /** Keycloak token'ındaki preferred_username. */
+  readonly username = this.keycloakService.username;
 
   /** İlk çizim tamamlanınca kullanıcıya özel kısımların önü açılır. */
   constructor() {
@@ -55,17 +54,9 @@ export class Header extends BaseComponent {
     this.router.navigateByUrl(HOME);
   }
 
-  /**
-   * Çıkış. Önce sunucudaki oturum kapatılır, sonra token silinip giriş
-   * ekranına dönülür.
-   */
+  /** Çıkış. Keycloak oturumu kapatılır, tarayıcı Keycloak'a yönlenir. */
   logout() {
-    firstValueFrom(this.loginService.logout({ token: this.flowService.token() }))
-      .then(() => {
-        this.flowService.token.set(undefined);
-        this.featureFlagService.clearFeatures();
-        this.router.navigateByUrl('/firstlevel');
-      })
-      .catch((error) => console.error('Logout:', error));
+    this.featureFlagService.clearFeatures();
+    this.keycloakService.logout();
   }
 }
