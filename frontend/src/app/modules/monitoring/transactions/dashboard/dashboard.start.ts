@@ -15,6 +15,7 @@ import { Card } from '@lib/commons/card/card';
 import { Donutchart } from '@lib/commons/donutchart/donutchart';
 import { DocumentViewConfig, Documentview } from '@lib/commons/documentview/documentview';
 import { GenericListConfig, Genericlist } from '@lib/commons/genericlist/genericlist';
+import { Gif } from '@lib/commons/gif/gif';
 import { InfoVariant } from '@lib/commons/info/info';
 import { Select } from '@lib/commons/select/select';
 import { Statcard } from '@lib/commons/statcard/statcard';
@@ -28,7 +29,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Select, Statcard, Unity],
+  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Gif, Select, Statcard, Unity],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })

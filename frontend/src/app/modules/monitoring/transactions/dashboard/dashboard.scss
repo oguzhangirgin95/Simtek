@@ -8,3 +8,9 @@ app-donutchart + app-donutchart {
   padding-top: var(--space);
   border-top: 1px solid var(--color-border);
 }
+
+/* Basliktaki GIF ornegi: boyu ekran verir, bilesen kendisi boyut bilmez. */
+.page-head app-gif {
+  width: 52px;
+  margin-right: 12px;
+}
