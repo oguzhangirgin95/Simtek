@@ -14,6 +14,7 @@
   --color-accent-soft: hsl(216 75% 51% / 0.24);
   --color-on-accent: #ffffff;
   --color-error: #ff6b78;
+  --color-warning: #f5b301;
 
   --color-red: hsl(0 72% 46%);
   --color-red-dark: hsl(0 70% 33%);
@@ -45,31 +46,10 @@ body {
   font-size: 15px;
   line-height: 1.55;
   color: var(--color-text);
-  background: radial-gradient(1100px 520px at 50% -15%, hsl(216 70% 22% / 0.55), transparent 65%), var(--color-bg);
+  /* Hareketli arka plan bir GIF; kendi animasyon kodumuz yok. Baska bir GIF
+     icin resources/img/arka-plan.gif dosyasini degistirmek yeterli. */
+  background: var(--color-bg) url('../img/arka-plan.gif') center / cover no-repeat;
   -webkit-font-smoothing: antialiased;
-}
-
-/* Yavasca donen isik supurmesi. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: -45vmax;
-  z-index: -1;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 292deg,
-    hsl(0 80% 55% / 0.13) 322deg,
-    hsl(216 90% 60% / 0.16) 348deg,
-    transparent 360deg
-  );
-  animation: radar 22s linear infinite;
-}
-
-@keyframes radar {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Realm adini yazan varsayilan serit; yerine kendi seritlerimiz var. */
@@ -80,72 +60,13 @@ body::before {
 /* ---------------------------------------------------------------- sayfa -- */
 
 .login-page {
+  /* Koseler buna gore konumlaniyor. */
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
   display: flex;
   min-height: 100%;
   align-items: center;
   justify-content: center;
   padding: calc(var(--bar) + 24px) var(--space);
-
-  /* Cok soluk izgara; asagida yavasca kayiyor. */
-  background-image: linear-gradient(hsl(216 45% 62% / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(216 45% 62% / 0.045) 1px, transparent 1px);
-  background-size: 46px 46px;
-  animation: grid-drift 22s linear infinite;
-}
-
-/* Suruklenen iki isik lekesi: kirmizi ve mavi (tepe lambasi hissi). */
-.login-page::before,
-.login-page::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  width: 52vmax;
-  height: 52vmax;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.42;
-  will-change: transform;
-}
-
-.login-page::before {
-  top: -16vmax;
-  left: -14vmax;
-  background: radial-gradient(circle, var(--color-red) 0%, transparent 62%);
-  animation: drift-red 13s ease-in-out infinite alternate;
-}
-
-.login-page::after {
-  right: -14vmax;
-  bottom: -16vmax;
-  background: radial-gradient(circle, var(--color-accent) 0%, transparent 62%);
-  animation: drift-blue 16s ease-in-out infinite alternate;
-}
-
-@keyframes grid-drift {
-  to {
-    background-position: 46px 46px;
-  }
-}
-
-@keyframes drift-red {
-  from {
-    transform: translate3d(-4vmax, -2vmax, 0) scale(1);
-  }
-  to {
-    transform: translate3d(10vmax, 8vmax, 0) scale(1.2);
-  }
-}
-
-@keyframes drift-blue {
-  from {
-    transform: translate3d(4vmax, 2vmax, 0) scale(1.15);
-  }
-  to {
-    transform: translate3d(-9vmax, -7vmax, 0) scale(1);
-  }
 }
 
 /* ------------------------------------------------------- ust / alt serit -- */
@@ -157,7 +78,7 @@ body::before {
   z-index: 5;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   height: var(--bar);
   padding: 0 14px;
   background: linear-gradient(180deg, var(--color-red), var(--color-red-dark));
@@ -180,7 +101,21 @@ body::before {
   box-shadow: 0 -8px 22px rgb(0 0 0 / 0.38);
 }
 
-.app-bar__logo {
+/* Ikon, yazi, ikon ortada tek grup. */
+.app-bar__group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Ust seritte sagdaki dil seciciye yer kalsin diye iki yandan ayni pay
+   birakiliyor; alt seritte secici olmadigi icin gerek yok. */
+.app-bar--top .app-bar__group {
+  max-width: calc(100% - 200px);
+}
+
+.app-bar__icon {
   flex: none;
   width: 28px;
   height: 28px;
@@ -188,10 +123,8 @@ body::before {
 }
 
 .app-bar__title {
-  flex: 1;
   min-width: 0;
   overflow: hidden;
-  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
@@ -202,28 +135,27 @@ body::before {
 
 /* --------------------------------------------------------- dil secici ---- */
 
-/* base/login/template.ftl kendi acilir menusunu ciziyor; onun yerine
-   login.ftl'deki iki dugmeyi kullaniyoruz. */
+/* base/login/template.ftl kendi acilir menusunu ciziyor; onun yerine ust
+   seridin sagindaki iki dugme kullaniliyor. */
 #kc-locale {
   display: none;
 }
 
 .lang {
   position: absolute;
-  top: 14px;
+  top: 50%;
   right: 14px;
-  z-index: 2;
   display: flex;
   gap: 4px;
+  transform: translateY(-50%);
 }
 
 .lang__item {
   min-width: 34px;
-  padding: 3px 8px;
-  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border: 1px solid rgb(255 255 255 / 0.35);
   border-radius: 999px;
-  color: var(--color-muted);
-  background: hsl(224 40% 19% / 0.7);
+  color: rgb(255 255 255 / 0.8);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.6px;
@@ -233,18 +165,79 @@ body::before {
 }
 
 .lang__item:hover {
-  color: var(--color-text);
-  border-color: var(--color-border-strong, hsl(224 36% 40%));
+  color: #fff;
+  border-color: #fff;
 }
 
 .lang__item--active {
-  color: var(--color-on-accent);
-  border-color: var(--color-accent);
-  background: var(--color-accent);
+  color: var(--color-red-dark);
+  border-color: #fff;
+  background: #fff;
+}
+
+/* ------------------------------------------------------------ koseler ---- */
+
+/* Sayfaya gore konumlu (fixed degil): kisa ekranda sayfa kaydiginda icerigin
+   ustune binmeden sayfayla birlikte kayar. */
+.corner {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.corner--top-left {
+  top: calc(var(--bar) + 20px);
+  left: 24px;
+}
+
+.corner--top-right {
+  top: calc(var(--bar) + 20px);
+  right: 24px;
+}
+
+.corner--bottom-left {
+  bottom: calc(var(--bar) + 20px);
+  left: 24px;
+}
+
+.corner--bottom-right {
+  bottom: calc(var(--bar) + 20px);
+  right: 24px;
+}
+
+.corner__image {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.5));
+}
+
+/* Iki satir yazi alt alta; ikinci satir daha sonuk. */
+.corner__text {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.corner__text span + span {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.corner--top-right .corner__text {
+  text-align: right;
 }
 
 /* -------------------------------------------------------------- kart ----- */
 
+/* Diger Keycloak ekranlari (parola sifirlama, hata) icin kart. */
 .login-form {
   position: relative;
   z-index: 1;
@@ -253,56 +246,10 @@ body::before {
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: hsl(224 42% 14% / 0.9);
-  animation: card-glow 8s ease-in-out infinite;
-}
-
-/* Kenarda kirmizidan maviye donen cok hafif bir isik. */
-@keyframes card-glow {
-  0%,
-  100% {
-    box-shadow: var(--shadow), 0 0 0 1px hsl(0 75% 55% / 0.3), 0 0 46px hsl(0 75% 55% / 0.16);
-  }
-  50% {
-    box-shadow: var(--shadow), 0 0 0 1px hsl(216 85% 60% / 0.3), 0 0 46px hsl(216 85% 60% / 0.16);
-  }
-}
-
-/* Kart uzerinde transform ANIMASYONU YOK: kart, icindeki position:fixed
-   seritlerin kapsayici blogu olur ve seritler ekrana degil karta yapisirdi.
-   Bu yuzden giris animasyonu icerideki elemanlarda. */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-
-.brand {
-  display: block;
-  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    badge-pulse 8s ease-in-out 560ms infinite;
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 12px;
-}
-
-/* Rozetin cevresinde kirmizidan maviye donen hafif bir hale. */
-@keyframes badge-pulse {
-  0%,
-  100% {
-    filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55)) drop-shadow(0 0 12px hsl(0 80% 55% / 0.5));
-  }
-  50% {
-    filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55)) drop-shadow(0 0 14px hsl(216 90% 60% / 0.55));
-  }
-}
-
-.brand-text {
-  display: block;
+  box-shadow: var(--shadow);
 }
 
 #kc-page-title {
-  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
   margin: 0 0 26px;
   font-size: 22px;
   font-weight: 700;
@@ -321,11 +268,44 @@ body::before {
   border-radius: 2px;
 }
 
-/* -------------------------------------------------------------- form ----- */
-
-#kc-form-login {
-  animation: rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 160ms both;
+/* Giris ekraninda kart yalnizca bir sutun: cerceveyi .form-box ciziyor,
+   ustteki resim ve alttaki baglantilar onun disinda duruyor. */
+[data-page-id='login-login'] .login-form {
+  /* Static: koseler karta degil .login-page'e gore konumlansin. */
+  position: static;
+  width: min(380px, 100%);
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
 }
+
+[data-page-id='login-login'] #kc-page-title {
+  margin: 0 0 20px;
+  line-height: 0;
+}
+
+[data-page-id='login-login'] #kc-page-title::after {
+  display: none;
+}
+
+.hero {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55));
+}
+
+.form-box {
+  padding: 28px 28px 26px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: hsl(224 42% 14% / 0.9);
+  box-shadow: var(--shadow);
+}
+
+/* -------------------------------------------------------------- form ----- */
 
 .field {
   display: flex;
@@ -342,7 +322,9 @@ body::before {
   text-transform: uppercase;
 }
 
-.field input,
+/* Submit haric: base sablonlari butonu da .field icine koyuyor, alan stili
+   butonu metin kutusuna ceviriyordu. */
+.field input:not([type='submit']),
 .field select,
 .field textarea {
   width: 100%;
@@ -357,7 +339,7 @@ body::before {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.field input:focus,
+.field input:not([type='submit']):focus,
 .field select:focus,
 .field textarea:focus {
   outline: none;
@@ -367,6 +349,38 @@ body::before {
 
 .field input.field-error {
   border-color: var(--color-error);
+}
+
+/* Alanin solundaki ikon; odaklaninca vurgu rengini alir. */
+.field__control {
+  position: relative;
+  display: block;
+}
+
+/* .field icinde: yukaridaki alan kuraliyla ayni oncelikte olsun ki sonra
+   geldigi icin kazansin. */
+.field .field__control input {
+  padding-left: 44px;
+}
+
+.field__icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: stroke var(--transition);
+}
+
+.field__control:focus-within .field__icon {
+  stroke: var(--color-accent);
 }
 
 .buttons {
@@ -408,11 +422,83 @@ button:active,
   transform: scale(0.98);
 }
 
+/* Giris ekraninda buton kutunun ortasinda, alanlardan dar. */
+[data-page-id='login-login'] .buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+[data-page-id='login-login'] .buttons button {
+  width: auto;
+  min-width: 180px;
+}
+
 .error {
   margin: var(--space) 0 0;
   color: var(--color-error);
   font-weight: 600;
   text-align: center;
+}
+
+/* Kutunun altindaki iki baglanti: biri solda, biri sagda. */
+.form-links {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space);
+  margin-top: 14px;
+  padding: 0 4px;
+  font-size: 13px;
+}
+
+.form-links a {
+  color: var(--color-muted);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.form-links a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* Baglantilarin altindaki uyari. Uygulamadaki app-info--warning seridiyle
+   ayni: ince cerceve, solda amber cizgi. */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-warning);
+  border-radius: var(--radius);
+  background: hsl(224 42% 14% / 0.9);
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.notice__icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--color-warning);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Diger ekranlardaki baglantilar ("Girise geri don" gibi). */
+a {
+  color: var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-text);
 }
 
 /* Keycloak'in kendi bildirim kutusu (oturum suresi doldu gibi). */
@@ -435,16 +521,63 @@ button:active,
   display: none;
 }
 
-/* -------------------------------------------------------------- mobil ---- */
+/* ----------------------------------------------------------- daraldikca -- */
 
-@media (max-width: 700px) {
+/* Koseler kenarlarda; ekran daraldikca ortadaki sutunla cakismasin diye
+   yazilar cekiliyor, resimler kaliyor. */
+@media (max-width: 1100px) {
+  .corner__text {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Mobilde giris kutusu ekrani enlemesine dolduruyor; koseler kucuk kalip
+     ust ve alt bantta duruyor, icerik o bantlara girmesin diye bosluk buyuk. */
+  .login-page {
+    padding: calc(var(--bar) + 54px) var(--space);
+  }
+
+  .corner--top-left,
+  .corner--top-right {
+    top: calc(var(--bar) + 8px);
+  }
+
+  .corner--bottom-left,
+  .corner--bottom-right {
+    bottom: calc(var(--bar) + 8px);
+  }
+
+  .corner--top-left,
+  .corner--bottom-left {
+    left: 12px;
+  }
+
+  .corner--top-right,
+  .corner--bottom-right {
+    right: 12px;
+  }
+
+  .corner__image {
+    width: 40px;
+    height: 40px;
+  }
+
   .login-form {
     padding: 34px 20px 30px;
   }
 
-  .brand {
-    width: 72px;
-    height: 72px;
+  .form-box {
+    padding: 24px 18px 22px;
+  }
+
+  .hero {
+    width: 96px;
+    height: 96px;
+  }
+
+  .app-bar--top .app-bar__group {
+    max-width: calc(100% - 180px);
   }
 
   .app-bar__title {
@@ -453,15 +586,43 @@ button:active,
   }
 }
 
+/* Kisa ekranda dikey bosluklar sikisir: sayfa kayarsa alt koseler ilk
+   acilista alt seridin altinda kaliyordu. */
+@media (max-height: 760px) {
+  .hero {
+    width: 72px;
+    height: 72px;
+  }
+
+  [data-page-id='login-login'] #kc-page-title {
+    margin-bottom: 12px;
+  }
+
+  .form-box {
+    padding: 18px 20px 16px;
+  }
+
+  .field {
+    margin-bottom: 12px;
+  }
+
+  [data-page-id='login-login'] .buttons {
+    margin-top: 14px;
+  }
+
+  .form-links {
+    margin-top: 10px;
+  }
+
+  .notice {
+    margin-top: 10px;
+    padding: 8px 10px;
+  }
+}
+
+/* Hareket istemeyen kullaniciya GIF yerine duz zemin. */
 @media (prefers-reduced-motion: reduce) {
-  body::before,
-  .login-page,
-  .login-page::before,
-  .login-page::after,
-  .login-form,
-  .brand,
-  #kc-page-title,
-  #kc-form-login {
-    animation: none;
+  body {
+    background-image: none;
   }
 }
