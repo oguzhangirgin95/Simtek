@@ -12,6 +12,7 @@ import { SettingControllerService } from '@lib/services/api/settingController.se
 import { UnitControllerService } from '@lib/services/api/unitController.service';
 import { Barchart } from '@lib/commons/barchart/barchart';
 import { Card } from '@lib/commons/card/card';
+import { Datepicker } from '@lib/commons/datepicker/datepicker';
 import { Donutchart } from '@lib/commons/donutchart/donutchart';
 import { DocumentViewConfig, Documentview } from '@lib/commons/documentview/documentview';
 import { GenericListConfig, Genericlist } from '@lib/commons/genericlist/genericlist';
@@ -29,7 +30,7 @@ const STATUS_VARIANT: Record<string, string> = {
 };
 
 @Component({
-  imports: [Barchart, Card, Documentview, Donutchart, FormsModule, Genericlist, Gif, Select, Statcard, Unity],
+  imports: [Barchart, Card, Datepicker, Documentview, Donutchart, FormsModule, Genericlist, Gif, Select, Statcard, Unity],
   templateUrl: './dashboard.start.html',
   styleUrl: './dashboard.scss',
 })
@@ -49,6 +50,7 @@ export class DashboardStart extends BaseComponent implements OnInit {
     unit: this.getResource('FILTER_UNIT', 'Birim'),
     status: this.getResource('FILTER_STATUS', 'Durum'),
     all: this.getResource('FILTER_ALL', 'Tümü'),
+    dateTime: this.getResource('FILTER_DATETIME', 'Tarih ve saat'),
     totalPolice: this.getResource('STAT_TOTAL', 'Toplam personel'),
     onDuty: this.getResource('STAT_ONDUTY', 'Sahada'),
     atStation: this.getResource('STAT_ATSTATION', 'Merkezde'),

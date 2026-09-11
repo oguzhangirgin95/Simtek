@@ -14,3 +14,8 @@ app-donutchart + app-donutchart {
   width: 52px;
   margin-right: 12px;
 }
+
+.filters > app-datepicker {
+  flex: 1 1 200px;
+  min-width: 0;
+}

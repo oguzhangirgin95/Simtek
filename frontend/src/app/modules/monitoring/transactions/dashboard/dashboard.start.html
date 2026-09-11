@@ -34,6 +34,7 @@
     [ngModel]="State.Request.status"
     (ngModelChange)="setFilter('status', $event)"
   />
+  <app-datepicker id="dateTime" mode="datetime" [label]="labels().dateTime" [(ngModel)]="State.SelectedDate" />
 </div>
 
 <div class="stats" id="dashboardStats">
