@@ -15,6 +15,7 @@
   --color-on-accent: #ffffff;
   --color-error: #ff6b78;
   --color-warning: #f5b301;
+  --color-success: #2fbf5f;
 
   --color-red: hsl(0 72% 46%);
   --color-red-dark: hsl(0 70% 33%);
@@ -383,6 +384,24 @@ body {
   stroke: var(--color-accent);
 }
 
+.field__toggle,
+.field__toggle:hover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48px;
+  border: 0;
+  background: none;
+}
+
+.field__control #password {
+  padding-right: 48px;
+}
+
+#password::-ms-reveal {
+  display: none;
+}
+
 .buttons {
   margin-top: 24px;
 }
@@ -432,6 +451,30 @@ button:active,
 [data-page-id='login-login'] .buttons button {
   width: auto;
   min-width: 180px;
+}
+
+#kc-login:disabled {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+#kc-login:disabled::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 10px;
+  vertical-align: -2px;
+  border: 2px solid rgb(255 255 255 / 35%);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
