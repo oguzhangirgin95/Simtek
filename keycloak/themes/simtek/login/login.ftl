@@ -17,14 +17,18 @@
   Metinler messages/messages_tr|en.properties dosyalarinda.
 -->
 <#import "template.ftl" as layout>
-<@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password'); section>
+<@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') && !(message?has_content && message.summary == msg("reauthenticate")); section>
     <#assign resim = url.resourcesPath + "/img/police-logo.png">
 
-    <#if section = "header">
+    <#if section = "header" || section = "show-username">
         <#-- Sayfanin basligi bu resim; ekran okuyucu icin alt metni var. -->
         <img class="hero" src="${resim}" alt="${msg("loginAccountTitle")}" />
 
     <#elseif section = "form">
+        <#if usernameHidden??>
+            <meta http-equiv="refresh" content="0;url=${url.loginRestartFlowUrl}" />
+        </#if>
+
         <div class="app-bar app-bar--top">
             <span class="app-bar__group">
                 <img class="app-bar__icon" src="${resim}" alt="" />
@@ -57,7 +61,7 @@
         <div class="corner corner--bottom-right"><img class="corner__image" src="${resim}" alt="" /></div>
 
         <div class="form-box">
-            <form id="kc-form-login" action="${url.loginAction}" method="post">
+            <form id="kc-form-login" action="${url.loginAction}" method="post" onsubmit="login.disabled = true; return true;">
                 <div class="field">
                     <label for="username">${msg("username")}</label>
                     <span class="field__control">
@@ -80,6 +84,14 @@
                         </svg>
                         <input id="password" name="password" type="password" autocomplete="current-password"
                                class="<#if messagesPerField.existsError('username','password')>field-error</#if>" />
+                        <button class="field__toggle" type="button" aria-label="${msg("showPassword")}" aria-controls="password" aria-pressed="false"
+                                onclick="var p = document.getElementById('password'), goster = p.type === 'password'; p.type = goster ? 'text' : 'password'; this.setAttribute('aria-pressed', goster);">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                                <path class="field__toggle-slash" d="M4 4l16 16" />
+                            </svg>
+                        </button>
                     </span>
                 </div>
 
@@ -89,7 +101,10 @@
 
                 <div class="buttons">
                     <input type="hidden" name="credentialId" value="${(auth.selectedCredential)!''}" />
-                    <button id="kc-login" name="login" type="submit">${msg("doLogIn")}</button>
+                    <button id="kc-login" name="login" type="submit">
+                        <span class="button__idle">${msg("doLogIn")}</span>
+                        <span class="button__busy">${msg("simtekVerifying")}</span>
+                    </button>
                 </div>
             </form>
         </div>

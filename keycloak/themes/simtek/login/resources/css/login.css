@@ -15,6 +15,7 @@
   --color-on-accent: #ffffff;
   --color-error: #ff6b78;
   --color-warning: #f5b301;
+  --color-success: #2fbf5f;
 
   --color-red: hsl(0 72% 46%);
   --color-red-dark: hsl(0 70% 33%);
@@ -281,7 +282,7 @@ body {
 }
 
 [data-page-id='login-login'] #kc-page-title {
-  margin: 0 0 20px;
+  margin: 0;
   line-height: 0;
 }
 
@@ -293,8 +294,12 @@ body {
   display: block;
   width: 120px;
   height: 120px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.55));
+}
+
+[data-page-id='login-login'] #kc-username {
+  display: none;
 }
 
 .form-box {
@@ -383,6 +388,52 @@ body {
   stroke: var(--color-accent);
 }
 
+.field__toggle {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+}
+
+.field__toggle:hover {
+  background: none;
+  color: var(--color-text);
+}
+
+.field__toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.field__toggle-slash {
+  display: none;
+}
+
+.field__toggle[aria-pressed='true'] .field__toggle-slash {
+  display: inline;
+}
+
+.field__control #password {
+  padding-right: 48px;
+}
+
+#password::-ms-reveal {
+  display: none;
+}
+
 .buttons {
   margin-top: 24px;
 }
@@ -432,6 +483,42 @@ button:active,
 [data-page-id='login-login'] .buttons button {
   width: auto;
   min-width: 180px;
+}
+
+.button__busy {
+  display: none;
+}
+
+#kc-login:disabled {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  cursor: progress;
+}
+
+#kc-login:disabled .button__idle {
+  display: none;
+}
+
+#kc-login:disabled .button__busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button__busy::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgb(255 255 255 / 35%);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
@@ -592,9 +679,6 @@ a:hover {
   .hero {
     width: 72px;
     height: 72px;
-  }
-
-  [data-page-id='login-login'] #kc-page-title {
     margin-bottom: 12px;
   }
 
