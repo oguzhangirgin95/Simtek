@@ -669,3 +669,30 @@ a:hover {
     background-image: none;
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero,
+  .form-box,
+  .form-links,
+  .notice,
+  .corner {
+    animation: enter 800ms ease-out backwards;
+  }
+
+  .form-box {
+    animation-delay: 150ms;
+  }
+
+  .form-links,
+  .notice,
+  .corner {
+    animation-delay: 300ms;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
